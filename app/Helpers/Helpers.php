@@ -465,17 +465,19 @@ if (!function_exists('stringIntoArray')) {
     {
         $clean_string = trim($value, '[]');
         $interest_list = explode(',', $clean_string);
-        $interest_list = array_map('trim', $interest_list); 
+        $interest_list = array_map('trim', $interest_list);
         return $interest_list;
     }
 }
-if (!function_exists('friendsIds')) {
-    function friendsIds()
-    {
-        $user_id = auth()->id();
-        $data = App\Models\FriendList::where('user_id', $user_id)->pluck('friend_id');
-        return $data;
-        
+
+if (!function_exists('calculate_duration_days')) {
+    function calculate_duration_days($value, $unit) {
+        return match ($unit) {
+            'days' => $value,
+            'weeks' => $value * 7,
+            'months' => $value * 30,
+            'years' => $value * 365,
+            default => throw new \InvalidArgumentException("Invalid unit"),
+        };
     }
 }
-
