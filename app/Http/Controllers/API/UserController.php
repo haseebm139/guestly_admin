@@ -8,7 +8,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Interest;
 use App\Models\FriendRequestList;
-use App\Models\FriendList; 
+use App\Models\FriendList;
 
 use Carbon\Carbon;
 use Str;
@@ -19,11 +19,11 @@ class UserController extends BaseController
 {
     public function getProfile(Request $request,User $user){
         try {
-             
+
             $user_id = auth()->id();
             if(isset($request->id)){
                 $user_id =$request->id;
-            }             
+            }
             $data = $user->with(['interests'])->find($user_id);
             $data['isFriend'] = $this->isFriend($data);
             return $this->sendResponse($data,"My Profile");
@@ -31,7 +31,7 @@ class UserController extends BaseController
             return $this->sendError("Something Went Wrong");
         }
     }
-    
+
     public function isFriend($data){
         $user_id = auth()->id();
         $friend_id = $data->id;
@@ -46,56 +46,56 @@ class UserController extends BaseController
         }
         return  $data;
     }
-    public function updateProfile(Request $request,User $user){ 
+    public function updateProfile(Request $request,User $user){
         try {
             $user_id = auth()->id();
             $user = $user->find($user_id);
-            $item = null; 
+            $item = null;
             $data = $user->find($user_id);
             if ($request->name != $user->name) {
                 $item['name'] = $request->name ;
-            } 
+            }
             if ($request->date_of_birth != $user->date_of_birth) {
                 $item['date_of_birth'] = Carbon::parse($request->date_of_birth);
-            } 
+            }
             if ($request->gender != $user->gender) {
                 $item['gender'] = stringLowerCase($request->gender);
-            } 
+            }
             if ($request->city != $user->city) {
                 $item['city'] = stringLowerCase($request->city);
-            } 
+            }
             if ($request->country != $user->country) {
                 $item['country'] = stringLowerCase($request->country);
-            } 
+            }
             if ($request->job != $user->job) {
                 $item['job'] = stringLowerCase($request->job);
-            } 
+            }
             if ($request->company != $user->company) {
                 $item['company'] = stringLowerCase($request->company);
-            } 
+            }
             if ($request->college != $user->college) {
                 $item['college'] = $request->college;
-            } 
+            }
             $user->interests()->delete();
             if($request->interests){
                 $interest_list = stringIntoArray($request->interests);
-                    
+
                 foreach ($interest_list as $key => $value) {
                     $userInterest = Interest::where(['name'=>$value,'user_id'=>$user_id])->first();
-                    if (!isset($userInterest)) {                     
+                    if (!isset($userInterest)) {
                         Interest::create([
                             'name'=>$value,
                             'user_id'=>$user_id
                         ]);
-                    } 
+                    }
                 }
             }
-            
-                 
-            
+
+
+
             if ($request->bio != $user->bio) {
                 $item['bio'] = $request->bio;
-            } 
+            }
             if($request->hasFile('avatar'))
             {
                 $img = time().$request->file('avatar')->getClientOriginalName();
@@ -103,18 +103,18 @@ class UserController extends BaseController
                 $request->avatar->move(public_path("documents/gallery/"), $img);
                 $input['avatar'] = $file_path;
             }
-            
+
             $user->update($item);
             $data = $user->with('interests')->find($user_id);
-             
+
             return $this->sendResponse($data,"My Profile");
-             
+
         } catch (\Throwable $th) {
             return $this->sendError("Something Went Wrong");
         }
     }
 
-    
+
     public function listSubscription(){
         try {
             //code...
@@ -129,7 +129,7 @@ class UserController extends BaseController
     }
 
     public function friendsList(){
-        
+
         try {
             //code...
             $user_id = auth()->id();
@@ -144,9 +144,9 @@ class UserController extends BaseController
     }
     // Begin::Request Process
     public function sendFriendRequest(Request $request){
-        try {  
+        try {
             $validator = Validator::make($request->all(), [
-                'user_id' => 'required|numeric', 
+                'user_id' => 'required|numeric',
             ]);
 
             if ($validator->fails()) {
@@ -167,9 +167,9 @@ class UserController extends BaseController
                 });
             })->first();
 
-            
+
             if (!isset($check_request)) {
-                
+
                 FriendRequestList::create([
                     'sender_id'=>$senderId,
                     'receive_id'=>$receiverId,
@@ -180,38 +180,38 @@ class UserController extends BaseController
         } catch (\Throwable $th) {
             return $this->sendError("Something Went Wrong");
         }
-    }  
+    }
     public function receiveFriendRequest(Request $request){
-        try {   
-            $receiveId = auth()->id();        
-            $data = FriendRequestList::where([                
+        try {
+            $receiveId = auth()->id();
+            $data = FriendRequestList::where([
                 'receive_id'=>$receiveId,
                 'status'=>0
             ])->paginate(20);
-            
+
             return $this->sendResponse($data,"Friend Request List");
         } catch (\Throwable $th) {
             return $this->sendError("Something Went Wrong");
         }
-    }    
+    }
     public function acceptFriendRequest(Request $request){
-        try {  
+        try {
             $validator = Validator::make($request->all(), [
-                'id' => 'required|numeric', 
-                 
+                'id' => 'required|numeric',
+
             ]);
-    
+
             if ($validator->fails()) {
                 return $this->sendError($validator->errors()->first());
             }
-             
+
             $id = $request->id;
-            $checkRequest = FriendRequestList::where('status',0)->where('id',$id)->first();                       
+            $checkRequest = FriendRequestList::where('status',0)->where('id',$id)->first();
             if (!isset($checkRequest)) {
-                return $this->sendError("Request Not Found");            
-            }         
-            $userId = $checkRequest->receive_id; 
-            $friendId = $checkRequest->sender_id; 
+                return $this->sendError("Request Not Found");
+            }
+            $userId = $checkRequest->receive_id;
+            $friendId = $checkRequest->sender_id;
             FriendList::create([
                 'user_id'=>$userId,
                 'friend_id'=>$friendId,
@@ -229,23 +229,23 @@ class UserController extends BaseController
         }
     }
     public function rejectFriendRequest(Request $request){
-        try {  
+        try {
             $validator = Validator::make($request->all(), [
-                'id' => 'required|numeric', 
-                 
+                'id' => 'required|numeric',
+
             ]);
-    
+
             if ($validator->fails()) {
                 return $this->sendError($validator->errors()->first());
             }
-             
+
             $id = $request->id;
-            $checkRequest = FriendRequestList::where('status',0)->where('id',$id)->first();                       
+            $checkRequest = FriendRequestList::where('status',0)->where('id',$id)->first();
             if (!isset($checkRequest)) {
-                return $this->sendError("Request Not Found");            
-            }         
-            $userId = $checkRequest->receive_id; 
-            $friendId = $checkRequest->sender_id; 
+                return $this->sendError("Request Not Found");
+            }
+            $userId = $checkRequest->receive_id;
+            $friendId = $checkRequest->sender_id;
             FriendList::where([
                 'user_id'=>$userId,
                 'friend_id'=>$friendId,
@@ -262,13 +262,13 @@ class UserController extends BaseController
     }
 
     public function userSearch(Request $request){
-        try { 
-            
+        try {
+
             $validator = Validator::make($request->all(), [
-                'keyword' => 'required', 
-                 
+                'keyword' => 'required',
+
             ]);
-    
+
             if ($validator->fails()) {
                 return $this->sendError($validator->errors()->first());
             }
@@ -293,11 +293,11 @@ class UserController extends BaseController
     }
     // End::Request Process
     public function newMatchUser(){
-        try {  
+        try {
             $user_id = auth()->id();
             $users = User::Query();
-            $data = $this->newMatch($users);  
-               
+            $data = $this->newMatch($users);
+
             return $this->sendResponse($data,"New Match User data");
         } catch (\Throwable $th) {
             return $this->sendError("Something Went Wrong");
@@ -305,33 +305,33 @@ class UserController extends BaseController
     }
 
     public function nearUser(){
-        try {  
+        try {
             $user_id = auth()->id();
-            $users = User::Query();              
-            $data = $this->nearYou($users);                 
+            $users = User::Query();
+            $data = $this->nearYou($users);
             return $this->sendResponse($data,"Near Users data");
         } catch (\Throwable $th) {
             return $this->sendError("Something Went Wrong");
         }
     }
     public function recentPartnerUser(){
-        try {  
+        try {
             $user_id = auth()->id();
-            $users = User::Query();  
-            $data = $this->recentPartners();  
+            $users = User::Query();
+            $data = $this->recentPartners();
             return $this->sendResponse($data,"Recent Partners data");
         } catch (\Throwable $th) {
             return $this->sendError("Something Went Wrong");
         }
     }
-    
+
     public function homeScreenApi(){
-        try {  
+        try {
             $user_id = auth()->id();
             $users = User::Query();
-            $data['new_match'] = $this->newMatch($users);  
-            $data['nearYou'] = $this->nearYou($users);  
-            $data['recentPartners'] = $this->recentPartners();  
+            $data['new_match'] = $this->newMatch($users);
+            $data['nearYou'] = $this->nearYou($users);
+            $data['recentPartners'] = $this->recentPartners();
             return $this->sendResponse($data,"Home data");
         } catch (\Throwable $th) {
             return $this->sendError("Something Went Wrong");
@@ -344,13 +344,13 @@ class UserController extends BaseController
         $data = $users->where('id','!=',$user_id)
         ->where('user_type','user')
         ->whereNotIn('id',$friends)
-        ->paginate(20); 
+        ->paginate(20);
         return $data;
     }
 
     public function nearYou($users){
         $user = auth()->user();
-        
+
         $latitude = $user->latitude;
         $longitude = $user->longitude;
 
@@ -360,24 +360,24 @@ class UserController extends BaseController
         ->where('user_type','user')
         ->whereNotIn('id',$friends)
         ->select(DB::raw(
-            "*, (6371 * acos(cos(radians($latitude)) 
-                * cos(radians(latitude)) 
-                * cos(radians(longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+            "*, (6371 * acos(cos(radians($latitude))
+                * cos(radians(latitude))
+                * cos(radians(longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(latitude)))) AS distance"
         ))
         ->orderBy('distance', 'asc')
-        ->paginate(20); 
+        ->paginate(20);
         return $data;
-         
+
     }
     public function recentPartners(){
         $user = auth()->user();
         $friends = friendsIds();
         $user_id = $user->id ;
-        $data = User::whereIn('id',$friends)->paginate(20); 
+        $data = User::whereIn('id',$friends)->paginate(20);
         return $data;
     }
 
-     
+
 }

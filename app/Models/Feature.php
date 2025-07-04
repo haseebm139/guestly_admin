@@ -11,8 +11,13 @@ class Feature extends Model
 
     protected $guarded = [];
 
-    public function plans()
+     public function plans()
     {
-        return $this->belongsToMany(Plan::class);
+        return $this->belongsToMany(Plan::class, 'feature_plan');
+    }
+
+    public function userFeatures()
+    {
+        return $this->hasMany(UserFeature::class);
     }
 }

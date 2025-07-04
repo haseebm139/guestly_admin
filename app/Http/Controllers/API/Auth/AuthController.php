@@ -69,7 +69,7 @@ class AuthController extends BaseController
                     'last_login_at' => now(), // Assuming 'last_login_at' is a timestamp/datetime field
                     'last_login_ip' => request()->ip(), // Get the user's IP address
                 ]);
-                $success['token'] = $user->createToken('Empowered Dating')->accessToken;
+                $success['token'] = $user->createToken('Guestly')->accessToken;
                 $success['name'] = Str::upper($user->name);
                 // $success['user'] = $user;
 
@@ -197,7 +197,7 @@ class AuthController extends BaseController
                 if (Auth::attempt(['email' => $request->email, 'password' =>  $request->google_id])) {
                     $user = Auth::user();
 
-                    $success['token'] =  $user->createToken('Meditation App')->accessToken;
+                    $success['token'] =  $user->createToken('Guestly')->accessToken;
                     $success['name'] =  Str::upper($user->name);
                     $success['user'] = $user;
                     return $this->sendResponse($success, 'User login successfully.');
@@ -213,7 +213,7 @@ class AuthController extends BaseController
                 $input['password'] = Hash::make($request->google_id);
                 $input['google_id'] = $request->google_id;
                 $user = User::create($input);
-                $success['token'] =  $user->createToken('Meditation App')->accessToken;
+                $success['token'] =  $user->createToken('Guestly')->accessToken;
                 $success['name'] =  Str::upper($user->name);
                 return $this->sendResponse($success, 'User login successfully.');
 
