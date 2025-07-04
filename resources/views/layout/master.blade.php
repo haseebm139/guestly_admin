@@ -15,6 +15,7 @@
     <meta property="og:title" content="" />
     <link rel="canonical" href="" />
     <script src="{{ asset('assets/js/ckeditor/ckeditor.js') }}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.css">
     {!! includeFavicon() !!}
 
     <!--begin::Fonts-->
@@ -69,9 +70,10 @@
     @foreach (getCustomJs() as $path)
         {!! sprintf('<script src="%s"></script>', asset($path)) !!}
     @endforeach
-
+ <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.js"></script>
     <!--end::Custom Javascript-->
     @stack('scripts')
     <!--end::Javascript-->

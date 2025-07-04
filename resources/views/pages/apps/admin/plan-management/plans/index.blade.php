@@ -1,10 +1,10 @@
 <x-default-layout>
 
     @section('title')
-    FAQ's
+        Plan
     @endsection
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('app-management.faq.index') }}
+        {{ Breadcrumbs::render('plan-management.plans.index') }}
     @endsection
     <div id="kt_app_content" class="app-content  flex-column-fluid ">
 
@@ -69,7 +69,7 @@
                             <!--begin::Modal header-->
                             <div class="modal-header" id="kt_modal_add_user_header">
                                 <!--begin::Modal title-->
-                                <h2 class="fw-bold">Add FAQ</h2>
+                                <h2 class="fw-bold">Add Plan</h2>
                                 <!--end::Modal title-->
 
                                 <!--begin::Close-->
@@ -83,11 +83,11 @@
                             <!--end::Modal header-->
 
                             <form id="kt_modal_add_user_form" class="form"
-                                action="{{ route('app-management.faq.store') }}" method="POST"
+                                action="{{ route('plan-management.plans.store') }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <!--begin::Modal body-->
-                                <div class="modal-body px-5 my-7">
+                                <div class="modal-body px-5 my-2">
                                     <!--begin::Form-->
 
                                     <!--begin::Scroll-->
@@ -98,51 +98,124 @@
                                         data-kt-scroll-wrappers="#kt_modal_add_user_scroll"
                                         data-kt-scroll-offset="300px">
 
-                                        <div class="fv-row mb-7">
-                                            <!--begin::Label-->
-                                            <label class="required fw-semibold fs-6 mb-2" name="question">
-                                                Question</label>
-                                            <!--end::Label-->
+                                        <div class="form-group fv-row mb-4">
+                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan
+                                                Name</label>
+                                            <input type="text" name="name" class="form-control"
+                                                placeholder="Free Trial" />
+                                            <span class="form-text text-muted">Enter a unique name for this plan (e.g.
+                                                Basic, Premium)</span>
+                                        </div>
+                                        <div class="form-group fv-row mb-4">
 
-                                            <!--begin::solid autosize textarea-->
-                                            <div class="rounded border d-flex flex-column p-10">
+                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan
+                                                Validity</label>
+                                            <div class="input-group input-group-solid">
+                                                <!-- Integer input -->
+                                                <input type="number" name="validity_value" class="form-control"
+                                                    placeholder="Enter number" required />
 
-                                                <textarea name="question" class="form-control form-control form-control-solid" data-kt-autosize="true"></textarea>
+                                                <!-- Unit select -->
+                                                <select name="validity_unit" class="form-select form-control"
+                                                    style="max-width: 150px;" required>
+                                                    <option value="days">Day(s)</option>
+                                                    <option value="weeks">Week(s)</option>
+                                                    <option value="months" selected>Month(s)</option>
+                                                    <option value="years">Year(s)</option>
+                                                </select>
                                             </div>
-                                            <!--end::solid autosize textarea-->
+                                            <span class="form-text text-muted">Enter a number and select the duration
+                                                unit (e.g. 3 months)</span>
+                                        </div>
+
+
+                                        <div class="form-group fv-row mb-4">
+                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan
+                                                Price</label>
+                                            <input id="price_touchspin_1" type="text" class="form-control"
+                                                value="55" name="price" placeholder="Select time" />
+                                            <span class="form-text text-muted"> Use the spinner or type directly (e.g.
+                                                19.99)</span>
 
                                         </div>
 
-                                        <div class="fv-row mb-7">
+
+
+                                        <!--begin::Permissions-->
+                                        <div class="fv-row">
                                             <!--begin::Label-->
-                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Answer</label>
+                                            <label class="fs-5 fw-bold form-label mb-2">Feature Permissions</label>
                                             <!--end::Label-->
+                                            <!--begin::Table wrapper-->
+                                            <div class="table-responsive">
+                                                <!--begin::Table-->
+                                                <table class="table align-middle table-row-dashed fs-6 gy-5">
+                                                    <!--begin::Table body-->
+                                                    <tbody class="text-gray-600 fw-semibold">
+                                                        <!--begin::Table row-->
+                                                        <tr>
+                                                            <td class="text-gray-800">Feature Access
+                                                                <span class="ms-1" data-bs-toggle="tooltip"
+                                                                    title="Allows a full access to the system">
+                                                                    {!! getIcon('information-5', 'text-gray-500 fs-6') !!}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <!--begin::Checkbox-->
+                                                                <label
+                                                                    class="form-check form-check-sm form-check-custom form-check-solid me-9">
 
-                                            <!--begin::solid autosize textarea-->
-                                            <div class="rounded border d-flex flex-column p-10">
 
-                                                <textarea name="answer" class="form-control form-control form-control-solid" data-kt-autosize="true"></textarea>
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        id="select_all_features" />
+                                                                    <span class="form-check-label"
+                                                                        for="select_all_features">Select all</span>
+                                                                </label>
+                                                                <!--end::Checkbox-->
+                                                            </td>
+                                                        </tr>
+                                                        <!--end::Table row-->
+                                                        @if (isset($features))
+                                                            @foreach ($features->chunk(2) as $chunk)
+                                                                <!--begin::Table row-->
+                                                                <tr>
+                                                                    <!--begin::Label-->
+                                                                    @foreach ($chunk as $feature)
+                                                                        <!--end::Label-->
+                                                                        <!--begin::Input group-->
+                                                                        <td>
+                                                                            <!--begin::Wrapper-->
+                                                                            <div class="d-flex">
+                                                                                <!--begin::Checkbox-->
+                                                                                <label
+                                                                                    class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
+                                                                                    <input
+                                                                                        class="form-check-input feature-checkbox"
+                                                                                        type="checkbox"
+                                                                                        name="features[]"
+                                                                                        value="{{ $feature->id }}" />
+                                                                                    <span
+                                                                                        class="form-check-label">{{ ucwords($feature->name) }}</span>
+                                                                                </label>
+                                                                                <!--end::Checkbox-->
+                                                                            </div>
+                                                                            <!--end::Wrapper-->
+                                                                        </td>
+                                                                        <!--end::Input group-->
+                                                                    @endforeach
+                                                                </tr>
+                                                            @endforeach
+                                                            <!--end::Table row-->
+                                                        @endif
+                                                        <!--begin::Table row-->
+                                                    </tbody>
+                                                    <!--end::Table body-->
+                                                </table>
+                                                <!--end::Table-->
                                             </div>
-                                            <!--end::solid autosize textarea-->
-
+                                            <!--end::Table wrapper-->
                                         </div>
-
-
-
-                                        <div class="fv-row mb-7">
-                                            <!--begin::Label-->
-                                            <label class="required fw-semibold fs-6 mb-2" for="lang">Language</label>
-                                            <!--end::Label-->
-
-                                            <!--begin::Input-->
-                                            <select name="lang"
-                                                class="form-control form-control-solid mb-3 mb-lg-0">
-                                                <option value="en">English</option>
-                                                <option value="ru">Russian</option>
-                                                <!-- Add more options as needed -->
-                                            </select>
-                                            <!--end::Input-->
-                                        </div>
+                                        <!--end::Permissions-->
 
                                     </div>
                                     <!--end::Input group-->
@@ -151,7 +224,7 @@
 
                                 <!--begin::Actions-->
                                 <div class="text-center pt-10 mb-5">
-                                    <button type="submit" class="btn btn-primary" >
+                                    <button type="submit" class="btn btn-primary">
                                         <span class="indicator-label">
                                             Add
                                         </span>
@@ -177,9 +250,9 @@
                         <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
 
 
-                            <th class="min-w-125px">Question</th>
-                            <th class="min-w-125px">Answer</th>
-                            <th class="min-w-125px">Language</th>
+                            <th class="min-w-125px">Name</th>
+                            <th class="min-w-125px">Price</th>
+                            <th class="min-w-125px">Validity</th>
                             <th class="min-w-125px">Status</th>
                             <th class="text-end min-w-70px">Action</th>
                         </tr>
@@ -189,9 +262,9 @@
                             @foreach ($data as $item)
                                 <tr>
 
-                                    <td>{{ $item->question??'' }}</td>
-                                    <td>{{ $item->answer??'' }}</td>
-                                    <td>{{ $item->lang === 'en' ? "English" : "Russian " }}</td>
+                                    <td>{{ $item->name ?? '' }}</td>
+                                    <td>{{ $item->price ?? '' }}</td>
+                                    <td>{{ $item->validity_value ?? '' }}/{{ $item->validity_unit ?? '' }}</td>
                                     <td>
                                         <div class="form-group">
                                             <div
@@ -205,7 +278,7 @@
 
                                     <td class="text-end">
 
-                                        <form action="{{ route('app-management.faq.destroy', $item->id) }}"
+                                        <form action="{{ route('plan-management.plans.destroy', $item->id) }}"
                                             method="post" style="display:inline">
                                             @csrf
                                             @method('DELETE')
@@ -214,7 +287,7 @@
                                             </button>
                                         </form>
 
-                                        <form action="{{ route('app-management.faq.edit', $item->id) }}"
+                                        <form action="{{ route('plan-management.plans.edit', $item->id) }}"
                                             method="get" style="display:inline">
                                             @csrf
 
@@ -238,8 +311,22 @@
 
 
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.js"></script>
+
         <script>
             $(document).ready(function() {
+                $("#price_touchspin_1").TouchSpin({
+                    buttondown_class: 'btn btn-secondary',
+                    buttonup_class: 'btn btn-secondary',
+
+                    min: 0,
+                    max: 1000000,
+                    step: 0.1,
+                    decimals: 2,
+                    boostat: 5,
+                    maxboostedstep: 10,
+                    prefix: '$'
+                });
                 // Function to filter the table based on the search input
                 function filterTable() {
                     var searchText = $('#userSearchInput').val().toLowerCase();
@@ -266,7 +353,7 @@
                     else
                         var status = 0;
                     $.ajax({
-                        url: "{{ route('app-management.faq.change.status') }}",
+                        url: "{{ route('plan-management.plans.change.status') }}",
                         type: 'GET',
                         /*dataType: 'json',*/
                         data: {
@@ -288,4 +375,23 @@
             });
         </script>
 
+        @push('scripts')
+            <script>
+                $(document).ready(function() {
+                    // When 'Select All' is toggled
+                    $('#select_all_features').on('change', function() {
+                        $('.feature-checkbox').prop('checked', $(this).is(':checked'));
+                    });
+
+                    // If any individual checkbox is unchecked, uncheck "Select All"
+                    $('.feature-checkbox').on('change', function() {
+                        if ($('.feature-checkbox:checked').length !== $('.feature-checkbox').length) {
+                            $('#select_all_features').prop('checked', false);
+                        } else {
+                            $('#select_all_features').prop('checked', true);
+                        }
+                    });
+                });
+            </script>
+        @endpush
 </x-default-layout>

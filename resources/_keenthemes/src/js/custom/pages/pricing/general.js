@@ -39,7 +39,7 @@ var KTPricingGeneral = function () {
 
             planPeriodMonthButton.classList.remove('active');
             planPeriodAnnualButton.classList.add('active');
-            
+
             changePlanPrices('annual');
         });
     }

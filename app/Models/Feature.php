@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Plan extends Model
+class Feature extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
 
-    public function features()
+    public function plans()
     {
-        return $this->belongsToMany(Feature::class);
+        return $this->belongsToMany(Plan::class);
     }
 }

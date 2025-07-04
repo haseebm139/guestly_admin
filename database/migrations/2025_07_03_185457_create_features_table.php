@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('features', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->decimal('price', 8, 2)->nullable();
-            $table->integer('validity_value')->nullable();
-            $table->enum('validity_unit', ['days', 'weeks', 'months', 'years'])->nullable();
-            $table->integer('duration_days')->nullable();
+            $table->string('name');
+            $table->string('code')->unique();
             $table->enum('status', ['0', '1'])->nullable()->default('1');   // 1 = active, 0 = inactive
             $table->timestamps();
         });
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('features');
     }
 };

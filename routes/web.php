@@ -7,6 +7,10 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ImageUpload;
 use App\Http\Controllers\DashboardController;
 
+
+use App\Http\Controllers\Apps\Admin\PlanManagementController;
+use App\Http\Controllers\Apps\Admin\FeatureManagementController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -43,7 +47,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     });
 
+    Route::name('plan-management.')->group(function () {
+            Route::resource('/plan-management/plans', PlanManagementController::class);
+            Route::get('plan-change-status', [PlanManagementController::class,'change_status'])->name('plans.change.status');
+            Route::resource('/plan-management/features', FeatureManagementController::class);
+            Route::get('feature-change-status', [FeatureManagementController::class,'change_status'])->name('features.change.status');
 
+        });
 
 
     Route::resource('image/upload', ImageUpload::class);
