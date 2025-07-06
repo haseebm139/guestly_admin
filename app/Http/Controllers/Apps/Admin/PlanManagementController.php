@@ -28,8 +28,10 @@ class PlanManagementController extends Controller
     public function store(StorePlanRequest $request)
     {
         try {
+
             $data = $request->validated();
-            $data['duration_days'] = calculate_duration_days($data['validity_value'], $data['validity_unit']);
+            // $data['duration_days'] = calculate_duration_days($data['validity_value'], $data['validity_unit']);
+            // $data['duration_days'] = calculate_duration_days($data['validity_value'], $data['validity_unit']);
             $this->planRepo->createPlan($data);
             return redirect()->back()->with(['type' => 'success', 'message' => 'Data stored successfully']);
         } catch (\Throwable $e) {
@@ -61,26 +63,25 @@ class PlanManagementController extends Controller
     public function update(UpdatePlanRequest $request, string $id)
     {
 
+        //code...
+        $plan = $this->planRepo->findPlan($id);
+
+        $plan->fill($request->only([
+            'name',
+            'm_price',
+            'y_price',
+        ]));
+
+        // $plan->duration_days = calculate_duration_days($plan->validity_value, $plan->validity_unit);
+
+        if ($request->has('features')) {
+            $plan->features()->sync($request->features);
+        }
+
+        $plan->save();
+        return redirect()->route('plan-management.plans.index')
+            ->with(['message' => 'Plan updated successfully', 'type' => 'success']);
         try {
-            //code...
-            $plan = $this->planRepo->findPlan($id);
-
-            $plan->fill($request->only([
-                'name',
-                'validity_value',
-                'validity_unit',
-                'price',
-            ]));
-
-            $plan->duration_days = calculate_duration_days($plan->validity_value, $plan->validity_unit);
-
-            if ($request->has('features')) {
-                $plan->features()->sync($request->features);
-            }
-
-            $plan->save();
-            return redirect()->route('plan-management.plans.index')
-                ->with(['message' => 'Plan updated successfully', 'type' => 'success']);
         } catch (\Throwable $th) {
              return redirect()->back()->with(['message' => 'Something went wrong', 'type' => 'error']);
 

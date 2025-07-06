@@ -25,9 +25,9 @@ class UpdatePlanRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
-            'validity_value' => 'sometimes|numeric|min:1',
-            'validity_unit' => 'sometimes|in:days,weeks,months,years',
-            'price' => 'sometimes|numeric|min:0',
+
+            'm_price' => 'sometimes|numeric|min:0',
+            'y_price' => 'sometimes|numeric|min:0',
             'features' => 'nullable|array',
             'features.*' => 'exists:features,id',
         ];

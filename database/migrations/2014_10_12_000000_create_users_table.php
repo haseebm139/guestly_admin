@@ -21,21 +21,24 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('country')->nullable();
+            $table->string('city')->nullable();
+            $table->string('address')->nullable();
             $table->string('phone')->nullable();
+            $table->string('emergency_phone')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('front_doc')->nullable();
+            $table->string('back_doc')->nullable();
             $table->string('avatar')->nullable();
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();
             $table->string('apple_id')->nullable();
             $table->integer('otp')->nullable();
+            $table->enum('status', ['0', '1'])->nullable()->default('0');   // 1 = active, 0 = inactive
             $table->date('date_of_birth')->nullable();
-            $table->string('city')->nullable();
             $table->enum('role_id', ['administrator',"user","guest_artist","studio"])->nullable()->default("user");
             $table->enum('user_type', ['administrator',"user","guest_artist","studio"])->nullable()->default("user");
-            $table->string('job')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
-            $table->string('company')->nullable();
-            $table->string('college')->nullable();
-            $table->string('bio')->nullable();
+
             $table->decimal('longitude', 10, 6)->nullable()->default(67.001137); // Adjust precision and scale as needed
             $table->decimal('latitude', 10, 6)->nullable()->default(24.860735);
             $table->rememberToken();

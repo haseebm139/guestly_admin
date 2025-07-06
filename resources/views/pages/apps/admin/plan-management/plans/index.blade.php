@@ -106,7 +106,7 @@
                                             <span class="form-text text-muted">Enter a unique name for this plan (e.g.
                                                 Basic, Premium)</span>
                                         </div>
-                                        <div class="form-group fv-row mb-4">
+                                        {{-- <div class="form-group fv-row mb-4">
 
                                             <label class="required fw-semibold fs-6 mb-2" name="answer">Plan
                                                 Validity</label>
@@ -126,16 +126,26 @@
                                             </div>
                                             <span class="form-text text-muted">Enter a number and select the duration
                                                 unit (e.g. 3 months)</span>
-                                        </div>
+                                        </div> --}}
 
 
                                         <div class="form-group fv-row mb-4">
-                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan
+                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan Monthly
                                                 Price</label>
                                             <input id="price_touchspin_1" type="text" class="form-control"
-                                                value="55" name="price" placeholder="Select time" />
+                                                value="55" name="m_price" placeholder="Select time" />
                                             <span class="form-text text-muted"> Use the spinner or type directly (e.g.
                                                 19.99)</span>
+
+                                        </div>
+
+                                        <div class="form-group fv-row mb-4">
+                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan Yearly
+                                                Price</label>
+                                            <input id="price_touchspin_2" type="text" class="form-control"
+                                                value="55" name="y_price" placeholder="Select time" />
+                                            <span class="form-text text-muted"> Use the spinner or type directly (e.g.
+                                                199.99)</span>
 
                                         </div>
 
@@ -251,8 +261,8 @@
 
 
                             <th class="min-w-125px">Name</th>
-                            <th class="min-w-125px">Price</th>
-                            <th class="min-w-125px">Validity</th>
+                            <th class="min-w-125px">Price Monthly</th>
+                            <th class="min-w-125px">Price Yearly</th>
                             <th class="min-w-125px">Status</th>
                             <th class="text-end min-w-70px">Action</th>
                         </tr>
@@ -263,8 +273,8 @@
                                 <tr>
 
                                     <td>{{ $item->name ?? '' }}</td>
-                                    <td>{{ $item->price ?? '' }}</td>
-                                    <td>{{ $item->validity_value ?? '' }}/{{ $item->validity_unit ?? '' }}</td>
+                                    <td>{{ $item->m_price ?? '' }}/Monthly</td>
+                                    <td>{{ $item->y_price ?? '' }}/Yearly</td>
                                     <td>
                                         <div class="form-group">
                                             <div
@@ -310,12 +320,26 @@
         </div>
 
 
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.js"></script>
 
+        @push('scripts')
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.js"></script>
         <script>
             $(document).ready(function() {
                 $("#price_touchspin_1").TouchSpin({
+                    buttondown_class: 'btn btn-secondary',
+                    buttonup_class: 'btn btn-secondary',
+
+                    min: 0,
+                    max: 1000000,
+                    step: 0.1,
+                    decimals: 2,
+                    boostat: 5,
+                    maxboostedstep: 10,
+                    prefix: '$'
+                });
+
+                $("#price_touchspin_2").TouchSpin({
                     buttondown_class: 'btn btn-secondary',
                     buttonup_class: 'btn btn-secondary',
 
@@ -374,8 +398,6 @@
                 });
             });
         </script>
-
-        @push('scripts')
             <script>
                 $(document).ready(function() {
                     // When 'Select All' is toggled

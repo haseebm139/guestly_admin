@@ -86,28 +86,28 @@ class AuthController extends BaseController
 
     public function VerifyEmail(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first());
-        }
-
-        $emailExists = User::where('email', $request->email)->first();
-        if (isset($emailExists)) {
-            $otp = rand(1000, 9999);
-            $data['otp']=$otp;
-            $emailExists->update([
-                'otp'=>$otp
-            ]);
-            sendVerificationMail($otp,$request->email);
-            return $this->sendResponse($data, 'Code Send Successfully');
-
-        } else {
-            return $this->sendError('Invalid Email Address');
-        }
         try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first());
+            }
+
+            $emailExists = User::where('email', $request->email)->first();
+            if (isset($emailExists)) {
+                $otp = rand(1000, 9999);
+                $data['otp']=$otp;
+                $emailExists->update([
+                    'otp'=>$otp
+                ]);
+                sendVerificationMail($otp,$request->email);
+                return $this->sendResponse($data, 'Code Send Successfully');
+
+            } else {
+                return $this->sendError('Invalid Email Address');
+            }
 
         } catch (\Throwable $th) {
             return $this->sendError('Something went wrong');

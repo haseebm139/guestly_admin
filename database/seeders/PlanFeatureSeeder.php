@@ -36,28 +36,31 @@ class PlanFeatureSeeder extends Seeder
         $freePlan = Plan::firstOrCreate([
             'name' => 'Free Tier',
         ], [
-            'price' => 0.00,
+            'm_price' => 0.00,
+            'y_price' => 0.00,
             'validity_value' => 1,
             'validity_unit' => 'months',
-            'duration_days' => 30,
+
         ]);
 
         $proPlan = Plan::firstOrCreate([
             'name' => 'Pro Tier',
         ], [
-            'price' => 9.99,
+            'm_price' => 9.99,
+            'y_price' => 19.99,
             'validity_value' => 1,
             'validity_unit' => 'months',
-            'duration_days' => 30,
+
         ]);
 
         $premiumPlan = Plan::firstOrCreate([
             'name' => 'Premium Tier',
         ], [
-            'price' => 19.99,
+            'm_price' => 19.99,
+            'y_price' => 190.99,
             'validity_value' => 1,
             'validity_unit' => 'months',
-            'duration_days' => 30,
+
         ]);
 
         // Attach features

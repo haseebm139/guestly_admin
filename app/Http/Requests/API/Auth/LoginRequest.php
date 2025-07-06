@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\API\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-class StorePlanRequest extends FormRequest
+
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,25 +23,24 @@ class StorePlanRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => 'required|string|max:255',
+         return [
 
-            'm_price' => 'required|numeric|min:0',
-            'y_price' => 'required|numeric|min:0',
-            'features' => 'nullable|array',
-            'features.*' => 'exists:features,id',
+            'email' => 'required|email',
+            'password' => 'required',
         ];
     }
 
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            redirect()->back()
-                ->withInput()
-                ->with([
-                    'type' => 'error',
-                    'message' => $validator->errors()->first(), // just the first error
-                ])
+            response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'data' => [],
+            ], 422)
         );
+
     }
+
+
 }

@@ -9,6 +9,10 @@ use App\Interfaces\PlanRepositoryInterface;
 use App\Interfaces\FeatureRepositoryInterface;
 use App\Repositories\PlanRepository;
 use App\Repositories\FeatureRepository;
+
+// Repositories API
+use App\Interfaces\API\UserRepositoryInterface;
+use App\Repositories\API\UserRepository;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -20,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(PlanRepositoryInterface::class, PlanRepository::class);
         $this->app->bind(FeatureRepositoryInterface::class, FeatureRepository::class);
+        $this->app->bind(
+         UserRepositoryInterface::class,
+         UserRepository::class
+        );
     }
 
     /**
