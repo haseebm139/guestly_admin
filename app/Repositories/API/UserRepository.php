@@ -43,4 +43,43 @@ class UserRepository implements UserRepositoryInterface
 
 
     }
+
+    public function updateVerificationImages(User $user, array $paths, string $type)
+    {
+        $user->verification_type = $type;
+
+        if (isset($paths['front'])) {
+            $user->document_front = $paths['front'];
+        }
+
+        if (isset($paths['back'])) {
+            $user->document_back = $paths['back'];
+        }
+
+        $user->verification_status = '0';
+
+        $user->save();
+
+        return $user;
+    }
+
+
+    public function confirmVerification(User $user)
+    {
+        $user->verification_status = '1';
+        $user->save();
+
+        return $user;
+    }
+
+    public function getVerificationStatus(User $user)
+    {
+
+        return [
+            'status' => $user->verification_status,
+            'type' => $user->verification_type,
+            'front' => $user->document_front,
+            'back' => $user->document_back,
+        ];
+    }
 }

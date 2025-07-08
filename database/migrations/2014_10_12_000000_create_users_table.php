@@ -39,6 +39,7 @@ return new class extends Migration
             $table->enum('user_type', ['administrator',"user","guest_artist","studio"])->nullable()->default("user");
             $table->enum('gender', ['male', 'female'])->nullable();
 
+
             $table->decimal('longitude', 10, 6)->nullable()->default(67.001137); // Adjust precision and scale as needed
             $table->decimal('latitude', 10, 6)->nullable()->default(24.860735);
             $table->rememberToken();
