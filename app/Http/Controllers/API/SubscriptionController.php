@@ -13,21 +13,7 @@ use App\Http\Requests\BuyPlanRequest; // Import the BuyPlanRequest
 class SubscriptionController extends BaseController
 {
 
-    /**
-     * Fetch all plans.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function plans(){
-        $plans = Plan::select('id', 'name', 'price', 'validity_value', 'validity_unit','duration_days','status')
-            ->where('status', '1')
-            ->with(['features' => function ($query) {
-            $query->select('features.id', 'features.name', 'features.code', 'features.status')
-                ->where('status', '1');  // Filter features to include only those with status = 1
-        }])
-            ->get();
-        return $this->sendResponse($plans, 'Plans fetched successfully.');
-    }
+
     /**
      * Handle buying a plan and subscribing the user.
      *
@@ -38,6 +24,52 @@ class SubscriptionController extends BaseController
     public function buyPlan(BuyPlanRequest $request,$planId )
     {
 
+
+
+    }
+    /**
+     * Calculate the subscription end date based on the plan's validity.
+     *
+     * @param  \Carbon\Carbon  $startDate
+     * @param  \App\Models\Plan  $plan
+     * @return \Carbon\Carbon
+     */
+    protected function calculateEndDate($startDate, $plan)
+    {
+        // Add the validity value to the start date based on the validity unit
+        switch ($plan->validity_unit) {
+            case 'days':
+                return $startDate->copy()->addDays($plan->duration_days);
+            case 'weeks':
+                return $startDate->copy()->addDays($plan->duration_days);
+            case 'months':
+                return $startDate->copy()->addDays($plan->duration_days);
+            case 'years':
+                return $startDate->copy()->addDays($plan->duration_days);
+            default:
+                return $startDate;  // Default to no change if the unit is invalid
+        }
+    }
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+         $plans = Plan::select('id', 'name', 'price', 'validity_value', 'validity_unit','duration_days','status')
+            ->where('status', '1')
+            ->with(['features' => function ($query) {
+            $query->select('features.id', 'features.name', 'features.code', 'features.status')
+                ->where('status', '1');  // Filter features to include only those with status = 1
+        }])
+            ->get();
+        return $this->sendResponse($plans, 'Plans fetched successfully.');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(BuyPlanRequest $request,$planId)
+    {
         // $planId = $request->input('plan_id');
         $user = Auth::user();  // Get the authenticated user
         $plan = Plan::find($planId);
@@ -81,45 +113,6 @@ class SubscriptionController extends BaseController
             \DB::rollBack();
             return $this->sendError('An error occurred while processing your subscription.', [], 500);
         }
-
-    }
-    /**
-     * Calculate the subscription end date based on the plan's validity.
-     *
-     * @param  \Carbon\Carbon  $startDate
-     * @param  \App\Models\Plan  $plan
-     * @return \Carbon\Carbon
-     */
-    protected function calculateEndDate($startDate, $plan)
-    {
-        // Add the validity value to the start date based on the validity unit
-        switch ($plan->validity_unit) {
-            case 'days':
-                return $startDate->copy()->addDays($plan->duration_days);
-            case 'weeks':
-                return $startDate->copy()->addDays($plan->duration_days);
-            case 'months':
-                return $startDate->copy()->addDays($plan->duration_days);
-            case 'years':
-                return $startDate->copy()->addDays($plan->duration_days);
-            default:
-                return $startDate;  // Default to no change if the unit is invalid
-        }
-    }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**

@@ -2,7 +2,7 @@
 namespace App\Repositories\API;
 
 use App\Models\User;
-use App\Interfaces\API\UserRepositoryInterface;
+use App\Repositories\API\UserRepositoryInterface;
 
 
 class UserRepository implements UserRepositoryInterface
@@ -24,14 +24,15 @@ class UserRepository implements UserRepositoryInterface
     }
     public function createOrUpdateSocialUser(array $data)
     {
-         
-         
+
+
         $user = $this->findByEmail($data['email']);
-        
-        $providerField = $data['provider_field']; 
+
+        $providerField = $data['provider_field'];
         $data[$providerField] = $data['social_id'];
 
         unset($data['social_id']);
+        unset($data['provider_field']);
 
         if ($user) {
             $user->update($data);

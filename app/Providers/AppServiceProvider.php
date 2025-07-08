@@ -11,8 +11,13 @@ use App\Repositories\PlanRepository;
 use App\Repositories\FeatureRepository;
 
 // Repositories API
-use App\Interfaces\API\UserRepositoryInterface;
+use App\Repositories\API\UserRepositoryInterface;
 use App\Repositories\API\UserRepository;
+
+use App\Repositories\API\SubscriptionRepository;
+use App\Repositories\API\SubscriptionRepositoryInterface;
+use App\Services\Subscription\SubscriptionService;
+use App\Services\Subscription\SubscriptionServiceInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -28,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
          UserRepositoryInterface::class,
          UserRepository::class
         );
+        $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
     }
 
     /**

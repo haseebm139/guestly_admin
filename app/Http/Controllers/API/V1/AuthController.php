@@ -26,6 +26,7 @@ class AuthController extends BaseController
     public function register(RegisterRequest $request)
     {
 
+
         $data = $this->authService->register($request->validated());
 
         return $this->sendResponse($data =[],"User Register Successfully");

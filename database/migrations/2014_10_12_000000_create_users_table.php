@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('facebook_id')->nullable();
             $table->string('apple_id')->nullable();
             $table->integer('otp')->nullable();
-            $table->enum('status', ['0', '1'])->nullable()->default('0');   // 1 = active, 0 = inactive
+            $table->enum('email_verified', ['0', '1'])->nullable()->default('0');   // 1 = active, 0 = inactive
             $table->date('date_of_birth')->nullable();
             $table->enum('role_id', ['administrator',"user","guest_artist","studio"])->nullable()->default("user");
             $table->enum('user_type', ['administrator',"user","guest_artist","studio"])->nullable()->default("user");

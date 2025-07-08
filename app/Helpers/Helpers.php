@@ -437,7 +437,7 @@ if (!function_exists('sendVerificationMail')) {
     {
         // Send Email
             Illuminate\Support\Facades\Mail::send('emails.reset-password-email', ['otp' => $otp], function($message) use($email){
-                $message->to($email, 'Verification Code From Empowered');
+                $message->to($email, 'Verification Code From Guestly');
                 $message->subject('You have received Verification Code');
             });
         // Send Email

@@ -3,7 +3,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Interfaces\API\UserRepositoryInterface;
+use App\Repositories\API\UserRepositoryInterface;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Str;
 use Auth;
