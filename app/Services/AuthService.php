@@ -7,6 +7,7 @@ use App\Interfaces\API\UserRepositoryInterface;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Str;
 use Auth;
+use Validator;
 class AuthService extends BaseController
 {
     protected $userRepo;
@@ -74,5 +75,30 @@ class AuthService extends BaseController
         } catch (\Throwable $e) {
             return $this->sendError('Something went wrong.', [$e->getMessage()]);
         }
+    }
+
+    public function sendOtpToEmail(array $data)
+    {
+        $validator = Validator::make($data, [
+            'email' => 'required|email',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first());
+        }
+
+        $user = $this->userRepo->findByEmail($data['email']);
+
+        if (!$user) {
+            return $this->sendError('Invalid Email Address');
+        }
+
+        $otp = rand(1000, 9999);
+        $this->userRepo->updateOtp($data['email'], $otp);
+
+        // Send email (assuming helper function works)
+        sendVerificationMail($otp, $data['email']);
+
+        return $this->sendResponse(['otp' => $otp], 'Code sent successfully');
     }
 }

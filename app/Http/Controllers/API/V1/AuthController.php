@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\API\Auth\RegisterRequest;
 use App\Http\Requests\API\Auth\LoginRequest;
 use App\Http\Requests\API\Auth\SocialAuthRequest;
+use App\Http\Requests\API\Auth\VerifyEmailRequest;
 
 use App\Services\AuthService;
 use Str;
@@ -64,5 +65,9 @@ class AuthController extends BaseController
         $data = $request->validated();
         $data['provider'] = 'apple';
         return $this->authService->handleSocialLogin($data);
+    }
+    public function sendCodeToEmail(VerifyEmailRequest $request)
+    {
+        return $this->authService->sendOtpToEmail($request->all());
     }
 }
