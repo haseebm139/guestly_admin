@@ -23,10 +23,9 @@ class AuthService extends BaseController
         $data['password'] = Hash::make($data['password']);
 
         $user = $this->userRepo->createUser($data);
+        $token = $user->createToken('guestly')->accessToken;
 
-        // $token = $user->createToken('guestly')->accessToken;
-
-        return compact('user');
+         return compact('user', 'token');
     }
 
     public function login(array $credentials)

@@ -32,7 +32,7 @@ class RolesPermissionsSeeder extends Seeder
                 'database management',
                 'repository management',
             ],
-            'guest_artist' => [
+            'artist' => [
                 'user management',
                 'content management',
                 'financial management',

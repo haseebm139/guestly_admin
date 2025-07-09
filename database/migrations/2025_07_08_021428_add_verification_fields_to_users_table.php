@@ -12,10 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('verification_type')->nullable();
-            $table->string('document_front')->nullable();
-            $table->string('document_back')->nullable();
-            $table->enum('verification_status', ['0', '1', '2'])->default('0');
+
         });
     }
 
