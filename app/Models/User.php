@@ -107,4 +107,9 @@ class User extends Authenticatable
         return $this->belongsToMany(StationAmenity::class, 'studio_station_amenity');
     }
 
+    public function studioImages()
+    {
+        return $this->hasMany(StudioImage::class);
+    }
+
 }

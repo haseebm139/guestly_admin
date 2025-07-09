@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\AuthController  ;
 use App\Http\Controllers\Api\V1\UserController  ;
 
 use App\Http\Controllers\API\V1\SubscriptionController;
+use App\Http\Controllers\API\V1\CardController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,8 +38,11 @@ Route::prefix('v1')->group(function () {
             Route::post('verification/confirm', [UserController::class, 'confirmVerification']);
             Route::get('verification/status', [UserController::class, 'getVerificationStatus']);
         });
-        Route::get('plans', [SubscriptionController::class, 'index']);
-        Route::post('plans/{planId}/subscribe', [SubscriptionController::class, 'buyPlan']);
+        Route::controller(SubscriptionController::class)->group(function () {
+            Route::get('plans', 'index');
+            Route::post('plans/{planId}/subscribe', 'buyPlan');
+        });
+        Route::apiResource('cards', CardController::class);
 
 
 

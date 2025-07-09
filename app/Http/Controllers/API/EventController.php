@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\API\BaseController as BaseController;
 class EventController extends BaseController
 {
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +21,7 @@ class EventController extends BaseController
     public function index()
     {
         $user_id = auth()->id();
-        $today = Carbon::today();  
+        $today = Carbon::today();
         $invited_ids = $this->invitedIds();
         $events = Event::
         whereNotIn('id',$invited_ids)
@@ -40,10 +40,10 @@ class EventController extends BaseController
     {
         try {
             $user_id = auth()->id();
-            $today = Carbon::today();  
+            $today = Carbon::today();
             $events = Event::where('user_id',$user_id)
             ->where('date', '>=', $today->format('Y-m-d'))
-            ->paginate(20); 
+            ->paginate(20);
             $data = $this->participates($events);
             return $this->sendResponse($data,"Events");
         } catch (\Throwable $th) {
@@ -68,14 +68,14 @@ class EventController extends BaseController
                 'start_time' => 'required|date_format:H:i:s',
                 'end_time' => 'required|date_format:H:i:s',
                 'longitude' => 'required|numeric|between:-180,180',
-                'latitude' => 'required|numeric|between:-90,90', 
+                'latitude' => 'required|numeric|between:-90,90',
             ]);
-    
+
             if ($validator->fails()) {
                 return $this->sendError($validator->errors()->first());
             }
             $item = $request->all();
-            $item['user_id'] = auth()->id();   
+            $item['user_id'] = auth()->id();
             $event = Event::create($item);
             return $this->sendResponse($data = [],"Events Add Successfully");
         } catch (\Throwable $th) {
@@ -91,11 +91,11 @@ class EventController extends BaseController
      */
     public function show($id)
     {
-        try {             
+        try {
             $event = Event::where(['id'=>$id])->first();
 
             if (!$event) {
-                return $this->sendError("Event not found"); 
+                return $this->sendError("Event not found");
             }
 
             return $this->sendResponse($event,"Event");
@@ -114,10 +114,10 @@ class EventController extends BaseController
     public function update(Request $request, $id)
     {
         try{
-            
+
             $event = Event::where(['id'=>$id,'user_id'=>auth()->id()])->first();
             if (!$event) {
-                return $this->sendError("Event not found"); 
+                return $this->sendError("Event not found");
             }
 
             $validator = Validator::make($request->all(), [
@@ -136,7 +136,7 @@ class EventController extends BaseController
                 return $this->sendError($validator->errors()->first());
             }
             $item = $request->all();
-            $item['user_id'] = auth()->id(); 
+            $item['user_id'] = auth()->id();
             $event->update($item); // Update the event with validated data
             $event = Event::where(['id'=>$id,'user_id'=>auth()->id()])->first();
             return $this->sendResponse($event,"Event Update");
@@ -164,17 +164,17 @@ class EventController extends BaseController
 
     public function accept($id)
     {
-        try {         
-            $user_id = auth()->id();    
-            $data = Event::where('user_id', '!=', $user_id) 
+        try {
+            $user_id = auth()->id();
+            $data = Event::where('user_id', '!=', $user_id)
             ->where('id', '!=', $id)->first();
 
             if (!$event) {
-                return $this->sendError("Event not found"); 
+                return $this->sendError("Event not found");
             }
             $check = UserEventList::where([
                 'user_id'=>auth()->id(),
-                'event_id'=>$event->id, 
+                'event_id'=>$event->id,
             ])->first();
             if (isset($check)) {
                 $check->update([
@@ -196,24 +196,24 @@ class EventController extends BaseController
 
     public function reject($id)
     {
-        try {  
-            $user_id = auth()->id();           
-            $data = Event::where('user_id', '!=', $user_id) 
+        try {
+            $user_id = auth()->id();
+            $data = Event::where('user_id', '!=', $user_id)
             ->where('id', '!=', $id)->first();
-    
+
             if (!$event) {
-                return $this->sendError("Event not found"); 
+                return $this->sendError("Event not found");
             }
             $check = UserEventList::where([
                 'user_id'=>auth()->id(),
-                'event_id'=>$event->id, 
+                'event_id'=>$event->id,
             ])->first();
             if (isset($check)) {
                 $check->update([
                     'type'=>'reject'
                 ]);
             }else{
-    
+
                 UserEventList::create([
                     'user_id'=>auth()->id(),
                     'event_id'=>$event->id,
@@ -228,22 +228,22 @@ class EventController extends BaseController
 
     public function invitedIds(){
         $data = UserEventList::where([
-            'user_id'=>auth()->id(), 
+            'user_id'=>auth()->id(),
         ])->pluck('event_id');
         return $data;
     }
 
     public function participates($data){
-         
+
         $arr = $data->items(); // Get the items from the paginator
 
         foreach ($arr as $key => $value) {
             // Check if the audio is a favorite for the user
             $count = UserEventList::where([
-                'event_id' => $value->id, 
+                'event_id' => $value->id,
             ])->count();
 
-         
+
             $arr[$key]->participates = $count ;
         }
 
@@ -253,7 +253,7 @@ class EventController extends BaseController
         return $data;
     }
 
-    
+
 
 
 }

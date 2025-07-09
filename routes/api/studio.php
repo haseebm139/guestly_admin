@@ -16,5 +16,6 @@ use App\Http\Controllers\API\V1\Studio\StudioController;
 */
 Route::middleware(['auth:api', 'studio'])->group(function () {
     Route::post('/profile/update', [StudioController::class, 'update']);
+    Route::post('/profile/update-image', [StudioController::class, 'updateImages']);
     Route::get('/profile', [StudioController::class, 'show']);
 });

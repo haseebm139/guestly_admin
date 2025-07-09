@@ -16,8 +16,12 @@ use App\Repositories\API\UserRepository;
 
 use App\Repositories\API\SubscriptionRepository;
 use App\Repositories\API\SubscriptionRepositoryInterface;
+
 use App\Services\Subscription\SubscriptionServiceInterface;
 use App\Services\Subscription\SubscriptionService;
+use App\Repositories\API\CardRepositoryInterface;
+use App\Repositories\API\CardRepository;
+
 
 use App\Repositories\API\Studio\StudioRepository;
 use App\Repositories\API\Studio\StudioRepositoryInterface;
@@ -40,6 +44,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
 
         $this->app->bind(StudioRepositoryInterface::class, StudioRepository::class);
+
+        $this->app->bind(
+        CardRepositoryInterface::class,
+        CardRepository::class
+    );
     }
 
     /**

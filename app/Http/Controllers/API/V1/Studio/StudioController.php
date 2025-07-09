@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Studio\StudioProfileService;
 use App\Http\Controllers\API\BaseController as BaseController;
-
+use App\Http\Requests\API\Studio\StudioUpdateProfileRequest;
 
 class StudioController extends BaseController
 {
@@ -17,36 +17,30 @@ class StudioController extends BaseController
         $this->service = $service;
     }
 
-    public function update(Request $request)
+
+    public function update(StudioUpdateProfileRequest $request)
     {
-
-        $validated = $request->validate([
-            'studio_name' => 'nullable|string|max:255',
-            'business_email' => 'nullable|email',
-            'studio_address' => 'nullable|string',
-            'language' => 'nullable|string',
-            'website_url' => 'nullable|url',
-            'phone' => 'nullable|string',
-            'guest_spots' => 'nullable|integer',
-            'studio_type' => 'nullable|string',
-            'require_portfolio' => 'nullable|string',
-            'accept_bookings' => 'nullable|string',
-            'preferred_duration' => 'nullable|string',
-            'commission_percent' => 'nullable|numeric|min:0|max:100',
-            'supplies_provided' => 'nullable|array',
-            'amenities' => 'nullable|array',
-        ]);
         $studio = auth()->user();
-
-        $data = $request->all(); // Apply per-step validation if needed
-
+        $data = $request->validated();
         $updatedStudio = $this->service->updateProfile($studio->id, $data);
-
         return $this->sendResponse(
             $updatedStudio,
             'Studio profile updated successfully.'
         );
     }
+
+
+    public function updateImages(StudioUpdateProfileRequest $request)
+    {
+        $studio = auth()->user();
+        $data = $request->validated();
+        $updatedStudio = $this->service->updateProfile($studio->id, $data);
+        return $this->sendResponse(
+            $updatedStudio,
+            'Studio Images updated successfully.'
+        );
+    }
+
 
     public function show()
     {

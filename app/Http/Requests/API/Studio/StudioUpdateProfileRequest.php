@@ -3,7 +3,8 @@
 namespace App\Http\Requests\API\Studio;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class StudioUpdateProfileRequest extends FormRequest
 {
     /**
@@ -22,30 +23,43 @@ class StudioUpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'studio_name' => 'required|string|max:255',
-            'email'       => 'required|email|unique:users,email,' . auth()->id(),
-            'country'     => 'required|string|max:500',
-            'city'        => 'required|string|max:500',
-            'address'     => 'required|string|max:500',
-            'language'    => 'required|string',
+            'studio_name' => 'nullable|string|max:255',
+            'business_email' => 'nullable|email',
+            'studio_address' => 'nullable|string',
+            'language' => 'nullable|string',
             'website_url' => 'nullable|url',
-            'phone'       => 'required|string|max:20',
+            'phone' => 'nullable|string',
+            'guest_spots' => 'nullable|integer',
+            'studio_type' => 'nullable|string',
+            'require_portfolio' => 'nullable|boolean',
+            'accept_bookings' => 'nullable|boolean',
+            'preferred_duration' => 'nullable|string',
+            'commission_percent' => 'nullable|numeric|min:0|max:100',
 
-            'guest_spots'         => 'required|integer|min:1',
-            'studio_type'         => 'required|string|in:Private Studio,Public Studio,Other',
-            'require_portfolio'   => 'required|boolean',
-            'accept_bookings'     => 'required|boolean',
-            'preferred_duration'  => 'nullable|string',
-            'commission_percent'  => 'required|numeric|min:0|max:100',
+            // Array fields
+            'supplies_provided' => 'nullable|array|max:10',
+            'supplies_provided.*' => 'integer|exists:supplies,id',
 
+            'amenities' => 'nullable|array|max:10',
+            'amenities.*' => 'integer|exists:station_amenities,id',
 
-            'logo'     => 'required|file|mimes:jpg,png,pdf,zip|max:51200',
-            'cover'    => 'required|file|mimes:jpg,png,pdf,zip|max:51200',
-            'photos'   => 'required|array|min:1|max:5',
-            'photos.*' => 'file|mimes:jpg,png,pdf,zip|max:51200',
-
-            'supplies_provided' => 'required|array|min:1',
-            'amenities' => 'required|array|min:1',
+            // File fields
+            'studio_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'studio_images' => 'nullable|array|max:5',
+            'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'data' => [],
+            ], 422)
+        );
+
     }
 }
