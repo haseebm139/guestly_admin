@@ -15,7 +15,8 @@ class StudioMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->role === 'studio') {
+
+        if (auth()->check() && auth()->user()->user_type === 'studio') {
             return $next($request);
         }
 

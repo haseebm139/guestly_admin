@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -77,4 +80,31 @@ class User extends Authenticatable
 
         return $this->profile_photo_path;
     }
+
+
+
+    /**
+     * studio-specific attributes
+     * The supplies provided by the studio.
+     */
+    public function supplies(): BelongsToMany
+    {
+        return $this->belongsToMany(Supply::class, 'studio_supply');
+    }
+
+
+    /**
+     * The specific station amenities provided by the studio.
+     */
+    public function stationAmenitiesProvided(): BelongsToMany
+    {
+        // Use 'station_amenities_list' as the table name for the related model
+        return $this->belongsToMany(StationAmenity::class, 'studio_station_amenity', 'studio_id', 'station_amenity_id');
+    }
+
+    public function stationAmenities()
+    {
+        return $this->belongsToMany(StationAmenity::class, 'studio_station_amenity');
+    }
+
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\V1\Studio\StudioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,3 +14,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::middleware(['auth:api', 'studio'])->group(function () {
+    Route::post('/profile/update', [StudioController::class, 'update']);
+    Route::get('/profile', [StudioController::class, 'show']);
+});

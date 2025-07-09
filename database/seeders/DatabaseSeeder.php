@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             UsersSeeder::class,
             RolesPermissionsSeeder::class,
             PlanFeatureSeeder::class,
+            SupplySeeder::class,
+            StationAmenitySeeder::class
 
         ]);
 
