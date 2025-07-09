@@ -15,7 +15,7 @@ class ArtistMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->role === 'artist') {
+        if (auth()->check() && auth()->user()->user_type === 'artist') {
             return $next($request);
         }
 

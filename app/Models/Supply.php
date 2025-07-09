@@ -17,7 +17,7 @@ class Supply extends Model
      */
     public function studios(): BelongsToMany
     {
-        return $this->belongsToMany(Studio::class, 'studio_supply');
+        return $this->belongsToMany(User::class, 'studio_supply');
     }
 
 

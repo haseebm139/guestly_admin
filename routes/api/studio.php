@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\Studio\StudioController;
+use App\Http\Controllers\API\V1\Studio\BoostAdController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +17,17 @@ use App\Http\Controllers\API\V1\Studio\StudioController;
 |
 */
 Route::middleware(['auth:api', 'studio'])->group(function () {
-    Route::post('/profile/update', [StudioController::class, 'update']);
-    Route::post('/profile/update-image', [StudioController::class, 'updateImages']);
-    Route::get('/profile', [StudioController::class, 'show']);
+
+    Route::controller(StudioController::class)->group(function () {
+        Route::get('/profile', 'show');
+        Route::post('/profile/update', 'update');
+        Route::post('/profile/update-image', 'updateImages');
+    });
+
+    Route::controller(BoostAdController::class)->group(function () {
+        Route::get('/boost-ads', 'list');
+        Route::post('/boost-ads', 'store');
+        Route::post('/boost-ad/{id}/stop', 'stop');
+        Route::post('/boost-ad/{id}/boost-again', 'boostAgain');
+    });
 });

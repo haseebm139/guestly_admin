@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->string('address')->nullable();
+            $table->longText('bio')->nullable()->default('');
             $table->string('language')->nullable()->default('en');
             $table->string('website_url')->nullable();
             $table->string('phone')->nullable();

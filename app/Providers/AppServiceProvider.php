@@ -22,9 +22,16 @@ use App\Services\Subscription\SubscriptionService;
 use App\Repositories\API\CardRepositoryInterface;
 use App\Repositories\API\CardRepository;
 
-
+// STUDIO
 use App\Repositories\API\Studio\StudioRepository;
 use App\Repositories\API\Studio\StudioRepositoryInterface;
+use App\Repositories\API\Studio\BoostAdRepository;
+use App\Repositories\API\Studio\BoostAdRepositoryInterface;
+
+
+// ARTIST
+use App\Repositories\API\Artist\ArtistRepository;
+use App\Repositories\API\Artist\ArtistRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,14 +48,17 @@ class AppServiceProvider extends ServiceProvider
          UserRepositoryInterface::class,
          UserRepository::class
         );
+        $this->app->bind(CardRepositoryInterface::class,CardRepository::class);
         $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
 
+        // STUDIO
         $this->app->bind(StudioRepositoryInterface::class, StudioRepository::class);
+        $this->app->bind(BoostAdRepositoryInterface::class,BoostAdRepository::class);
 
-        $this->app->bind(
-        CardRepositoryInterface::class,
-        CardRepository::class
-    );
+
+        // ARTIST
+
+        $this->app->bind(ArtistRepositoryInterface::class, ArtistRepository::class);
     }
 
     /**

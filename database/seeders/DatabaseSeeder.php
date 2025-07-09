@@ -19,11 +19,12 @@ class DatabaseSeeder extends Seeder
             RolesPermissionsSeeder::class,
             PlanFeatureSeeder::class,
             SupplySeeder::class,
-            StationAmenitySeeder::class
+            StationAmenitySeeder::class,
+            TattooStylesSeeder::class
 
         ]);
 
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(30)->create();
 
         // \App\Models\User::factory(10)->create([
         //     'name' => 'Test User',
