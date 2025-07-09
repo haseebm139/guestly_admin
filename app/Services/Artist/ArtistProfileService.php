@@ -51,9 +51,10 @@ class ArtistProfileService
         // return $this->repo->getAllStudios($perPage);
     }
 
-     public function getStudios1(int $perPage = 10)
+    public function getStudio(int $id)
     {
-        return $this->repo->getAllStudios1($perPage);
+
+        return $this->repo->findStudio($id);
     }
 
 }

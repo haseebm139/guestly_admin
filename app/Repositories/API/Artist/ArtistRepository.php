@@ -53,7 +53,7 @@ class ArtistRepository implements ArtistRepositoryInterface
         }
     }
 
-    public function getAllStudios1(int $perPage = 10)
+    public function getAllStudios(int $perPage = 10)
     {
         return User::where('user_type', 'studio')
             ->with([
@@ -62,6 +62,17 @@ class ArtistRepository implements ArtistRepositoryInterface
                 'studioImages:id,user_id,image_path',
             ])
             ->paginate($perPage);
+    }
+
+    public function findStudio(int $id)
+    {
+
+        return User::where('user_type', 'studio')
+            ->with(['supplies:id,name',
+                    'stationAmenities:id,name',
+                    'studioImages:id,user_id,image_path',
+                    'tattooStyles:id,name'])
+            ->first();          // returns null if not found
     }
 
 

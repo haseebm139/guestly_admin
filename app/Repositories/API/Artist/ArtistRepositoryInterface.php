@@ -7,7 +7,8 @@ interface ArtistRepositoryInterface
     public function getById(int $userId);
 
     public function saveGalleryImages(int $userId, array $paths);
-    public function getAllStudios1(int $perPage = 10);
+    public function getAllStudios(int $perPage = 10);
+    public function findStudio(int $id);
 
 }
 

@@ -73,12 +73,12 @@ class ArtistController extends BaseController
     }
 
 
-    public function studios()
+    public function studios(Request $request)
     {
+
         try {
             $perPage = $request->get('per_page', 10);
-            $studios = $this->service->getStudios1($perPage);
-            // $studios = $this->service->getStudios(10);
+            $studios = $this->service->getStudios($perPage);
             return $studios
                 ? $this->sendResponse($studios, 'Studios fetched successfully.')
                 : $this->sendError('No studios found.',$errorMessages = [], 404);
@@ -86,5 +86,24 @@ class ArtistController extends BaseController
             return $this->sendError('Failed to fetch studios.',$errorMessages = [], 500);
         }
     }
+
+    public function studio(int $id)
+    {
+
+        try {
+            $studio = $this->service->getStudio($id);
+
+            return $studio
+                ? $this->sendResponse($studio,
+                                    'Studio fetched successfully.')
+                : $this->sendError('Studio not found.', 404);
+
+        } catch (\Throwable $th) {
+            return $this->sendError('Failed to fetch studio.', 500);
+        }
+    }
+
+
+
 
 }
