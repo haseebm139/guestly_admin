@@ -13,6 +13,7 @@ use App\Http\Controllers\Apps\Admin\FeatureManagementController;
 
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/maintenance/clear-caches', function () {
+        // Only allow in local / staging or if you add auth
+        if (! app()->isLocal()) {
+            abort(403, 'Forbidden');
+        }
+
+        Artisan::call('cache:clear');
+        Artisan::call('route:clear');
+        Artisan::call('config:clear');
+        Artisan::call('view:clear');
+
+
+        return response()->json([
+            'message' => 'All caches cleared.',
+            'output'  => Artisan::output(),
+        ]);
+    });
 
     Route::get('/', [DashboardController::class, 'index']);
     Route::get('/upload-image', [DashboardController::class, 'uploadImage'])->name('upload.image');
