@@ -117,4 +117,13 @@ class User extends Authenticatable
         return $this->belongsToMany(TattooStyle::class) ;
     }
 
+
+    public function spotBookingsAsArtist() {
+        return $this->hasMany(SpotBooking::class, 'artist_id');
+    }
+
+    public function spotBookingsAsStudio() {
+        return $this->hasMany(SpotBooking::class, 'studio_id');
+    }
+
 }

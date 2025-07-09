@@ -66,13 +66,12 @@ class ArtistRepository implements ArtistRepositoryInterface
 
     public function findStudio(int $id)
     {
-
         return User::where('user_type', 'studio')
             ->with(['supplies:id,name',
                     'stationAmenities:id,name',
                     'studioImages:id,user_id,image_path',
                     'tattooStyles:id,name'])
-            ->first();          // returns null if not found
+            ->first();
     }
 
 

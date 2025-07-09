@@ -22,7 +22,6 @@ Route::middleware(['auth:api', 'artist'])->group(function () {
         Route::post('/profile/update-image', 'updateImages');
         // List of all studios
         Route::get('studios','studios');
-
         Route::get('studio/{id}','studio');
     });
 

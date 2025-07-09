@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\UserController  ;
 
 use App\Http\Controllers\API\V1\SubscriptionController;
 use App\Http\Controllers\API\V1\CardController;
+use App\Http\Controllers\API\V1\SpotBooking\SpotBookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,26 @@ Route::prefix('v1')->group(function () {
             Route::post('plans/{planId}/subscribe', 'buyPlan');
         });
         Route::apiResource('cards', CardController::class);
+        Route::controller(SpotBookingController::class)->prefix('bookings')->group(function () {
+
+            // Artist books a new spot
+            Route::post('/', 'store');
+
+            // View a specific booking
+            Route::get('/{id}', ['show']);
+
+            // Artist or studio can reschedule
+            Route::put('/{id}/reschedule', 'reschedule');
+
+            // Studio can approve
+            Route::post('/{id}/approve', 'approve')->middleware('studio');
+
+            // Studio can reject
+            Route::post('/{id}/reject', 'reject');
+
+            // List all bookings for the current user (artist or studio)
+            Route::get('/', 'index');
+        });
 
 
 
