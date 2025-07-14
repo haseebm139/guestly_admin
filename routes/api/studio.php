@@ -28,6 +28,7 @@ Route::middleware(['auth:api', 'studio'])->group(function () {
     });
 
     Route::controller(BoostAdController::class)->group(function () {
+        Route::get('/boost-ads-page', 'boosts');
         Route::get('/boost-ads', 'list');
         Route::post('/boost-ads', 'store');
         Route::post('/boost-ad/{id}/stop', 'stop');

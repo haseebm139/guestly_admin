@@ -7,5 +7,8 @@ interface BoostAdRepositoryInterface
     public function getByStudio($studioId);
     public function stop($id, $studioId);
     public function boostAgain($id, $studioId);
+    public function getActiveBoostAd(int $studioId);
+    public function getUnactiveBoostAd(int $studioId);
+
 }
 

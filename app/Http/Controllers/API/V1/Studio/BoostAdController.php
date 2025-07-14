@@ -83,4 +83,15 @@ class BoostAdController extends BaseController
             return $this->sendError('Failed to boost ad again',$errorMessages = [], 500);
         }
     }
+
+    public function boosts()
+    {
+        try {
+            $data['active'] = $this->repo->getActiveBoostAd(Auth::user()->id);
+            $data['expired'] = $this->repo->getUnactiveBoostAd(Auth::user()->id);
+            return $this->sendResponse($data, 'Boosts fetched successfully.');
+        } catch (\Throwable $th) {
+            return $this->sendError('Failed to fetch boosts',$errorMessages = [], 500);
+        }
+    }
 }

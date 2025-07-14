@@ -42,7 +42,6 @@ class BoostAdRepository implements BoostAdRepositoryInterface
     {
         $oldAd = BoostAd::where('id', $id)
             ->where('user_id', $studioId)
-            ->where('status', 'completed')
             ->first();
 
         if ($oldAd) {
@@ -54,5 +53,34 @@ class BoostAdRepository implements BoostAdRepositoryInterface
         }
 
         return null;
+    }
+
+    public function getActiveBoostAd($studioId){
+
+        return BoostAd::where('user_id', $studioId)
+        ->where('status', 'in_process')
+        ->where(function ($query) {
+            $query->where(function ($q) {
+                $q->whereDate('start_date', '<=', now())
+                  ->whereDate('end_date', '>=', now());
+            })
+            ->orWhere(function ($q) {
+                // fallback condition, example: boost starts in future
+                $q->whereDate('start_date', '>', now());
+            });
+        })
+        ->orderBy('start_date', 'desc') // latest by start date
+        ->first();
+     }
+
+     public function getUnactiveBoostAd($studioId)
+    {
+        return BoostAd::where('user_id', $studioId)
+            ->where('status', 'in_process')
+            ->where(function ($query) {
+                $query->whereDate('end_date', '<', now()) // Expired
+                    ->orWhereDate('start_date', '>', now()); // Not started yet
+            })
+            ->get();
     }
 }
