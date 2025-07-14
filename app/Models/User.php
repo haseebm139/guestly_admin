@@ -112,6 +112,11 @@ class User extends Authenticatable
         return $this->hasMany(StudioImage::class);
     }
 
+     public function portfolioFile()
+    {
+        return $this->hasMany(PortfolioFile::class);
+    }
+
     public function tattooStyles()
     {
         return $this->belongsToMany(TattooStyle::class) ;

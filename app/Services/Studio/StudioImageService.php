@@ -34,4 +34,26 @@ class StudioImageService
 
         return $paths;
     }
+
+    public function uploadPortfolio(array $files,int $user_id ,int $limit = 5): array
+    {
+         $paths = [];
+
+        foreach (array_slice($files, 0, $limit) as $index => $file) {
+
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME); // name without extension
+            $extension = $file->getClientOriginalExtension();
+
+            $filename = $originalName .'.' . $extension;
+
+            $file->move(public_path('artists/portfolio/'.$user_id. '/'), $filename);
+
+            $paths[] = 'artists/portfolio/'.$user_id . '/' . $filename;
+        }
+
+        return $paths;
+    }
+
+
+
 }

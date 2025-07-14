@@ -50,19 +50,24 @@ Route::prefix('v1')->group(function () {
             Route::post('/', 'store');
 
             // View a specific booking
-            Route::get('/{id}', ['show']);
+            Route::get('/{id}', 'show');
 
             // Artist or studio can reschedule
-            Route::put('/{id}/reschedule', 'reschedule');
+            Route::post('/{id}/reschedule', 'reschedule');
 
+
+            Route::get('/reschedule_post', 'reschedulePost');
+            // reschedulePost
             // Studio can approve
-            Route::post('/{id}/approve', 'approve')->middleware('studio');
+            Route::post('/{id}/approve', 'approve') ;
 
             // Studio can reject
             Route::post('/{id}/reject', 'reject');
 
             // List all bookings for the current user (artist or studio)
             Route::get('/', 'index');
+
+
         });
 
 

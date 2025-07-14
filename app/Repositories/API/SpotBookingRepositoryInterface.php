@@ -14,4 +14,6 @@ interface SpotBookingRepositoryInterface
     public function reschedule(int $id, array $data);
     public function approve(int $id);
     public function reject(int $id);
+
+    public function savePortFolio(int $userId, array $paths);
 }

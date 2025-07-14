@@ -54,4 +54,24 @@ class BaseController extends Controller
         // Return the JSON error response with the optional headers
         return response()->json($response, $code, $headers);
     }
+
+    public function sendResponseAnother($result, $message = '', $code = 200): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data'    => $result,
+            'message' => $message,
+        ], $code);
+    }
+
+    public function sendErrorAnother($error, $errorMessages = [], $code = 400): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $error,
+            'data'    => $errorMessages,
+        ], $code);
+    }
+
+
 }

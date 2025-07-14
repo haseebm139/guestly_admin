@@ -1,19 +1,23 @@
 <?php
 namespace App\Repositories\API;
 
+use App\Models\User;
+use App\Models\SpotBooking;
+use Illuminate\Support\Facades\Auth;
+
 class SpotBookingRepository implements SpotBookingRepositoryInterface
 {
-    public function create(array $data): SpotBooking
+    public function create(array $data)
     {
+
         return SpotBooking::create($data);
     }
 
-    public function find(int $id): ?SpotBooking
+    public function find(int $id)
     {
         return SpotBooking::with([
-            'artist:id,name',
-            'studio:id,studio_name',
-            'groupArtists:id,name',
+            'artist',
+            'studio',
         ])->find($id);
     }
 
@@ -36,7 +40,7 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
             ->paginate($perPage);
     }
 
-    public function reschedule(int $id, array $data): bool
+    public function reschedule(int $id, array $data)
     {
         return SpotBooking::where('id', $id)->update([
             'start_date'     => $data['start_date'],
@@ -47,13 +51,26 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
         ]);
     }
 
-    public function approve(int $id): bool
+    public function approve(int $id)
     {
         return SpotBooking::where('id', $id)->update(['status' => 'approved']);
     }
 
-    public function reject(int $id): bool
+    public function reject(int $id)
     {
         return SpotBooking::where('id', $id)->update(['status' => 'rejected']);
+    }
+
+
+    public function savePortFolio(int $userId, array $paths): void
+    {
+        $user = User::findOrFail($userId);
+
+        foreach ($paths['file_path'] as $index => $filePath) {
+            $user->portfolioFile()->create([
+                'file_path' => $filePath,
+                'file_name' => $paths['file_name'][$index] ?? null,
+            ]);
+        }
     }
 }
