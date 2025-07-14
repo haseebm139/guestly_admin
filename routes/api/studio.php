@@ -22,6 +22,9 @@ Route::middleware(['auth:api', 'studio'])->group(function () {
         Route::get('/profile', 'show');
         Route::post('/profile/update', 'update');
         Route::post('/profile/update-image', 'updateImages');
+        Route::get('/guests', 'getGuests');
+        Route::get('/upcomming/guests', 'upcommingGuests');
+        Route::get('/guest-requests', 'requestGuests');
     });
 
     Route::controller(BoostAdController::class)->group(function () {

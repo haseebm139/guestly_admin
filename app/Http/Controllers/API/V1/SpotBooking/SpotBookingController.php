@@ -19,6 +19,7 @@ class SpotBookingController extends BaseController
 
     protected $spotBookingService;
 
+
     public function __construct(SpotBookingService  $spotBookingService)
     {
 
@@ -52,7 +53,7 @@ class SpotBookingController extends BaseController
     public function store(StoreSpotBookingRequest  $request)
     {
 
-        
+
         $data = $request->validated();
         $booking = $this->spotBookingService->create($data);
         return $this->sendResponse($booking, 'Booking request sent.', 201);
@@ -61,8 +62,8 @@ class SpotBookingController extends BaseController
     /* ────── RESCHEDULE ────── */
     public function reschedule(Request $request, int $id)
     {
-         
-        
+
+
         $data = Validator::make($request->all(), [
             'start_date'        => 'required|date',
             'end_date'          => 'required|date|after_or_equal:start_date',
@@ -95,7 +96,7 @@ class SpotBookingController extends BaseController
             : $this->sendError('Booking not found.', 404);
     }
 
-     
+
 
 
 }

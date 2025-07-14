@@ -7,5 +7,7 @@ interface StudioRepositoryInterface
     public function getById(int $userId);
 
     public function saveGalleryImages(int $userId, array $paths);
+    public function getGuests(int $userId, string $range, int $perPage);
+    public function getUpcomingGuests(int $studioId, int $perPage);
 }
 

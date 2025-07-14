@@ -75,4 +75,42 @@ class StudioController extends BaseController
 
         }
     }
+
+
+
+    public function getGuests(Request $request)
+    {
+        $studio = auth()->user();
+        $range = $request->query('range', 'today'); // default to today
+        if (!in_array($range, ['today', 'week', '15days', 'month'])) {
+            return $this->sendError('Invalid date range.');
+        }
+        $perPage = $request->query('per_page', 20);
+        $guests = $this->service->getGuests($studio->id, $range, $perPage);
+        return $this->sendResponse($guests, 'Today guests fetched successfully.');
+        try {
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong while fetching today guests', 500);
+        }
+    }
+    public function upcommingGuests(Request $request)
+    {
+        $studio = $request->user(); // Authenticated studio user
+        $perPage = $request->query('per_page', 20);
+
+        $data = $this->service->getUpcomingGuests($studio->id, $perPage);
+
+        return $this->sendResponse($data, 'Upcoming guests retrieved.');
+    }
+
+    public function requestGuests(Request $request)
+    {
+        $studio = $request->user(); // Assuming studio is logged in
+        $status = $request->query('status', 'pending'); // default to pending
+        $perPage = $request->query('per_page', 10);
+
+        $data = $this->service->getGuestRequests($studio->id, $status, $perPage);
+
+        return $this->sendResponse($data, 'Guest artist requests retrieved successfully.');
+    }
 }

@@ -56,6 +56,7 @@ class SpotBookingService
 
             $paths['file_path'][] = 'artists/portfolio/'.$user_id . '/' . $filename;
             $paths['file_name'][] = $originalName .'.' . $extension;
+            $paths['file_type'][] = $extension;
         }
 
         return $paths;

@@ -42,4 +42,19 @@ class StudioProfileService
         return $this->repo->getById($userId);
     }
 
+    public function getGuests(int $studioId, string $range, int $perPage)
+    {
+        return $this->repo->getGuests($studioId, $range, $perPage);
+    }
+
+    public function getUpcomingGuests(int $studioId, int $perPage = 20)
+    {
+        return $this->repo->getUpcomingGuests($studioId, $perPage);
+    }
+
+    public function getGuestRequests(int $studioId, string $status, int $perPage)
+    {
+        return $this->repo->getRequestsByStatus($studioId, $status, $perPage);
+    }
+
 }
