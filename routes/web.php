@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 
 use App\Http\Controllers\Apps\Admin\PlanManagementController;
 use App\Http\Controllers\Apps\Admin\FeatureManagementController;
+use App\Http\Controllers\Apps\Admin\SupplyController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/', [DashboardController::class, 'index']);
+
     Route::get('/upload-image', [DashboardController::class, 'uploadImage'])->name('upload.image');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -74,7 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         });
 
-
+    Route::resource('supplies', SupplyController::class);
     Route::resource('image/upload', ImageUpload::class);
 
 

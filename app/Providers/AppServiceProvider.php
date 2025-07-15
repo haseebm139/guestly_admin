@@ -9,6 +9,8 @@ use App\Interfaces\PlanRepositoryInterface;
 use App\Interfaces\FeatureRepositoryInterface;
 use App\Repositories\PlanRepository;
 use App\Repositories\FeatureRepository;
+use App\Repositories\Admin\SupplyRepositoryInterface;
+use App\Repositories\Admin\SupplyRepository;
 
 // Repositories API
 use App\Repositories\API\UserRepositoryInterface;
@@ -44,8 +46,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+        // ADMIN
         $this->app->bind(PlanRepositoryInterface::class, PlanRepository::class);
         $this->app->bind(FeatureRepositoryInterface::class, FeatureRepository::class);
+        $this->app->bind(SupplyRepositoryInterface::class, SupplyRepository::class );
         $this->app->bind(
          UserRepositoryInterface::class,
          UserRepository::class
