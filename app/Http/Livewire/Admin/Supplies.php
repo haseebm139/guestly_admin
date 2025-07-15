@@ -80,26 +80,37 @@ class Supplies extends Component
 
     public function update()
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        if (is_null($this->supplyId)) {
-            throw new \Exception('Supply ID is required.');
+            if (is_null($this->supplyId)) {
+                throw new \Exception('Supply ID is required.');
+            }
+
+            $supply = Supply::findOrFail($this->supplyId);
+
+            $supply->update([
+                'name'        => $this->name,
+                'description' => $this->description,
+            ]);
+
+            // success toast
+            $this->dispatchBrowserEvent('toastr', [
+                'type'    => 'success',
+                'message' => 'Supply updated.',
+            ]);
+
+            $this->dispatchBrowserEvent('hideSupplyModal');
+            $this->resetForm();
+        } catch (\Throwable $th) {
+            $this->dispatchBrowserEvent('hideSupplyModal');
+            $this->resetForm();
+            $this->dispatchBrowserEvent('toastr', [
+                'type'    => 'error',
+                'message' => 'Something went wrong. ',
+            ]);
         }
 
-        $supply = Supply::findOrFail($this->supplyId);
-
-        $supply->update([
-            'name'        => $this->name,
-            'description' => $this->description,
-        ]);
-
-        $this->dispatchBrowserEvent('toastr', [
-            'type'    => 'success',
-            'message' => 'Supply updated.',
-        ]);
-
-        $this->dispatchBrowserEvent('hideSupplyModal');
-        $this->resetForm();
     }
 
     public function delete($id)
