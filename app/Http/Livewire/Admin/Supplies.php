@@ -23,6 +23,8 @@ class Supplies extends Component
     protected $paginationTheme = 'bootstrap';
     protected $queryString     = ['search'];
 
+    protected $listeners = ['deleteConfirmed' => 'delete'];
+
     /* ---------- validation ---------- */
     protected function rules()
     {
@@ -78,7 +80,10 @@ class Supplies extends Component
     public function delete(int $id)
     {
         Supply::destroy($id);
-        session()->flash('success', 'Supply deleted.');
+        $this->dispatchBrowserEvent('toastr', [
+            'type' => 'success',
+            'message' => 'Supply deleted.'
+        ]);
     }
 
     public function updatingSearch()   { $this->resetPage(); }

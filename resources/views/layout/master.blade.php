@@ -14,7 +14,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:title" content="" />
     <link rel="canonical" href="" />
-    <script src="{{ asset('assets/js/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('/ckeditor.js') }}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.css">
     {!! includeFavicon() !!}
 
@@ -74,9 +74,9 @@
     @endforeach
 
     <!--end::Custom Javascript-->
+    @livewireScripts
     @stack('scripts')
     <!--end::Javascript-->
-
     <script>
         $('.editor').each(function(e) {
             CKEDITOR.replace(this.id, {
@@ -136,7 +136,7 @@
         }
     </script>
 
-    @livewireScripts
+
 </body>
 <!--end::Body-->
 
