@@ -23,7 +23,7 @@ class Supplies extends Component
     protected $paginationTheme = 'bootstrap';
     protected $queryString     = ['search'];
 
-    protected $listeners = ['deleteConfirmed' => 'delete'];
+    protected $listeners = ['deletePrompt', 'deleteConfirmed'];
 
     /* ---------- validation ---------- */
     protected function rules()
@@ -77,12 +77,18 @@ class Supplies extends Component
         $this->resetForm();
     }
 
-    public function delete(int $id)
+    public function deletePrompt($id)
+    {
+
+        $this->dispatchBrowserEvent('confirming-delete', ['id' => $id]);
+    }
+    public function deleteConfirmed($id)
     {
         Supply::destroy($id);
+
         $this->dispatchBrowserEvent('toastr', [
-            'type' => 'success',
-            'message' => 'Supply deleted.'
+            'type'    => 'success',
+            'message' => 'Supply deleted.',
         ]);
     }
 

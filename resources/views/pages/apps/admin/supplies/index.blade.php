@@ -1,10 +1,6 @@
 <x-default-layout>
-    @section('title')
-        Supplies
-    @endsection
-    @section('breadcrumbs')
-        {{ Breadcrumbs::render('plan-management.plans.index') }}
-    @endsection
+    @section('title') Supplies @endsection
+    @section('breadcrumbs') {{ Breadcrumbs::render('plan-management.plans.index') }} @endsection
 
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div class="card">
@@ -14,56 +10,45 @@
         </div>
     </div>
 
-    @push('scripts')
-        <script>
-            window.addEventListener('toastr', event => {
-                const type = event.detail.type || 'info';
-                const message = event.detail.message || '';
+   @push('scripts')
+<script>
+document.addEventListener('livewire:load', () => {
 
-                switch (type) {
-                    case 'info':
-                        toastr.info(message);
-                        break;
-                    case 'success':
-                        toastr.success(message);
-                        break;
-                    case 'warning':
-                        toastr.warning(message);
-                        break;
-                    case 'error':
-                        toastr.error(message);
-                        break;
-                }
-            });
-            window.addEventListener('showSupplyModal', () =>
-                new bootstrap.Modal(document.getElementById('supplyModal')).show());
-            window.addEventListener('hideSupplyModal', () =>
-                bootstrap.Modal.getInstance(document.getElementById('supplyModal')).hide());
+    /* ── Sweet‑alert confirm delete (already working) ───────────────── */
+    window.addEventListener('confirming-delete', e => {
+        const id = e.detail.id;
 
-            /* SweetAlert confirm on deletePrompt */
-            Livewire.on('deletePrompt', id => {
-                Swal.fire({
-                    text: 'Are you sure you want to remove this supply?',
-                    icon: 'warning',
-                    buttonsStyling: false,
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete',
-                    cancelButtonText: 'No',
-                    customClass: {
-                        confirmButton: 'btn btn-danger',
-                        cancelButton: 'btn btn-secondary',
-                    }
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        Livewire.emit('deleteConfirmed', id);
-                    }
-                });
-            });
+        Swal.fire({
+            text: 'Are you sure you want to remove?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'No',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-danger',
+                cancelButton:  'btn btn-secondary',
+            },
+        }).then(r => r.isConfirmed && Livewire.emit('deleteConfirmed', id));
+    });
 
-            /* Toastr listener (already added earlier) */
-            window.addEventListener('toastr', e => {
-                toastr[e.detail.type ?? 'info'](e.detail.message ?? '');
-            });
-        </script>
-    @endpush
+    /* ── Toastr helper (already working) ─────────────────────────────── */
+    window.addEventListener('toastr', e =>
+        toastr[e.detail.type ?? 'info'](e.detail.message ?? '')
+    );
+
+    /* ── NEW: show & hide the Bootstrap modal ───────────────────────── */
+    window.addEventListener('showSupplyModal', () => {
+        new bootstrap.Modal(document.getElementById('supplyModal')).show();
+    });
+
+    window.addEventListener('hideSupplyModal', () => {
+        const el    = document.getElementById('supplyModal');
+        const modal = bootstrap.Modal.getInstance(el);
+        if (modal) modal.hide();
+    });
+
+});
+</script>
+@endpush
 </x-default-layout>
