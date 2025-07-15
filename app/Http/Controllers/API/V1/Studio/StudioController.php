@@ -23,6 +23,7 @@ class StudioController extends BaseController
         try {
             $studio = auth()->user();
             $data = $request->validated();
+
             $updatedStudio = $this->service->updateProfile($studio->id, $data);
             if (!$updatedStudio) {
                 return $this->sendError('Studio not found or update failed', 404);

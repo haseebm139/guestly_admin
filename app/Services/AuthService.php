@@ -43,7 +43,35 @@ class AuthService extends BaseController
         return compact('user', 'token');
     }
 
+    public function autoLoginOrRegister(array $data)
+    {
+        $user = $this->userRepo->findByEmail($data['email']);
 
+        if ($user && Hash::check($data['password'], $user->password)) {
+            $token = $user->createToken('guestly')->accessToken;
+
+            return [
+                'status' => 'login',
+                'data' => [
+                    'token' => $token,
+                    'name'  => Str::upper($user->name),
+                ]
+            ];
+        }
+
+        // New user registration
+        $data['password'] = Hash::make($data['password']);
+        $newUser = $this->userRepo->createUser($data);
+        $token = $newUser->createToken('guestly')->accessToken;
+
+        return [
+            'status' => 'register',
+            'data' => [
+                'token' => $token,
+                'name'  => Str::upper($newUser->name),
+            ]
+        ];
+    }
 
     public function handleSocialLogin(array $data)
     {

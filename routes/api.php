@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\V1\UserController  ;
 use App\Http\Controllers\API\V1\SubscriptionController;
 use App\Http\Controllers\API\V1\CardController;
 use App\Http\Controllers\API\V1\SpotBooking\SpotBookingController;
-
+use App\Http\Controllers\API\V1\Studio\HomeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,6 +30,7 @@ Route::prefix('v1')->group(function () {
     Route::post('facebook_login', [AuthController::class, 'facebookLogin']);
     Route::post('apple_login', [AuthController::class, 'appleLogin']);
     Route::post('send-code-to-email', [AuthController::class, 'sendCodeToEmail']);
+    Route::post('/auto-login-register',[AuthController::class, 'autoLoginOrRegister']);
 
     Route::middleware('auth:api')->group(function () {
         Route::prefix('user/')->group(function () {
@@ -71,7 +72,7 @@ Route::prefix('v1')->group(function () {
         });
 
 
-
+        Route::get('lookups', [HomeController::class, 'lookups']);
 
 
 

@@ -23,10 +23,7 @@ class ArtistRepository implements ArtistRepositoryInterface
         $user->update(Arr::except($data, ['tattoo_style']));
 
         // ✅ Return with relations
-        return $user->load([
-            'tattooStyles',
-            'supplies', 'stationAmenities','studioImages'
-        ]);
+        return $user->load(['supplies', 'stationAmenities','studioImages','designSpecialties','tattooStyles']);
     }
 
 
@@ -36,10 +33,7 @@ class ArtistRepository implements ArtistRepositoryInterface
         $user = User::where('id', $userId)
             ->where('user_type', 'artist')
             ->firstOrFail();
-        return $user->load([
-            'tattooStyles',
-            'supplies', 'stationAmenities','studioImages'
-        ]);
+        return $user->load(['supplies', 'stationAmenities','studioImages','designSpecialties','tattooStyles']);
     }
 
     public function saveGalleryImages(int $userId, array $paths): void

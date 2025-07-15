@@ -48,6 +48,20 @@ class AuthController extends BaseController
         }
     }
 
+    public function autoLoginOrRegister(LoginRequest $request)
+    {
+
+
+        $result = $this->authService->autoLoginOrRegister($request->only('name', 'email', 'password'));
+
+        if ($result['status'] === 'login') {
+            return $this->sendResponse($result['data'], 'Login successful');
+        } elseif ($result['status'] === 'register') {
+            return $this->sendResponse($result['data'], 'User registered and logged in successfully');
+        }
+
+        return $this->sendError('Authentication failed.');
+    }
     public function googleLogin(SocialAuthRequest $request)
     {
         $data = $request->validated();

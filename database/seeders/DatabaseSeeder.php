@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             PlanFeatureSeeder::class,
             SupplySeeder::class,
             StationAmenitySeeder::class,
-            TattooStylesSeeder::class
+            TattooStylesSeeder::class,
+            DesignSpecialtiesSeeder::class,
 
         ]);
 

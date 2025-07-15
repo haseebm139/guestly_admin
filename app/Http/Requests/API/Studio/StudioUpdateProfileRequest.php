@@ -48,6 +48,10 @@ class StudioUpdateProfileRequest extends FormRequest
             'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'studio_images' => 'nullable|array|max:5',
             'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+
+            /* ✅ NEW: design specialties (exists in `design_specialties` table) */
+            'design_specialties'   => 'nullable|array|max:10',
+            'design_specialties.*' => 'integer|exists:design_specialties,id',
         ];
     }
 

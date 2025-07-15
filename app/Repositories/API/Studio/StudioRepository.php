@@ -14,12 +14,13 @@ class StudioRepository implements StudioRepositoryInterface
             ->where('user_type', 'studio')
             ->firstOrFail();
             // ✅ Upload logo
+
         $user->supplies()->sync($data['supplies_provided'] ?? []);
         $user->stationAmenities()->sync($data['amenities'] ?? []);
+        $user->designSpecialties()->sync($data['design_specialties'] ?? []);   // ✅ NEW
+        $user->update(Arr::except($data, ['supplies_provided', 'amenities', 'design_specialties','studio_images']));
 
-        $user->update(Arr::except($data, ['supplies_provided', 'amenities','studio_images']));
-
-        return $user->load(['supplies', 'stationAmenities','studioImages']);
+        return $user->load(['supplies', 'stationAmenities','studioImages','designSpecialties','tattooStyles']);
     }
 
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\Studio\StudioController;
 use App\Http\Controllers\API\V1\Studio\BoostAdController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,4 +35,6 @@ Route::middleware(['auth:api', 'studio'])->group(function () {
         Route::post('/boost-ad/{id}/stop', 'stop');
         Route::post('/boost-ad/{id}/boost-again', 'boostAgain');
     });
+
+
 });

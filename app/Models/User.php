@@ -131,4 +131,11 @@ class User extends Authenticatable
         return $this->hasMany(SpotBooking::class, 'studio_id');
     }
 
+
+
+    public function designSpecialties()
+    {
+        return $this->belongsToMany(DesignSpecialty::class);
+    }
+
 }
