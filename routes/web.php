@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Apps\Admin\PlanManagementController;
 use App\Http\Controllers\Apps\Admin\FeatureManagementController;
 use App\Http\Controllers\Apps\Admin\SupplyController;
+use App\Http\Controllers\Apps\Admin\StationAmenityController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -69,14 +70,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::name('plan-management.')->group(function () {
-            Route::resource('/plan-management/plans', PlanManagementController::class);
+            Route::resource('plans', PlanManagementController::class);
             Route::get('plan-change-status', [PlanManagementController::class,'change_status'])->name('plans.change.status');
             Route::resource('/plan-management/features', FeatureManagementController::class);
             Route::get('feature-change-status', [FeatureManagementController::class,'change_status'])->name('features.change.status');
 
         });
+        Route::name('creative-management.')->group(function () {
+            Route::resource('supplies', SupplyController::class);
+            Route::resource('station-amenities', StationAmenityController::class);
 
-    Route::resource('supplies', SupplyController::class);
+
+        });
+
+
     Route::resource('image/upload', ImageUpload::class);
 
 

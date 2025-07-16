@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\Plan;
 use App\Models\Feature;
+use App\Models\Supply;
 
 
 use Diglactic\Breadcrumbs\Breadcrumbs;
@@ -51,6 +52,34 @@ Breadcrumbs::for('plan-management.features.show', function (BreadcrumbTrail $tra
     $trail->parent('plan-management.features.index');
     $trail->push(ucwords($feature->name), route('plan-management.features.show', $feature));
 });
+
+// Home > Dashboard > Creative  Management
+Breadcrumbs::for('creative-management.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Creative Management', route('creative-management.supplies.index'));
+});
+// station-amenities
+// Home > Dashboard > Creative  Management > Supplies
+Breadcrumbs::for('creative-management.supplies.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('creative-management.index');
+    $trail->push('Supplies', route('creative-management.supplies.index'));
+});
+
+// Home > Dashboard > Creative  Management > Station Amenities
+Breadcrumbs::for('creative-management.station-amenities.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('creative-management.index');
+    $trail->push('Station Amenities', route('creative-management.station-amenities.index'));
+});
+
+// Home > Dashboard > Creative  Management > Supplies > [Plan]
+Breadcrumbs::for('creative-management.supplies.show', function (BreadcrumbTrail $trail, Supply $supply) {
+    $trail->parent('creative-management.supplies.index');
+    $trail->push(ucwords($supply->name), route('creative-management.supplies.show', $supply));
+});
+
+
+
+
 // Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

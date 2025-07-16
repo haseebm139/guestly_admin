@@ -93,7 +93,8 @@
                                 {!! getIcon('notepad-edit', 'fs-2tx') !!}
                             </button>
                             <button class="btn btn-hover-danger btn-icon"
-                                wire:click="$emit('deletePrompt',{{ $s->id }})">
+                                wire:click="$emit('deletePrompt', {{ $s->id }})">
+
                                 {!! getIcon('trash', 'fs-2tx') !!}
                             </button>
                         </td>

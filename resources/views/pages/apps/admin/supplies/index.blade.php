@@ -3,7 +3,7 @@
             Supplies
         @endsection
         @section('breadcrumbs')
-            {{ Breadcrumbs::render('plan-management.plans.index') }}
+            {{ Breadcrumbs::render('creative-management.supplies.index') }}
         @endsection
 
         <div id="kt_app_content" class="app-content flex-column-fluid">

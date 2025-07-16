@@ -7,15 +7,11 @@ use Livewire\WithPagination;
 use App\Models\Supply;
 
 class Supplies extends Component
-
- {
+{
     use WithPagination;
 
-    /* search + pagination */
     public $search = '';
     public $perPage = 10;
-
-    /* modal fields */
     public $supplyId = null;
     public $name = '';
     public $description = '';
@@ -23,9 +19,9 @@ class Supplies extends Component
     protected $paginationTheme = 'bootstrap';
     protected $queryString = ['search'];
     protected $listeners    = ['deletePrompt', 'deleteConfirmed' => 'delete'];
+    // protected $listeners = ['deleteConfirmed' => 'delete'];
 
-    /* validation */
-    public function rules(): array
+    protected function rules(): array
     {
         return [
             'name' => 'required|max:255|unique:supplies,name,' . $this->supplyId,
@@ -33,7 +29,6 @@ class Supplies extends Component
         ];
     }
 
-    /* render */
     public function render()
     {
         $supplies = Supply::when($this->search, fn ($q) =>
@@ -43,78 +38,90 @@ class Supplies extends Component
         return view('livewire.admin.supplies', compact('supplies'));
     }
 
-    /* ───── Create UI ───── */
+    public function create()
+    {
+
+        $this->save();
+    }
+
+
+    public function update()
+    {
+        $this->save();
+    }
+
+
+
+    public function resetSearch()
+    {
+        $this->reset('search');
+    }
+    private function resetForm()
+    {
+        $this->reset(['supplyId', 'name', 'description']);
+        $this->resetValidation();
+    }
     public function openCreate()
     {
+        $this->reset('search');
         $this->resetForm();
         $this->dispatchBrowserEvent('showSupplyModal');
     }
 
 
-    public function create()
+    public function closeCreate()
     {
-        $this->supplyId = null;          // ensure we validate as "create"
-        $data = $this->validate();
-
-        Supply::create([
-            'name'=>$data['name'],
-            'description'=>$data['description'],
-        ]);
-
-        $this->dispatchBrowserEvent('toastr', [
-            'type'    => 'success',
-            'message' => 'Supply created.',
-        ]);
-        $this->dispatchBrowserEvent('hideSupplyModal');
+        $this->reset('search');
         $this->resetForm();
+        $this->dispatchBrowserEvent('hideSupplyModal');
     }
-
     public function edit(int $id)
     {
-        $s                 = Supply::findOrFail($id);
-        $this->supplyId    = $s->id;
-        $this->name        = $s->name;
+        $s = Supply::findOrFail($id);
+        $this->supplyId = $s->id;
+        $this->name = $s->name;
         $this->description = $s->description;
         $this->dispatchBrowserEvent('showSupplyModal');
     }
-
-    public function update()
+    public function save()
     {
         try {
             $this->validate();
 
             if (is_null($this->supplyId)) {
-                throw new \Exception('Supply ID is required.');
+                Supply::create([
+                    'name' => $this->name,
+                    'description' => $this->description,
+                ]);
+            } else {
+                Supply::findOrFail($this->supplyId)->update([
+                    'name' => $this->name,
+                    'description' => $this->description,
+                ]);
             }
 
-            $supply = Supply::findOrFail($this->supplyId);
-
-            $supply->update([
-                'name'        => $this->name,
-                'description' => $this->description,
-            ]);
-
-            // success toast
             $this->dispatchBrowserEvent('toastr', [
-                'type'    => 'success',
-                'message' => 'Supply updated.',
+                'type' => 'success',
+                'message' => 'Supply ' . ($this->supplyId ? 'updated.' : 'created.'),
             ]);
-
-            $this->dispatchBrowserEvent('hideSupplyModal');
+            $this->closeCreate();
             $this->resetForm();
         } catch (\Throwable $th) {
-            $this->dispatchBrowserEvent('hideSupplyModal');
             $this->resetForm();
             $this->dispatchBrowserEvent('toastr', [
-                'type'    => 'error',
+                'type' => 'error',
                 'message' => 'Something went wrong. ',
             ]);
         }
 
     }
-
+    public function deletePrompt($id)   // called by Delete button
+    {
+        $this->dispatchBrowserEvent('confirming-delete', ['id' => $id]);
+    }
     public function delete($id)
     {
+
         Supply::destroy($id);
         $this->dispatchBrowserEvent('toastr', [
             'type' => 'success',
@@ -122,43 +129,6 @@ class Supplies extends Component
         ]);
     }
 
-    private function resetForm()
-    {
-        $this->reset(['supplyId','name','description']);
-        $this->resetValidation();
-    }
-    /* CRUD helpers */
-    public function openCreateModal()
-    {
-        $this->reset('supplyId','name','description');
-        $this->dispatchBrowserEvent('showSupplyModal');
-    }
 
-
-
-    public function save()
-    {
-        $this->validate();
-
-        Supply::updateOrCreate(
-            ['id' => $this->supplyId],
-            ['name' => $this->name, 'description' => $this->description]
-        );
-
-        $msg = $this->supplyId ? 'Supply updated.' : 'Supply created.';
-        $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'message' => $msg]);
-
-        $this->dispatchBrowserEvent('hideSupplyModal');
-        $this->reset('supplyId','name','description');
-    }
-
-    public function deletePrompt($id)   // called by Delete button
-    {
-        $this->dispatchBrowserEvent('confirming-delete', ['id' => $id]);
-    }
-
-
-
-    public function updatingSearch() { $this->resetPage(); }
 }
 
