@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('studio_supply', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('supply_id')->constrained('supplies')->onDelete('cascade');
-            $table->primary(['user_id', 'supply_id']);
-            
+        Schema::create('custom_forms', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('artist_id')->constrained('users')->onDelete('cascade');
+            $table->string('title')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('studio_supply');
+        Schema::dropIfExists('custom_forms');
     }
 };

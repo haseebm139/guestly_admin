@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique(); // e.g., Ink, Stencil, Needle
             $table->text('description')->nullable();
+            $table->boolean('status')->nullable()->default(true);
             $table->timestamps();
         });
     }

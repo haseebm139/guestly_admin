@@ -4,21 +4,20 @@ namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\WithFileUploads;
-use App\Models\StationAmenity;
-use Illuminate\Validation\Rule;
-class StationAmenities extends Component
-{
+use App\Models\TattooStyle;
 
-    use WithPagination, WithFileUploads;
+use Illuminate\Validation\Rule;
+
+class TattooStyles extends Component
+{
+    use WithPagination;
 
     public $search = '';
     public $perPage = 10;
-    public $amenityId=null;
+    public $styleId =null;
     public $name = '';
-    public $description = '';
-    public $icon = '';
-    public $oldIcon = '';
+    public $icon = ''; // Emoji
+
 
 
     protected $paginationTheme='bootstrap';
@@ -29,21 +28,20 @@ class StationAmenities extends Component
     protected function rules(): array
     {
         return [
-            'name' => 'required|max:255|unique:supplies,name,' . $this->amenityId,
-            'description' => 'nullable|string',
-            'icon' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+            'name' => 'required|max:255' . $this->styleId ,
+            'icon' => 'nullable|string',
         ];
     }
     public function render()
     {
-        $data = StationAmenity::when($this->search,fn($q)=>
+        $data = TattooStyle::when($this->search,fn($q)=>
                 $q->where('name','like',"%{$this->search}%"))
             ->latest()->paginate($this->perPage);
 
-        return view('livewire.admin.station-amenities',compact('data'));
+        return view('livewire.admin.tattoo-styles',compact('data'));
     }
 
-    public function create() { $this->amenityId=null; $this->save(); }
+    public function create() { $this->styleId =null; $this->save(); }
     public function update() { $this->save(); }
 
     public function resetSearch()
@@ -52,7 +50,7 @@ class StationAmenities extends Component
     }
     private function resetForm()
     {
-        $this->reset(['amenityId','name','description','icon','oldIcon']);
+        $this->reset(['styleId','name','icon']);
         $this->resetValidation();
     }
     public function openCreate()
@@ -70,49 +68,34 @@ class StationAmenities extends Component
     }
     public function edit($id)
     {
-        $a=StationAmenity::findOrFail($id);
-        $this->amenityId=$a->id;
+        $a=TattooStyle::findOrFail($id);
+        $this->styleId =$a->id;
         $this->name=$a->name;
-        $this->description=$a->description;
-        $this->oldIcon=$a->icon;      // keep for preview & delete
+        $this->icon=$a->icon;
         $this->openCreate();
     }
-    private function uploadImage($file)
-    {
 
-        $filename = 'amenity-' . time() . '.' . $file->getClientOriginalExtension();
-
-        $file->storeAs('amenities_icon', $filename,'public_path');
-
-        return "amenities_icon/" . $filename; // relative path to use in <img src="">
-    }
     private function save(){
         try {
             $this->validate();
-            $path = $this->icon
-            ? $this->uploadImage($this->icon)
-            : $this->oldIcon;
-            if ($this->icon && $this->oldIcon && file_exists(public_path($this->oldIcon))) {
-                @unlink(public_path($this->oldIcon));
-            }
-            if (is_null($this->amenityId)) {
-                StationAmenity::create([
+
+            if (is_null($this->styleId )) {
+                TattooStyle::create([
                     'name' => $this->name,
-                    'description' => $this->description,
-                    'icon' => $path,
+
+                    'icon' => $this->icon,
                 ]);
             }
             else {
-                StationAmenity::findOrFail($this->amenityId)->update([
+                TattooStyle::findOrFail($this->styleId )->update([
                     'name' => $this->name,
-                    'description' => $this->description,
-                    'icon' => $path,
+                    'icon' => $this->icon,
                 ]);
 
             }
             $this->dispatchBrowserEvent('toastr', [
             'type' => 'success',
-            'message' => 'Station Amenity ' . ($this->amenityId ? 'updated.' : 'created.'),
+            'message' => 'Tattoo Style ' . ($this->styleId  ? 'updated.' : 'created.'),
             ]);
             $this->closeCreate();
              $this->resetForm();
@@ -133,16 +116,13 @@ class StationAmenities extends Component
     }
     public function delete($id)
     {
-        if ($amenity=StationAmenity::find($id)) {
-            if ($amenity->icon) \Storage::disk('public')->delete($amenity->icon);
-            $amenity->delete();
-        }
-        $this->dispatchBrowserEvent('toastr',['type'=>'success','message'=>'Amenity deleted.']);
+        TattooStyle::destroy($id);
+        $this->dispatchBrowserEvent('toastr',['type'=>'success','message'=>'Tattoo Style deleted.']);
     }
 
     public function toggleStatus($id)
     {
-        $item =StationAmenity::findOrFail($id); // or StationAmenity
+        $item =TattooStyle::findOrFail($id); // or StationAmenity
         $item->status = !$item->status;
         $item->save();
 
@@ -151,8 +131,4 @@ class StationAmenities extends Component
             'message' => 'Status ' . ($item->status ? 'activated' : 'deactivated') . ' successfully.',
         ]);
     }
-
-
-
-
 }

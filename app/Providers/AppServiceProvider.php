@@ -36,6 +36,8 @@ use App\Repositories\API\Studio\BoostAdRepositoryInterface;
 // ARTIST
 use App\Repositories\API\Artist\ArtistRepository;
 use App\Repositories\API\Artist\ArtistRepositoryInterface;
+use App\Repositories\API\Artist\CustomFormRepository;
+use App\Repositories\API\Artist\CustomFormRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -67,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
         // ARTIST
 
         $this->app->bind(ArtistRepositoryInterface::class, ArtistRepository::class);
+        $this->app->bind(CustomFormRepositoryInterface::class, CustomFormRepository::class);
     }
 
     /**

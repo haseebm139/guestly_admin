@@ -129,6 +129,18 @@ class Supplies extends Component
         ]);
     }
 
+    public function toggleStatus($id)
+    {
+        $item =Supply::findOrFail($id); // or StationAmenity
+        $item->status = !$item->status;
+        $item->save();
+
+        $this->dispatchBrowserEvent('toastr', [
+            'type' => 'success',
+            'message' => 'Status ' . ($item->status ? 'activated' : 'deactivated') . ' successfully.',
+        ]);
+    }
+
 
 }
 

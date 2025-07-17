@@ -148,6 +148,7 @@
                     <th>Icon</th>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Status</th>
                     <th class="text-end">Action</th>
                 </tr>
             </thead>
@@ -170,6 +171,16 @@
                         </td>
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->description }}</td>
+                        <td class="text-end">
+                            <div class="form-check form-switch form-check-custom form-check-solid">
+                                <input class="form-check-input h-30px w-50px" type="checkbox"
+                                    wire:change="toggleStatus({{ $item->id }})" id="flexSwitch{{ $item->id }}"
+                                    @if ($item->status) checked @endif>
+                                <label class="form-check-label" for="flexSwitch{{ $item->id }}">
+                                    <span class="badge badge-{{ $item->status ? 'success' : 'danger' }}">{{ $item->status ? 'Active' : 'Inactive' }}</span>
+                                </label>
+                            </div>
+                        </td>
                         <td class="text-end">
                             <button class="btn btn-hover-danger btn-icon" wire:click="edit({{ $item->id }})">
                                 {!! getIcon('notepad-edit', 'fs-2tx') !!}

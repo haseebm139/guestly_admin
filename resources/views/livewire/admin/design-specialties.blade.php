@@ -1,3 +1,5 @@
+
+
 <div>
     <div class="card-header border-0 pt-6">
         <!--begin::Card title-->
@@ -8,7 +10,7 @@
                     <span class="path1"></span><span class="path2"></span>
                 </i>
                 <input wire:model.debounce.500ms="search" type="text" id="userSearchInput"
-                    class="form-control form-control-solid w-250px ps-13" placeholder="Search Supplies…" />
+                    class="form-control form-control-solid w-250px ps-13" placeholder="Search Design Speciality…" />
             </div>
             <!--end::Search-->
         </div>
@@ -41,13 +43,14 @@
 
 
         <!--begin::Modal - Add task-->
-        <div wire:ignore.self class="modal fade" id="supplyModal" tabindex="-1">
+        <div wire:ignore.self class="modal fade" id="myModel" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">{{ $supplyId ? 'Edit Supply' : 'Add Supply' }}</h5>
+                        <h5 class="modal-title">{{ $specialtyId ? 'Edit Design Speciality' : 'Add Design Speciality' }}</h5>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body  px-5 my-7">
+
                         <div class="mb-3">
                             <label class="required form-label">Name</label>
                             <input wire:model.defer="name" type="text" class="form-control">
@@ -55,13 +58,11 @@
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea wire:model.defer="description" rows="3" class="form-control"></textarea>
-                        </div>
+
+
                     </div>
                     <div class="modal-footer">
-                        @if ($supplyId)
+                        @if ($specialtyId)
                             <button class="btn btn-primary" wire:click="update">Update</button>
                         @else
                             <button class="btn btn-primary" wire:click="create">Save</button>
@@ -78,36 +79,38 @@
         <table class="table align-middle table-row-dashed fs-6 gy-5">
             <thead>
                 <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                    <th> </th>
+
+                    <th></th>
                     <th>Name</th>
-                    <th>Description</th>
                     <th>Status</th>
+
+
                     <th class="text-end">Action</th>
                 </tr>
             </thead>
+
             <tbody class="text-gray-600 fw-semibold">
-                @forelse($supplies as $key => $s)
+                @forelse($data as $key => $item)
                     <tr>
                         <td>{{ ++$key }}</td>
-                        <td>{{ $s->name }}</td>
-                        <td>{{ $s->description }}</td>
+
+                        <td>{{ $item->name }}</td>
                         <td class="text-end">
                             <div class="form-check form-switch form-check-custom form-check-solid">
                                 <input class="form-check-input h-30px w-50px" type="checkbox"
-                                    wire:change="toggleStatus({{ $s->id }})" id="flexSwitch{{ $s->id }}"
-                                    @if ($s->status) checked @endif>
-                                <label class="form-check-label" for="flexSwitch{{ $s->id }}">
-                                    <span class="badge badge-{{ $s->status ? 'success' : 'danger' }}">{{ $s->status ? 'Active' : 'Inactive' }}</span>
-
+                                    wire:change="toggleStatus({{ $item->id }})" id="flexSwitch{{ $item->id }}"
+                                    @if ($item->status) checked @endif>
+                                <label class="form-check-label" for="flexSwitch{{ $item->id }}">
+                                    <span class="badge badge-{{ $item->status ? 'success' : 'danger' }}">{{ $item->status ? 'Active' : 'Inactive' }}</span>
                                 </label>
                             </div>
                         </td>
                         <td class="text-end">
-                            <button class="btn btn-hover-danger btn-icon" wire:click="edit({{ $s->id }})">
+                            <button class="btn btn-hover-danger btn-icon" wire:click="edit({{ $item->id }})">
                                 {!! getIcon('notepad-edit', 'fs-2tx') !!}
                             </button>
                             <button class="btn btn-hover-danger btn-icon"
-                                wire:click="$emit('deletePrompt', {{ $s->id }})">
+                                wire:click="$emit('deletePrompt', {{ $item->id }})">
 
                                 {!! getIcon('trash', 'fs-2tx') !!}
                             </button>
@@ -115,12 +118,12 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center py-10">No supplies found.</td>
+                        <td colspan="7" class="text-center py-10">No Design Speciality found.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
-        {{ $supplies->links() }}
+        {{ $data->links() }}
     </div>
     {{-- table --}}
 

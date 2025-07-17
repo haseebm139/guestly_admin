@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\V1\Artist\ArtistController;
+use App\Http\Controllers\API\V1\Artist\CustomFormController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,6 +25,18 @@ Route::middleware(['auth:api', 'artist'])->group(function () {
         Route::get('studios','studios');
         Route::get('studio/{id}','studio');
     });
+    Route::controller(CustomFormController::class)->group(function () {
+        Route::get('/forms','index');
+        Route::post('forms', 'store');
+        Route::get('forms/{id}','show');
+        Route::post('/forms/update/{id}', 'update');
+        Route::delete('/forms/destroy/{id}', 'destroy');
+    });
+
+
+
+
+
 
 
 });

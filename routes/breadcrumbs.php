@@ -58,7 +58,7 @@ Breadcrumbs::for('creative-management.index', function (BreadcrumbTrail $trail) 
     $trail->parent('dashboard');
     $trail->push('Creative Management', route('creative-management.supplies.index'));
 });
-// station-amenities
+
 // Home > Dashboard > Creative  Management > Supplies
 Breadcrumbs::for('creative-management.supplies.index', function (BreadcrumbTrail $trail) {
     $trail->parent('creative-management.index');
@@ -70,6 +70,19 @@ Breadcrumbs::for('creative-management.station-amenities.index', function (Breadc
     $trail->parent('creative-management.index');
     $trail->push('Station Amenities', route('creative-management.station-amenities.index'));
 });
+
+// Home > Dashboard > Creative  Management > Tattoo Styles
+Breadcrumbs::for('creative-management.tattoo-styles.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('creative-management.index');
+    $trail->push('Tattoo Styles', route('creative-management.tattoo-styles.index'));
+});
+
+// Home > Dashboard > Creative  Management > Design Speciality
+Breadcrumbs::for('creative-management.design-specialities.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('creative-management.index');
+    $trail->push('Design Speciality', route('creative-management.tattoo-styles.index'));
+});
+
 
 // Home > Dashboard > Creative  Management > Supplies > [Plan]
 Breadcrumbs::for('creative-management.supplies.show', function (BreadcrumbTrail $trail, Supply $supply) {

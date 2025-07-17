@@ -12,11 +12,13 @@ use App\Http\Controllers\Apps\Admin\PlanManagementController;
 use App\Http\Controllers\Apps\Admin\FeatureManagementController;
 use App\Http\Controllers\Apps\Admin\SupplyController;
 use App\Http\Controllers\Apps\Admin\StationAmenityController;
+use App\Http\Controllers\Apps\Admin\TattooStyleController;
+use App\Http\Controllers\Apps\Admin\DesignSpecialityController;
 
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Artisan;
-
+// apiDHL
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,6 +30,7 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
+Route::get('/dhl', [ImageUpload::class, 'apiDHL']);
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {
@@ -79,6 +82,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::name('creative-management.')->group(function () {
             Route::resource('supplies', SupplyController::class);
             Route::resource('station-amenities', StationAmenityController::class);
+            Route::resource('tattoo-styles', TattooStyleController::class);
+            Route::resource('design-specialities', DesignSpecialityController::class);
 
 
         });
@@ -96,6 +101,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/error', function () {
     abort(500);
 });
+
+
 
 
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
