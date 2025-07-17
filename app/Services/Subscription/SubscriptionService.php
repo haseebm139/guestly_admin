@@ -2,7 +2,7 @@
 
 namespace App\Services\Subscription;
 
-use App\Http\Controllers\API\BaseController;
+use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Repositories\API\SubscriptionRepositoryInterface;

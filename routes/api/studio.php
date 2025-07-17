@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\V1\Studio\StudioController;
-use App\Http\Controllers\API\V1\Studio\BoostAdController;
+use App\Http\Controllers\Api\V1\Studio\StudioController;
+use App\Http\Controllers\Api\V1\Studio\BoostAdController;
 
 
 

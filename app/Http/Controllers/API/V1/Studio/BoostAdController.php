@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API\V1\Studio;
+namespace App\Http\Controllers\Api\V1\Studio;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\API\BaseController as BaseController;
+use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Repositories\API\Studio\BoostAdRepositoryInterface;
 
 use Illuminate\Support\Facades\Validator;

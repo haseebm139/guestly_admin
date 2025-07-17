@@ -5,13 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController  ;
 use App\Http\Controllers\Api\V1\UserController  ;
 
-use App\Http\Controllers\API\V1\SubscriptionController;
-use App\Http\Controllers\API\V1\CardController;
-use App\Http\Controllers\API\V1\SpotBooking\SpotBookingController;
-use App\Http\Controllers\API\V1\Studio\HomeController;
+use App\Http\Controllers\Api\V1\SubscriptionController;
+use App\Http\Controllers\Api\V1\CardController;
+use App\Http\Controllers\Api\V1\SpotBooking\SpotBookingController;
+use App\Http\Controllers\Api\V1\Studio\HomeController;
 
-use App\Http\Controllers\API\V1\Chat\MessageController;
-use App\Http\Controllers\API\V1\Chat\ChatController;
+use App\Http\Controllers\Api\V1\Chat\MessageController;
+use App\Http\Controllers\Api\V1\Chat\ChatController;
 /*
 |--------------------------------------------------------------------------
 | API Routes

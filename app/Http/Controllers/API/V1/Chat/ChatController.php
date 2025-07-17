@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\V1\Chat;
+namespace App\Http\Controllers\Api\V1\Chat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

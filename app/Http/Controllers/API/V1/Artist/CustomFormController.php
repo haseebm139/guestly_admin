@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\V1\Artist;
+namespace App\Http\Controllers\Api\V1\Artist;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use App\Repositories\API\Artist\CustomFormRepositoryInterface;
 use App\Http\Requests\API\Artist\StoreCustomFormRequest;
 use App\Http\Requests\API\Artist\UpdateCustomFormRequest;
 
-use App\Http\Controllers\API\BaseController as BaseController;
+use App\Http\Controllers\Api\BaseController as BaseController;
 class CustomFormController extends BaseController
 {
     protected $formRepo;
