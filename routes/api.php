@@ -9,6 +9,9 @@ use App\Http\Controllers\API\V1\SubscriptionController;
 use App\Http\Controllers\API\V1\CardController;
 use App\Http\Controllers\API\V1\SpotBooking\SpotBookingController;
 use App\Http\Controllers\API\V1\Studio\HomeController;
+
+use App\Http\Controllers\API\V1\Chat\MessageController;
+use App\Http\Controllers\API\V1\Chat\ChatController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -70,8 +73,13 @@ Route::prefix('v1')->group(function () {
 
 
         });
+        Route::prefix('chats')->group(function (){
+            Route::post('/start', [ChatController::class,'startChat']);
+            Route::get('/', [ChatController::class,'index']);
 
-
+            Route::get('/{chat}/messages', [MessageController::class,'index']);
+            Route::post('/{chat}/messages', [MessageController::class,'store']);
+        });
         Route::get('lookups', [HomeController::class, 'lookups']);
 
 
