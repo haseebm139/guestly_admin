@@ -86,4 +86,10 @@ class AuthController extends BaseController
     {
         return $this->authService->sendOtpToEmail($request->all());
     }
+
+    public function profile()
+    {
+        $user = auth()->user();
+        return $this->sendResponse($user, 'Profile fetched successfully');
+    }
 }

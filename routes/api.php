@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\Studio\HomeController;
 
 use App\Http\Controllers\Api\V1\Chat\MessageController;
 use App\Http\Controllers\Api\V1\Chat\ChatController;
+use Illuminate\Support\Facades\Broadcast;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,11 +23,16 @@ use App\Http\Controllers\Api\V1\Chat\ChatController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Broadcast::routes([
+    'middleware' => ['auth:api'], // Use 'auth:sanctum' if you're using Sanctum
+]);
+Route::middleware('auth:api')->group(function () {
+
+});
 
 Route::prefix('v1')->group(function () {
-    Route::any('test', function () {
-        return 'test';
-    });
+
+
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('google_login', [AuthController::class, 'googleLogin']);
@@ -36,6 +42,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/auto-login-register',[AuthController::class, 'autoLoginOrRegister']);
 
     Route::middleware('auth:api')->group(function () {
+        Route::get('user/profile', [AuthController::class, 'profile']);
+
         Route::prefix('user/')->group(function () {
 
             Route::get('verification/options', [UserController::class, 'getVerificationOptions']);
@@ -43,6 +51,7 @@ Route::prefix('v1')->group(function () {
             Route::post('verification/confirm', [UserController::class, 'confirmVerification']);
             Route::get('verification/status', [UserController::class, 'getVerificationStatus']);
         });
+
         Route::controller(SubscriptionController::class)->group(function () {
             Route::get('plans', 'index');
             Route::post('plans/{planId}/subscribe', 'buyPlan');
@@ -84,7 +93,7 @@ Route::prefix('v1')->group(function () {
 
 
 
-        Route::get('profile', [AuthController::class, 'profile']);
+
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });
