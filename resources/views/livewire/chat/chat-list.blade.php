@@ -1,6 +1,7 @@
 {{-- ChatList Component --}}
 <div>
-    <div class="flex-column flex-lg-row-auto w-100 w-lg-300px w-xl-400px mb-10 mb-lg-0">
+
+    <div class="flex-column d-flex  w-100 w-lg-300px w-xl-400px mb-10 mb-lg-0">
         <div class="card card-flush">
             <div class="card-header pt-7" id="kt_chat_contacts_header">
                 <form class="w-100 position-relative" autocomplete="off">
@@ -18,7 +19,7 @@
                 <div class="scroll-y me-n5 pe-5 h-200px h-lg-auto" data-kt-scroll="true"
                     data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
                     data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer, #kt_chat_contacts_header"
-                    data-kt-scroll-wrappers="#kt_content, #kt_chat_contacts_body" data-kt-scroll-offset="0px">
+                    data-kt-scroll-wrappers="#kt_content, #kt_chat_contacts_body" data-kt-scroll-offset="0px" style="max-height: calc(100vh - 250px); overflow-y: auto;">
                     @foreach ($users as $user)
                         <div wire:click="selectUser({{ $user->id }})"
                             class="d-flex flex-stack py-4 cursor-pointer @if ($selectedUser && $selectedUser->id == $user->id) bg-light-primary rounded @endif">

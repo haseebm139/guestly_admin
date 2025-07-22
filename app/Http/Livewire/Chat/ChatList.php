@@ -1,21 +1,24 @@
 <?php
-// ChatList
 namespace App\Http\Livewire\Chat;
 
 use Livewire\Component;
 use App\Models\User;
+
 class ChatList extends Component
 {
-
     public $search = '';
     public $users;
     public $selectedUser = null;
 
+
+    protected $listeners = [];
+
+
     public function mount()
     {
-        $this->users = User::all();
+        $myId = auth()->user()->id;
+        $this->users = User::where('id', '!=', $myId)->get();
 
-        // Check if there are any users and select the first one
         if ($this->users->isNotEmpty()) {
             $this->selectUser($this->users->first()->id);
         }
@@ -23,11 +26,12 @@ class ChatList extends Component
 
     public function updatedSearch()
     {
-        $this->users = User::where('name', 'like', '%' . $this->search . '%')
-                           ->orWhere('email', 'like', '%' . $this->search . '%')
-                           ->get();
+        $myId = auth()->user()->id;
+        $this->users = User::where('id', '!=', $myId)->where('name', 'like', '%' . $this->search . '%')
+                             ->orWhere('email', 'like', '%' . $this->search . '%')
+                             ->get();
 
-        // Optional: Re-select the first user from the filtered list if search changes
+
         if ($this->users->isNotEmpty()) {
             if (!$this->selectedUser || !$this->users->contains('id', $this->selectedUser->id)) {
                 $this->selectUser($this->users->first()->id);
@@ -35,18 +39,16 @@ class ChatList extends Component
         } else {
             // No users found after search, clear selected user
             $this->selectedUser = null;
-            // Livewire 3: Use dispatch() for inter-component events
-            $this->dispatch('clearChat');
+            // Livewire 2: Use $this->emit() for inter-component events
+            $this->emit('clearChat');
         }
     }
 
     public function selectUser($userId)
     {
-
-
         $this->selectedUser = User::find($userId);
-        // This is the key part: it dispatches an event
-        $this->dispatch('userSelected', userId: $userId);
+        // Livewire 2: Use $this->emit() for inter-component events
+        $this->emit('userSelected', $userId); // Pass arguments directly
     }
 
     public function render()
