@@ -36,9 +36,9 @@
     </div>
     <!--end::Post-->
     @push('scripts')
-        {{-- Initialize Livewire after Firebase SDK --}}
+
         <script type="module">
-            // Import the functions you need from the SDKs you need
+
             import {
                 initializeApp
             } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -51,10 +51,7 @@
                 addDoc,
                 serverTimestamp
             } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-            // TODO: Add SDKs for Firebase products that you want to use
-            // https://firebase.google.com/docs/web/setup#available-libraries
 
-            // Your web app's Firebase configuration
             const firebaseConfig = {
                 apiKey: "AIzaSyD534VPIDGenGI2H6N8Ozse0tLjn-V1SYM", // Replace with your Firebase API Key
                 authDomain: "guestly-d0d42.firebaseapp.com",
@@ -67,70 +64,71 @@
 
 
 
-            // Initialize Firebase
+
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
 
-            let unsubscribe; // To store the unsubscribe function for snapshot listener
+            let unsubscribe;
 
-            // Function to scroll chat to bottom
+
             function scrollToBottom() {
                 const messagesContainer = document.querySelector('[data-kt-element="messages"]');
+
                 if (messagesContainer) {
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 }
             }
 
-            Livewire.on('chatOpened', ({ selectedUserId, currentUserId }) => {
-                console.log();
-
+            Livewire.on('chatOpened', ({
+                selectedUserId,
+                currentUserId
+            }) => {
                 if (unsubscribe) {
                     unsubscribe();
-                    console.log('Previous Firebase listener unsubscribed.'); // Debugging log
+
                 }
 
                 const chatId = [currentUserId, selectedUserId].sort().join('_');
-                console.log('Calculated chat ID:', chatId); // Debugging log
+
 
                 const messagesRef = collection(db, 'chats', chatId, 'messages');
                 const q = query(messagesRef, orderBy('timestamp'));
 
+
                 unsubscribe = onSnapshot(q, (snapshot) => {
-                    console.log('Firebase onSnapshot callback triggered. Doc changes count:', snapshot.docChanges().length); // Debugging log
 
-                    // Array to hold messages from the current snapshot
+
                     let currentMessages = [];
-
-                    snapshot.docChanges().forEach((change) => {
-                        const messageData = change.doc.data();
-                        messageData.timestamp = messageData.timestamp ? messageData.timestamp.toMillis() / 1000 : null;
-
-                        if (change.type === 'added') {
-                            // On initial load, all existing documents are 'added'
-                            // For subsequent updates, only truly new messages are 'added'
-                            currentMessages.push(messageData);
-                            console.log('Message ADDED from Firebase:', messageData); // Debugging log
-                        }
-                        // You might also handle 'modified' or 'removed' if your chat requires it
-                        // else if (change.type === 'modified') {
-                        //     // Find and update the message in your local list
-                        // } else if (change.type === 'removed') {
-                        //     // Remove the message from your local list
-                        // }
+                    snapshot.forEach(doc => { // Iterate over all documents in the snapshot
+                        const messageData = doc.data();
+                        // Convert Firebase Timestamp to Unix timestamp for PHP
+                        messageData.timestamp = messageData.timestamp ? messageData.timestamp
+                            .toMillis() / 1000 : null;
+                        currentMessages.push(messageData);
                     });
 
-                    // Livewire 3: Use Livewire.dispatch() to emit events from JS to Livewire PHP component
-                    // Dispatch all messages from the current snapshot (initial load + new additions)
-                    Livewire.dispatch('setMessages', { messages: currentMessages }); // Dispatch an array of messages
-                    scrollToBottom();
+
+
+
+                    scrollToBottom()
+                    Livewire.dispatch('setMessages', {
+                        messages: currentMessages
+                    });
+
                 }, (error) => {
-                    console.error("Firebase onSnapshot error:", error); // Log Firebase errors
+                    console.error("Firebase onSnapshot error:", error);
                 });
             });
 
-            Livewire.on('sendMessageToFirebase', async ({ senderId, receiverId, messageText, timestamp }) => {
+
+            Livewire.on('sendMessageToFirebase', async ({
+                senderId,
+                receiverId,
+                messageText,
+                timestamp
+            }) => {
                 const chatId = [senderId, receiverId].sort().join('_');
-                console.log('Sending message to Firebase for chat ID:', chatId); // Debugging log
+
                 try {
                     await addDoc(collection(db, 'chats', chatId, 'messages'), {
                         sender_id: senderId,
@@ -138,7 +136,7 @@
                         message_text: messageText,
                         timestamp: serverTimestamp()
                     });
-                    console.log('Message successfully sent to Firebase.'); // Debugging log
+
                 } catch (e) {
                     console.error("Error adding document to Firebase: ", e); // Debugging log
                 }
@@ -148,9 +146,7 @@
                 scrollToBottom();
             });
 
-            document.addEventListener('livewire:initialized', () => {
-                scrollToBottom();
-            });
+
         </script>
     @endpush
     <!--end::Chat-->

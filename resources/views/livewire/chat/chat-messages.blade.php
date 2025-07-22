@@ -39,7 +39,7 @@
                                             class="fs-5 fw-bolder text-gray-900 text-hover-primary ms-1">You</a>
                                     </div>
                                     <div class="symbol symbol-35px symbol-circle">
-                                        <img alt="Pic" src="assets/media/avatars/150-26.jpg" />
+                                        <img alt="Pic" src="{{ image('avatars/300-6.jpg') }}" />
                                     </div>
                                 </div>
                                 <div class="p-5 rounded bg-light-primary text-dark fw-bold mw-lg-400px text-end"
