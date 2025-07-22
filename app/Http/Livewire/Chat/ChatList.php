@@ -1,5 +1,5 @@
 <?php
-
+// ChatList
 namespace App\Http\Livewire\Chat;
 
 use Livewire\Component;
@@ -13,7 +13,6 @@ class ChatList extends Component
 
     public function mount()
     {
-        // Fetch all users or a subset
         $this->users = User::all();
 
         // Check if there are any users and select the first one
@@ -36,17 +35,18 @@ class ChatList extends Component
         } else {
             // No users found after search, clear selected user
             $this->selectedUser = null;
-            // CORRECTED: Using emit() for Livewire v2 inter-component communication
-            $this->emit('clearChat');
+            // Livewire 3: Use dispatch() for inter-component events
+            $this->dispatch('clearChat');
         }
     }
 
     public function selectUser($userId)
     {
+
+
         $this->selectedUser = User::find($userId);
-        // CORRECTED: Using emit() for Livewire v2 inter-component communication
-        // Pass userId directly as an argument, not named.
-        $this->emit('userSelected', $userId);
+        // This is the key part: it dispatches an event
+        $this->dispatch('userSelected', userId: $userId);
     }
 
     public function render()

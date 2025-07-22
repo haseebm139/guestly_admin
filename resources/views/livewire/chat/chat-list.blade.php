@@ -1,8 +1,6 @@
+{{-- ChatList Component --}}
 <div>
-    <!--begin::Sidebar-->
     <div class="flex-column flex-lg-row-auto w-100 w-lg-300px w-xl-400px mb-10 mb-lg-0">
-        <!--begin::Contacts-->
-
         <div class="card card-flush">
             <div class="card-header pt-7" id="kt_chat_contacts_header">
                 <form class="w-100 position-relative" autocomplete="off">
@@ -39,11 +37,6 @@
                                     <div class="fw-bold text-muted">{{ $user->email }}</div>
                                 </div>
                             </div>
-                            {{-- You might display unread message count here --}}
-                            {{-- <div class="d-flex flex-column align-items-end ms-2">
-                            <span class="text-muted fs-7 mb-1">3 hrs</span>
-                            <span class="badge badge-sm badge-circle badge-light-success">6</span>
-                        </div> --}}
                         </div>
                         <div class="separator separator-dashed d-none"></div>
                     @endforeach
@@ -53,9 +46,6 @@
                     @endif
                 </div>
             </div>
-
         </div>
-        <!--end::Contacts-->
     </div>
-    <!--end::Sidebar-->
 </div>
