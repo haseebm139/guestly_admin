@@ -21,7 +21,8 @@ class AuthService extends BaseController
     {
 
         $data['password'] = Hash::make($data['password']);
-
+        $data['latitude'] = $data['latitude'] ?? null;
+        $data['longitude'] = $data['longitude'] ?? null;
         $user = $this->userRepo->createUser($data);
         $token = $user->createToken('guestly')->accessToken;
 
@@ -30,6 +31,7 @@ class AuthService extends BaseController
 
     public function login(array $credentials)
     {
+
         $user = $this->userRepo->findByEmail($credentials['email']);
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
@@ -37,7 +39,11 @@ class AuthService extends BaseController
                 'email' => ['Invalid credentials.'],
             ]);
         }
-
+        if (isset($credentials['latitude']) && isset($credentials['longitude'])) {
+            $user->latitude = $credentials['latitude'];
+            $user->longitude = $credentials['longitude'];
+            $user->save();
+        }
         $token = $user->createToken('guestly')->accessToken;
 
         return compact('user', 'token');
@@ -45,9 +51,15 @@ class AuthService extends BaseController
 
     public function autoLoginOrRegister(array $data)
     {
+
         $user = $this->userRepo->findByEmail($data['email']);
 
         if ($user && Hash::check($data['password'], $user->password)) {
+            if (isset($data['latitude']) && isset($data['longitude'])) {
+                $user->latitude = $data['latitude'];
+                $user->longitude = $data['longitude'];
+                $user->save();
+            }
             $token = $user->createToken('guestly')->accessToken;
 
             return [
@@ -61,6 +73,8 @@ class AuthService extends BaseController
 
         // New user registration
         $data['password'] = Hash::make($data['password']);
+        $data['latitude'] = $data['latitude'] ?? null;
+        $data['longitude'] = $data['longitude'] ?? null;
         $newUser = $this->userRepo->createUser($data);
         $token = $newUser->createToken('guestly')->accessToken;
 
@@ -85,6 +99,8 @@ class AuthService extends BaseController
                 'social_id' => $data['social_id'],
                 'provider_field' => $providerField,
                 'password' =>Hash::make($data['social_id']),
+                'latitude'        => $data['latitude'] ?? null,
+                'longitude'       => $data['longitude'] ?? null,
             ]);
 
             if (Auth::attempt(['email' => $user['email'], 'password' => $data['social_id']])) {
