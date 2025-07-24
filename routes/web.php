@@ -33,7 +33,8 @@ use Illuminate\Support\Facades\Artisan;
 
 Route::get('/dhl', [ImageUpload::class, 'apiDHL']);
 
-Route::get('/dhl111', [ImageUpload::class, 'apiDHL']);
+Route::get('/dhl1112', [ImageUpload::class, 'apiDHL']);
+Route::get('/dhl1112', [ImageUpload::class, 'apiDHL']);
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {
