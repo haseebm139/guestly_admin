@@ -22,8 +22,8 @@ jobs:
           port: 22
           script: |
             cd /var/www/guestly_admin
-            git pull origin main
-            composer install --no-dev --optimize-autoloader
-            php artisan migrate --force
-            php artisan config:cache
+            sudo git pull origin main
+            sudo composer install --no-dev --optimize-autoloader
+            sudo php artisan migrate --force
+            sudo php artisan config:cache
             sudo systemctl reload nginx
