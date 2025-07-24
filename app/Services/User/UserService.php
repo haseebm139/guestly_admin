@@ -4,7 +4,7 @@ namespace App\Services\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Repositories\API\UserRepositoryInterface;
-use App\Http\Controllers\Api\BaseController as BaseController;
+use App\Http\Controllers\API\BaseController as BaseController;
 use Str;
 use Auth;
 use Validator;
