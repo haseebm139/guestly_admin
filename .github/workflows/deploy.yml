@@ -1,0 +1,30 @@
+name: Deploy Laravel to EC2
+
+on:
+  push:
+    branches: 
+    - main # Triggers deployment when pushing to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: actions/checkout@v4
+
+      - name: Deploy to AWS
+        uses: appleboy/ssh-action@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
+           
+           
+          script: |
+            cd /var/www/guestly_admin
+            git pull origin main
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:cache
+            sudo systemctl reload nginx
