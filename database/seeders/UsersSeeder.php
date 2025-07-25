@@ -33,21 +33,21 @@ class UsersSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        $demoUser3 = User::create([
-            'name'              => "Artist User",
-            'email'             => 'artist@artist.com',
-            'password'          => Hash::make('12345'),
-            'role_id'           => "artist",
-            'user_type'           => "artist",
-            'email_verified_at' => now(),
-        ]);
-        $demoUser4 = User::create([
-            'name'              => "Studio User",
-            'email'             => 'studio@studio.com',
-            'password'          => Hash::make('12345'),
-            'role_id'           => "studio",
-            'user_type'           => "studio",
-            'email_verified_at' => now(),
-        ]);
+        // $demoUser3 = User::create([
+        //     'name'              => "Artist User",
+        //     'email'             => 'artist@artist.com',
+        //     'password'          => Hash::make('12345'),
+        //     'role_id'           => "artist",
+        //     'user_type'           => "artist",
+        //     'email_verified_at' => now(),
+        // ]);
+        // $demoUser4 = User::create([
+        //     'name'              => "Studio User",
+        //     'email'             => 'studio@studio.com',
+        //     'password'          => Hash::make('12345'),
+        //     'role_id'           => "studio",
+        //     'user_type'           => "studio",
+        //     'email_verified_at' => now(),
+        // ]);
     }
 }

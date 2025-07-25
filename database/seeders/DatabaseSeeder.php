@@ -30,17 +30,13 @@ class DatabaseSeeder extends Seeder
 
         $faker = Faker::create();
 
-        User::factory(30)->create()->each(function ($user) use ($faker) {
-
+         User::factory(30)->create([
+        'password' => Hash::make('password123'),
+        ])->each(function ($user) use ($faker) {
             $role = collect(['artist', 'studio'])->random();
-
-
             $user->user_type = $role;
             $user->role_id = $role;
-            $user->password = Hash::make('password123');
             $user->save();
-
-
             $user->assignRole($role);
         });
         // \App\Models\User::factory(30)->create();
