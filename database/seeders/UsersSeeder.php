@@ -17,7 +17,7 @@ class UsersSeeder extends Seeder
     public function run(Generator $faker)
     {
         $demoUser = User::create([
-            'name'              => $faker->name,
+            'name'              => "Administrator",
             'email'             => 'demo@demo.com',
             'password'          => Hash::make('demo'),
             'role_id'           => "administrator",
@@ -26,8 +26,8 @@ class UsersSeeder extends Seeder
         ]);
 
         $demoUser2 = User::create([
-            'name'              => $faker->name,
-            'email'             => 'admin@demo.com',
+            'name'              => "Administrator User",
+            'email'             => 'admin@admin.com',
             'password'          => Hash::make('demo'),
             'role_id'           => "administrator",
             'user_type'           => "administrator",
@@ -35,7 +35,7 @@ class UsersSeeder extends Seeder
         ]);
 
         $demoUser3 = User::create([
-            'name'              => $faker->name,
+            'name'              => "Artist User",
             'email'             => 'artist@artist.com',
             'password'          => Hash::make('12345'),
             'role_id'           => "artist",
@@ -43,7 +43,7 @@ class UsersSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $demoUser4 = User::create([
-            'name'              => $faker->name,
+            'name'              => "Studio User",
             'email'             => 'studio@studio.com',
             'password'          => Hash::make('12345'),
             'role_id'           => "studio",
