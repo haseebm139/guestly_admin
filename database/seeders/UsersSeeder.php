@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Faker\Generator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,7 +13,7 @@ class UsersSeeder extends Seeder
      *
      * @return void
      */
-    public function run(Generator $faker)
+    public function run()
     {
         $demoUser = User::create([
             'name'              => "Administrator",
