@@ -5,7 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Faker\Factory;
+use Faker\Factory as Faker;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -28,17 +28,19 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
-         $faker = Faker::create();
+        $faker = Faker::create();
 
-        User::factory(30)->create()->each(function ($user) {
+        User::factory(30)->create()->each(function ($user) use ($faker) {
+
             $role = collect(['artist', 'studio'])->random();
 
-            // Set user_type column (optional)
+
+
             $user->user_type = $role;
             $user->role_id = $role;
             $user->save();
 
-            // Assign role via Spatie
+
             $user->assignRole($role);
         });
         // \App\Models\User::factory(30)->create();
