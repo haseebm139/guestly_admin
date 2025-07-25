@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
+use App\Models\User;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -25,7 +25,20 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
-        \App\Models\User::factory(30)->create();
+
+
+        User::factory(30)->create()->each(function ($user) {
+            $role = collect(['artist', 'studio'])->random();
+
+            // Set user_type column (optional)
+            $user->user_type = $role;
+            $user->role_id = $role;
+            $user->save();
+
+            // Assign role via Spatie
+            $user->assignRole($role);
+        });
+        // \App\Models\User::factory(30)->create();
 
         // \App\Models\User::factory(10)->create([
         //     'name' => 'Test User',
