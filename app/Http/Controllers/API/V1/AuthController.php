@@ -52,7 +52,7 @@ class AuthController extends BaseController
     {
 
 
-        $result = $this->authService->autoLoginOrRegister($request->only('name', 'email', 'password'));
+        $result = $this->authService->autoLoginOrRegister($request->only('name', 'email', 'password', 'latitude', 'longitude', 'user_type'));
 
         if ($result['status'] === 'login') {
             return $this->sendResponse($result['data'], 'Login successful');

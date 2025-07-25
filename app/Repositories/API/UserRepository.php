@@ -9,8 +9,11 @@ class UserRepository implements UserRepositoryInterface
 {
     public function createUser(array $data)
     {
+        $user = User::create($data);
 
-        return User::create($data);
+        $user->assignRole($data['user_type']); // roles should be 'artist' or 'studio'
+
+        return $user;
     }
 
     public function findByEmail(string $email)
@@ -38,8 +41,12 @@ class UserRepository implements UserRepositoryInterface
             $user->update($data);
             return $user;
         }
+        $user = User::create($data);
 
-        return User::create($data);
+        $user->assignRole($data['user_type']); // roles should be 'artist' or 'studio'
+
+        return $user;
+
 
 
     }

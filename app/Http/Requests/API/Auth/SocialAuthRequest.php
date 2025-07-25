@@ -17,6 +17,7 @@ class SocialAuthRequest extends FormRequest
             'social_id' => 'required',
             'name' => 'required|string|max:255',
             'email' => 'required|email',
+            'user_type' => 'required|in:artist,studio',
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
         ];
