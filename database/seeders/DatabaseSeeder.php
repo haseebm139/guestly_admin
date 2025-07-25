@@ -5,7 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-
+use Faker\Factory;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
+
         $this->call([
             UsersSeeder::class,
             RolesPermissionsSeeder::class,
@@ -26,9 +28,9 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
+         $faker = Faker::create();
 
-
-        \App\Models\User::factory(30)->create()->each(function ($user) {
+        User::factory(30)->create()->each(function ($user) {
             $role = collect(['artist', 'studio'])->random();
 
             // Set user_type column (optional)
