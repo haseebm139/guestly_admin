@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\SpotBooking;
+namespace App\Http\Controllers\API\V1\SpotBooking;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\SpotBooking\SpotBookingService;
-use App\Http\Controllers\Api\BaseController as BaseController;
+use App\Http\Controllers\API\BaseController as BaseController;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;

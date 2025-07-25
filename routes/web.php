@@ -8,6 +8,7 @@ use App\Http\Controllers\ImageUpload;
 use App\Http\Controllers\DashboardController;
 
 
+use App\Http\Controllers\Apps\ChatController;
 use App\Http\Controllers\Apps\Admin\PlanManagementController;
 use App\Http\Controllers\Apps\Admin\FeatureManagementController;
 use App\Http\Controllers\Apps\Admin\SupplyController;
@@ -31,6 +32,8 @@ use Illuminate\Support\Facades\Artisan;
 */
 
 Route::get('/dhl', [ImageUpload::class, 'apiDHL']);
+
+Route::get('/dhl1112', [ImageUpload::class, 'apiDHL']);
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {
@@ -62,7 +65,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-profile-update-email', [UserManagementController::class,'myProfileUpdateEmail'])->name('myprofileUpdateEmail');
     Route::get('/my-profile-update-name', [UserManagementController::class,'myProfileUpdateName'])->name('myprofileUpdateName');
     Route::get('/my-profile-update-password', [UserManagementController::class,'myProfileUpdatePassword'])->name('myprofileUpdatePassword');
+    Route::controller(ChatController::class)->group(function () {
+        Route::get('/chat', 'index')->name('chat');
 
+    });
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Artist;
+namespace App\Http\Controllers\API\V1\Artist;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\Artist\ArtistProfileService;
 use App\Http\Requests\API\Artist\ArtistUpdateProfileRequest;
 
-use App\Http\Controllers\Api\BaseController as BaseController;
+use App\Http\Controllers\API\BaseController as BaseController;
 class ArtistController extends BaseController
 {
     protected $service;
