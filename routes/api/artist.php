@@ -3,8 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\API\V1\Artist\ArtistController;
-use App\Http\Controllers\API\V1\Artist\CustomFormController;
+use App\Http\Controllers\Api\V1\Artist\ArtistController;
+use App\Http\Controllers\Api\V1\Artist\CustomFormController;
 /*
 |--------------------------------------------------------------------------
 | API Routes

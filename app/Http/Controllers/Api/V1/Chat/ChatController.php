@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\V1\Chat;
+namespace App\Http\Controllers\Api\V1\Chat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use App\Events\Chat\NewChatStarted;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\API\BaseController as BaseController;
+use App\Http\Controllers\Api\BaseController as BaseController;
 class ChatController  extends BaseController
 {
     public function startChat(Request $request)
