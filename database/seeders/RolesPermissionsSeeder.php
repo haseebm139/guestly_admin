@@ -101,7 +101,7 @@ class RolesPermissionsSeeder extends Seeder
 
         User::find(1)->assignRole('administrator');
         User::find(2)->assignRole('administrator');
-        User::find(3)->assignRole('artist');
-        User::find(4)->assignRole('studio');
+        // User::find(3)->assignRole('artist');
+        // User::find(4)->assignRole('studio');
     }
 }
