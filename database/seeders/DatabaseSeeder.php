@@ -35,9 +35,9 @@ class DatabaseSeeder extends Seeder
             $role = collect(['artist', 'studio'])->random();
 
 
-
             $user->user_type = $role;
             $user->role_id = $role;
+            $user->password = Hash::make('password123');
             $user->save();
 
 
