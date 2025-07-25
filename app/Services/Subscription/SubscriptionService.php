@@ -47,7 +47,7 @@ class SubscriptionService extends BaseController
         }
 
         $start = Carbon::now();
-        $end = $start->copy()->addDays( $duration_days);
+        $end = $start->copy()->addDays($duration_days);
 
         DB::beginTransaction();
         try {

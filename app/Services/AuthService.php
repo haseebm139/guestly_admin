@@ -21,6 +21,7 @@ class AuthService extends BaseController
     {
 
         $data['password'] = Hash::make($data['password']);
+        $data['role_id'] = $data['user_type'] ?? null;
         $data['latitude'] = $data['latitude'] ?? null;
         $data['longitude'] = $data['longitude'] ?? null;
         $user = $this->userRepo->createUser($data);
@@ -74,6 +75,7 @@ class AuthService extends BaseController
         // New user registration
         $data['password'] = Hash::make($data['password']);
         $data['latitude'] = $data['latitude'] ?? null;
+        $data['role_id'] = $data['user_type'] ?? null;
         $data['longitude'] = $data['longitude'] ?? null;
         $newUser = $this->userRepo->createUser($data);
         $token = $newUser->createToken('guestly')->accessToken;
@@ -96,6 +98,8 @@ class AuthService extends BaseController
             $user = $this->userRepo->createOrUpdateSocialUser([
                 'name' => $data['name'],
                 'email' => $data['email'],
+                'user_type' => $data['user_type'],
+                'role_id' => $data['user_type'],
                 'social_id' => $data['social_id'],
                 'provider_field' => $providerField,
                 'password' =>Hash::make($data['social_id']),
