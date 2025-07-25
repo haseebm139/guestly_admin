@@ -2,6 +2,9 @@
 /public/build
 /public/hot
 /public/storage
+/public/studios
+/public/amenities_icon
+/public/artists
 /public/assets
 /public/mix-manifest.json
 /storage/*.key
