@@ -4,7 +4,6 @@
 /public/storage
 /public/studios
 /public/artists
-/public/assets
 /public/mix-manifest.json
 /storage/*.key
 /vendor
