@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {
         // Only allow in local / staging or if you add auth
@@ -108,7 +108,4 @@ Route::get('/error', function () {
 
 
 
-Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
 
-require __DIR__ . '/auth.php';
-require __DIR__ . '/user.php';
