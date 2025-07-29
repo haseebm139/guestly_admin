@@ -24,9 +24,9 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 Broadcast::routes([
-    'middleware' => ['auth:api'], // Use 'auth:sanctum' if you're using Sanctum
+    'middleware' => ['auth:sanctum'], // Use 'auth:sanctum' if you're using Sanctum
 ]);
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
 
 });
 
@@ -41,7 +41,7 @@ Route::prefix('v1')->group(function () {
     Route::post('send-code-to-email', [AuthController::class, 'sendCodeToEmail']);
     Route::post('/auto-login-register',[AuthController::class, 'autoLoginOrRegister']);
 
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
         Route::get('user/profile', [AuthController::class, 'profile']);
 
         Route::prefix('user/')->group(function () {

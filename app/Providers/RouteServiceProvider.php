@@ -35,19 +35,19 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/api.php'));
             // Admin API
             Route::prefix('api/v1/admin')
-                ->middleware(['api', 'auth:api', 'admin'])
+                ->middleware(['api', 'auth:sanctum', 'admin'])
                 ->name('api.admin.')
                 ->group(base_path('routes/api/admin.php'));
 
             // Studio API
             Route::prefix('api/v1/studio')
-                ->middleware(['api', 'auth:api', 'studio'])
+                ->middleware(['api', 'auth:sanctum', 'studio'])
                 ->name('api.studio.')
                 ->group(base_path('routes/api/studio.php'));
 
             // Artist API
             Route::prefix('api/v1/artist')
-                ->middleware(['api', 'auth:api', 'artist'])
+                ->middleware(['api', 'auth:sanctum', 'artist'])
                 ->name('api.artist.')
                 ->group(base_path('routes/api/artist.php'));
             Route::middleware('web')

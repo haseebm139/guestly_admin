@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\V1\Artist\CustomFormController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::middleware(['auth:api', 'artist'])->group(function () {
+Route::middleware(['auth:sanctum', 'artist'])->group(function () {
 
     Route::controller(ArtistController::class)->group(function () {
         Route::get('/profile', 'show');

@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\V1\Studio\BoostAdController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::middleware(['auth:api', 'studio'])->group(function () {
+Route::middleware(['auth:sanctum', 'studio'])->group(function () {
 
     Route::controller(StudioController::class)->group(function () {
         Route::get('/profile', 'show');

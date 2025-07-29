@@ -25,7 +25,7 @@ class AuthService extends BaseController
         $data['latitude'] = $data['latitude'] ?? null;
         $data['longitude'] = $data['longitude'] ?? null;
         $user = $this->userRepo->createUser($data);
-        $token = $user->createToken('guestly')->accessToken;
+        $token = $user->createToken('guestly')->plainTextToken;
 
          return compact('user', 'token');
     }
@@ -45,7 +45,7 @@ class AuthService extends BaseController
             $user->longitude = $credentials['longitude'];
             $user->save();
         }
-        $token = $user->createToken('guestly')->accessToken;
+        $token = $user->createToken('guestly')->plainTextToken;
 
         return compact('user', 'token');
     }
@@ -61,7 +61,7 @@ class AuthService extends BaseController
                 $user->longitude = $data['longitude'];
                 $user->save();
             }
-            $token = $user->createToken('guestly')->accessToken;
+            $token = $user->createToken('guestly')->plainTextToken;
 
             return [
                 'status' => 'login',
@@ -78,7 +78,7 @@ class AuthService extends BaseController
         $data['role_id'] = $data['user_type'] ?? null;
         $data['longitude'] = $data['longitude'] ?? null;
         $newUser = $this->userRepo->createUser($data);
-        $token = $newUser->createToken('guestly')->accessToken;
+        $token = $newUser->createToken('guestly')->plainTextToken;
 
         return [
             'status' => 'register',
@@ -110,7 +110,7 @@ class AuthService extends BaseController
             if (Auth::attempt(['email' => $user['email'], 'password' => $data['social_id']])) {
                 $user = Auth::user();
                 $success = [
-                    'token' => $user->createToken('guestly')->accessToken,
+                    'token' => $user->createToken('guestly')->plainTextToken,
                     'name'  => Str::upper($user['name']),
 
                 ];
