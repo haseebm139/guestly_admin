@@ -15,7 +15,56 @@
     <meta property="og:title" content="" />
     <link rel="canonical" href="" />
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.css">
+
+    <style>
+        [data-kt-app-layout=dark-sidebar] .app-sidebar {
+            background-color: #ffffff !important;
+            border-right: 0;
+        }
+
+
+        [data-kt-app-layout=dark-sidebar] .app-sidebar .menu>.menu-item .menu-link .menu-title {
+            color: #000000 !important;
+        }
+
+
+        .menu-column {
+            flex-direction: column;
+            width: 100%;
+            gap: 1.9rem;
+        }
+
+        [data-kt-app-layout=dark-sidebar] .app-sidebar .menu>.menu-item .menu-link.active {
+            transition: color 0.2s ease;
+            background-color: #cffbd3 !important;
+            color: var(--bs-primary-inverse);
+        }
+
+        .ki-duotone,
+        .ki-outline,
+        .ki-solid {
+            line-height: 1;
+            font-size: 1rem;
+            color: #014122 !important;
+        }
+
+        .menu-item .menu-link {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            flex: 0 0 100%;
+            padding: 15px 10px 15px 10px !important;
+            transition: none;
+            outline: none !important;
+        }
+
+        div#kt_app_wrapper {
+            background: #f0fdf9;
+        }
+    </style>
     {!! includeFavicon() !!}
 
     <!--begin::Fonts-->
