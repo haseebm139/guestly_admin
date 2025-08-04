@@ -26,67 +26,71 @@ class AuthService extends BaseController
         $data['longitude'] = $data['longitude'] ?? null;
         $user = $this->userRepo->createUser($data);
         $token = $user->createToken('guestly')->plainTextToken;
-
-         return compact('user', 'token');
+        $result['token'] =  $token;
+        $result['user'] =  $user;
+        return $result;
     }
 
     public function login(array $credentials)
     {
 
-        $user = $this->userRepo->findByEmail($credentials['email']);
-
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+        $data['user'] = $this->userRepo->findByEmail($credentials['email']);
+        if (! $data['user'] || ! Hash::check($credentials['password'], $data['user']->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Invalid credentials.'],
             ]);
         }
-        if (isset($credentials['latitude']) && isset($credentials['longitude'])) {
-            $user->latitude = $credentials['latitude'];
-            $user->longitude = $credentials['longitude'];
-            $user->save();
-        }
-        $token = $user->createToken('guestly')->plainTextToken;
 
-        return compact('user', 'token');
+        if (isset($credentials['latitude']) && isset($credentials['longitude'])) {
+            $data['user']->latitude = $credentials['latitude'];
+            $data['user']->longitude = $credentials['longitude'];
+            $data['user']->save();
+        }
+        $data['token'] = $data['user']->createToken('guestly')->plainTextToken;
+
+        return $data;
+
     }
 
-    public function autoLoginOrRegister(array $data)
+    public function autoLoginOrRegister(array $req)
     {
 
-        $user = $this->userRepo->findByEmail($data['email']);
+        $data['user'] = $this->userRepo->findByEmail($req['email']);
 
-        if ($user && Hash::check($data['password'], $user->password)) {
-            if (isset($data['latitude']) && isset($data['longitude'])) {
-                $user->latitude = $data['latitude'];
-                $user->longitude = $data['longitude'];
-                $user->save();
+        if ($data['user'] && Hash::check($req['password'], $data['user']->password)) {
+            if (isset($req['latitude']) && isset($req['longitude'])) {
+                $data['user']->latitude = $req['latitude'];
+                $data['user']->longitude = $req['longitude'];
+                $data['user']->save();
             }
-            $token = $user->createToken('guestly')->plainTextToken;
+            $token = $data['user']->createToken('guestly')->plainTextToken;
+            $data['token'] = $token;
+
+            $data['name'] = Str::upper($data['user']->name);
+
 
             return [
                 'status' => 'login',
-                'data' => [
-                    'token' => $token,
-                    'name'  => Str::upper($user->name),
-                ]
+                'data' =>  $data
             ];
         }
 
         // New user registration
-        $data['password'] = Hash::make($data['password']);
-        $data['latitude'] = $data['latitude'] ?? null;
-        $data['role_id'] = $data['user_type'] ?? null;
-        $data['longitude'] = $data['longitude'] ?? null;
-        $newUser = $this->userRepo->createUser($data);
+        $req['password'] = Hash::make($req['password']);
+        $req['latitude'] = $req['latitude'] ?? null;
+        $req['role_id'] = $req['user_type'] ?? null;
+        $req['longitude'] = $req['longitude'] ?? null;
+        $newUser = $this->userRepo->createUser($req);
         $token = $newUser->createToken('guestly')->plainTextToken;
+        $data['token'] = $token;
+        $data['user'] = $newUser;
+        $data['name'] = Str::upper($newUser->name);
 
         return [
-            'status' => 'register',
-            'data' => [
-                'token' => $token,
-                'name'  => Str::upper($newUser->name),
-            ]
+            'status' => 'login',
+            'data' =>  $data
         ];
+
     }
 
     public function handleSocialLogin(array $data)
@@ -112,6 +116,7 @@ class AuthService extends BaseController
                 $success = [
                     'token' => $user->createToken('guestly')->plainTextToken,
                     'name'  => Str::upper($user['name']),
+                    'user'  => $user
 
                 ];
                 return $this->sendResponse($success, 'User login successful.');

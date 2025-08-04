@@ -30,6 +30,7 @@ class AuthController extends BaseController
         $user = $this->authService->register($request->validated());
         $data['token'] = $user['token'];
         $data['name'] =Str::upper($user['user']['name']);
+        $data['user'] =$user['user'];
         return $this->sendResponse($data,"User Register Successfully");
 
 
@@ -40,9 +41,9 @@ class AuthController extends BaseController
     {
         try {
             $user = $this->authService->login($request->validated());
-            $data['token'] = $user['token'];
-            $data['name'] =Str::upper($user['user']['name']);
-            return $this->sendResponse($data, 'Login Successfully');
+
+
+            return $this->sendResponse($user, 'Login Successfully');
         } catch (\Throwable $e) {
             return $this->sendError($e->getMessage() ?: 'Login failed.');
         }
@@ -53,11 +54,11 @@ class AuthController extends BaseController
 
 
         $result = $this->authService->autoLoginOrRegister($request->only('name', 'email', 'password', 'latitude', 'longitude', 'user_type'));
-
+        $data = $result['data'];
         if ($result['status'] === 'login') {
-            return $this->sendResponse($result['data'], 'Login successful');
+            return $this->sendResponse($data, 'Login successful');
         } elseif ($result['status'] === 'register') {
-            return $this->sendResponse($result['data'], 'User registered and logged in successfully');
+            return $this->sendResponse($data, 'User registered and logged in successfully');
         }
 
         return $this->sendError('Authentication failed.');

@@ -10,9 +10,7 @@ class UserRepository implements UserRepositoryInterface
     public function createUser(array $data)
     {
         $user = User::create($data);
-
         $user->assignRole($data['user_type']); // roles should be 'artist' or 'studio'
-
         return $user;
     }
 
@@ -27,10 +25,7 @@ class UserRepository implements UserRepositoryInterface
     }
     public function createOrUpdateSocialUser(array $data)
     {
-
-
         $user = $this->findByEmail($data['email']);
-
         $providerField = $data['provider_field'];
         $data[$providerField] = $data['social_id'];
 
