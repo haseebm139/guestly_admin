@@ -52,55 +52,58 @@ class AuthService extends BaseController
 
     }
 
-    public function autoLoginOrRegister(array $req)
+    public function autoLoginOrRegister(array $request)
     {
 
-        $data['user'] = $this->userRepo->findByEmail($req['email']);
+        $user = $this->userRepo->findByEmail($request['email']);
 
-
-        if ($data['user'] && Hash::check($req['password'], $data['user']->password)) {
-            if (isset($req['latitude']) && isset($req['longitude'])) {
-                $data['user']->latitude = $req['latitude'];
-                $data['user']->longitude = $req['longitude'];
-                $data['user']->save();
-            }
-            $token = $data['user']->createToken('guestly')->plainTextToken;
-            $data['token'] = $token;
-
-            $data['name'] = Str::upper($data['user']->name);
-
-
+        if ($request['user_type'] !== $user->user_type) {
             return [
-                'status' => 'login',
-                'data' =>  $data
-            ];
-        }elseif (!$data['user']) {
-            // New user registration
-            $req['password'] = Hash::make($req['password']);
-            $req['latitude'] = $req['latitude'] ?? null;
-            $req['role_id'] = $req['user_type'] ?? null;
-            $req['longitude'] = $req['longitude'] ?? null;
-            $newUser = $this->userRepo->createUser($req);
-            $token = $newUser->createToken('guestly')->plainTextToken;
-            $data['token'] = $token;
-            $data['user'] = $newUser;
-            $data['name'] = Str::upper($newUser->name);
-
-            return [
-                'status' => 'login',
-                'data' =>  $data
-            ];
-
-        } else {
-
-            return [
-                'status' => 'error',
-                'data' =>  []
+                'status' => 'errorUserType',
+                'data' => $user->user_type
             ];
         }
 
+        if ($user && Hash::check($request['password'], $user->password)) {
+            if (isset($request['latitude']) && isset($request['longitude'])) {
+                $user->latitude = $request['latitude'];
+                $user->longitude = $request['longitude'];
+                $user->save();
+            }
+            $token = $user->createToken('guestly')->plainTextToken;
 
+            return [
+                'status' => 'login',
+                'data' => [
+                    'token' => $token,
+                    'name' => Str::upper($user->name),
+                    'user' => $user,
+                ]
+            ];
+        } elseif (!$user) {
+            // New user registration
+            $request['password'] = Hash::make($request['password']);
+            $request['latitude'] = $request['latitude'] ?? null;
+            $request['role_id'] = $request['user_type'] ?? null;
+            $request['longitude'] = $request['longitude'] ?? null;
 
+            $newUser = $this->userRepo->createUser($request);
+            $token = $newUser->createToken('guestly')->plainTextToken;
+
+            return [
+                'status' => 'register',
+                'data' => [
+                    'token' => $token,
+                    'name' => Str::upper($newUser->name),
+                    'user' => $newUser,
+                ]
+            ];
+        } else {
+            return [
+                'status' => 'error',
+                'data' => []
+            ];
+        }
     }
 
     public function handleSocialLogin(array $data)

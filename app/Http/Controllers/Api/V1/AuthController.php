@@ -55,11 +55,14 @@ class AuthController extends BaseController
 
         $result = $this->authService->autoLoginOrRegister($request->only('name', 'email', 'password', 'latitude', 'longitude', 'user_type'));
         $data = $result['data'];
+
         if ($result['status'] === 'login') {
             return $this->sendResponse($data, 'Login successful');
         } elseif ($result['status'] === 'register') {
             return $this->sendResponse($data, 'User registered and logged in successfully');
-        }else{
+        }elseif($result['status'] === 'errorUserType'){
+            return $this->sendError('This email is already registered as a '.$data);
+        }  else{
 
             return $this->sendError('Invalid credentials. Please check your email or password.');
         }
