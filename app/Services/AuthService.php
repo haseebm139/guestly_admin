@@ -73,23 +73,32 @@ class AuthService extends BaseController
                 'status' => 'login',
                 'data' =>  $data
             ];
+        }if ($data['user']) {
+            // New user registration
+            $req['password'] = Hash::make($req['password']);
+            $req['latitude'] = $req['latitude'] ?? null;
+            $req['role_id'] = $req['user_type'] ?? null;
+            $req['longitude'] = $req['longitude'] ?? null;
+            $newUser = $this->userRepo->createUser($req);
+            $token = $newUser->createToken('guestly')->plainTextToken;
+            $data['token'] = $token;
+            $data['user'] = $newUser;
+            $data['name'] = Str::upper($newUser->name);
+
+            return [
+                'status' => 'login',
+                'data' =>  $data
+            ];
+
+        } else {
+
+            return [
+                'status' => 'error',
+                'data' =>  []
+            ];
         }
 
-        // New user registration
-        $req['password'] = Hash::make($req['password']);
-        $req['latitude'] = $req['latitude'] ?? null;
-        $req['role_id'] = $req['user_type'] ?? null;
-        $req['longitude'] = $req['longitude'] ?? null;
-        $newUser = $this->userRepo->createUser($req);
-        $token = $newUser->createToken('guestly')->plainTextToken;
-        $data['token'] = $token;
-        $data['user'] = $newUser;
-        $data['name'] = Str::upper($newUser->name);
 
-        return [
-            'status' => 'login',
-            'data' =>  $data
-        ];
 
     }
 

@@ -59,8 +59,10 @@ class AuthController extends BaseController
             return $this->sendResponse($data, 'Login successful');
         } elseif ($result['status'] === 'register') {
             return $this->sendResponse($data, 'User registered and logged in successfully');
-        }
+        }else{
 
+            return $this->sendError('Invalid credentials. Please check your email or password.');
+        }
         return $this->sendError('Authentication failed.');
     }
     public function googleLogin(SocialAuthRequest $request)
