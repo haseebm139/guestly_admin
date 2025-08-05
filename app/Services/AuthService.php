@@ -57,6 +57,7 @@ class AuthService extends BaseController
 
         $data['user'] = $this->userRepo->findByEmail($req['email']);
 
+
         if ($data['user'] && Hash::check($req['password'], $data['user']->password)) {
             if (isset($req['latitude']) && isset($req['longitude'])) {
                 $data['user']->latitude = $req['latitude'];
@@ -73,7 +74,7 @@ class AuthService extends BaseController
                 'status' => 'login',
                 'data' =>  $data
             ];
-        }if ($data['user']) {
+        }elseif (!$data['user']) {
             // New user registration
             $req['password'] = Hash::make($req['password']);
             $req['latitude'] = $req['latitude'] ?? null;
