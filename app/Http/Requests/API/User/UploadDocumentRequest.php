@@ -25,8 +25,8 @@ class UploadDocumentRequest extends FormRequest
     {
         return [
             'type'  => 'required|in:id_card,passport,tattoo_license',
-            'front' => 'required|image|mimes:jpeg,jpg,png|max:2048',
-            'back'  => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'front' => 'required|image|mimes:jpeg,jpg,png|max:12000',
+            'back'  => 'required_if:type,id_card|image|mimes:jpeg,jpg,png|max:12000',
         ];
     }
 

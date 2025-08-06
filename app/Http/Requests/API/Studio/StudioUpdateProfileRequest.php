@@ -44,10 +44,10 @@ class StudioUpdateProfileRequest extends FormRequest
             'amenities.*' => 'integer|exists:station_amenities,id',
 
             // File fields
-            'studio_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'studio_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:12000',
+            'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:12000',
             'studio_images' => 'nullable|array|max:5',
-            'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:12000',
 
             /* ✅ NEW: design specialties (exists in `design_specialties` table) */
             'design_specialties'   => 'nullable|array|max:10',
