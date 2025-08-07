@@ -57,14 +57,14 @@ class AuthService extends BaseController
 
         $user = $this->userRepo->findByEmail($request['email']);
 
-        if ($request['user_type'] !== $user->user_type) {
-            return [
-                'status' => 'errorUserType',
-                'data' => $user->user_type
-            ];
-        }
 
         if ($user && Hash::check($request['password'], $user->password)) {
+            if ( $request['user_type'] !== $user->user_type) {
+                return [
+                    'status' => 'errorUserType',
+                    'data' => $user->user_type
+                ];
+            }
             if (isset($request['latitude']) && isset($request['longitude'])) {
                 $user->latitude = $request['latitude'];
                 $user->longitude = $request['longitude'];
