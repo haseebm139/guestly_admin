@@ -57,17 +57,15 @@ class AuthController extends BaseController
         return $this->sendResponse([], 'Password updated successfully');
     }
 
-
     public function login(LoginRequest $request)
     {
         try {
-            $result = $this->authService->login($request->validated());
+            $user = $this->authService->login($request->validated());
 
-            if ($result['status'] === 'error') {
-                return $this->sendError("This email is already registered as a {$result['message']}");
+            if (isset($user['status']) && $user['status'] === 'error') {
+                return $this->sendError('This email is already registered as a '.$user['data']);
             }
-
-            return $this->sendResponse($result, 'Login Successfully');
+            return $this->sendResponse($user, 'Login Successfully');
         } catch (\Throwable $e) {
             return $this->sendError($e->getMessage() ?: 'Login failed.');
         }

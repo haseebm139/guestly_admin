@@ -33,39 +33,30 @@ class AuthService extends BaseController
 
     public function login(array $credentials)
     {
-        $user = $this->userRepo->findByEmail($credentials['email']);
 
-        if ($user && $user->user_type !== $credentials['user_type']) {
-            return $this->errorResponse('errorUserType', $user->user_type);
+        $data['user'] = $this->userRepo->findByEmail($credentials['email']);
+
+        if ($credentials['user_type'] !== $data['user']->user_type) {
+            return [
+                'status' => 'error',
+                'data'   => $data['user']->user_type
+            ];
         }
-
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+        if (! $data['user'] || ! Hash::check($credentials['password'], $data['user']->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Invalid credentials.'],
             ]);
         }
 
         if (isset($credentials['latitude']) && isset($credentials['longitude'])) {
-            $user->latitude = $credentials['latitude'];
-            $user->longitude = $credentials['longitude'];
-            $user->save();
+            $data['user']->latitude = $credentials['latitude'];
+            $data['user']->longitude = $credentials['longitude'];
+            $data['user']->save();
         }
+        $data['token'] = $data['user']->createToken('guestly')->plainTextToken;
 
-        $token = $user->createToken('guestly')->plainTextToken;
+        return $data;
 
-        return [
-            'token' => $token,
-            'name' => Str::upper($user->name),
-            'user' => $user,
-        ];
-    }
-
-    private function errorResponse(string $status, string $message)
-    {
-        return [
-            'status' => $status,
-            'data' => $message,
-        ];
     }
 
     public function autoLoginOrRegister(array $request)
