@@ -37,11 +37,11 @@ class AuthService extends BaseController
         $data['user'] = $this->userRepo->findByEmail($credentials['email']);
 
         if ( $credentials['user_type'] !== $data['user']->user_type) {
+                $error['message'] = $data['user']->user_type;
+                $error['status'] = 'error';
 
-                return [
-                    'status' => 'error',
-                    'data' => $data['user']->user_type
-                ];
+                return $error;
+
             }
         if (! $data['user'] || ! Hash::check($credentials['password'], $data['user']->password)) {
             throw ValidationException::withMessages([
