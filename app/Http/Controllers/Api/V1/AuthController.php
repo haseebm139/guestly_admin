@@ -62,7 +62,9 @@ class AuthController extends BaseController
         try {
             $user = $this->authService->login($request->validated());
 
-
+            if($user['status'] === 'error'){
+                return $this->sendError('This email is already registered as a '.$user['data'] );
+            }
             return $this->sendResponse($user, 'Login Successfully');
         } catch (\Throwable $e) {
             return $this->sendError($e->getMessage() ?: 'Login failed.');
