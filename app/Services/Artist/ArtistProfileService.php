@@ -4,6 +4,7 @@ namespace App\Services\Artist;
 use App\Repositories\API\Artist\ArtistRepositoryInterface;
 use App\Services\Artist\ArtistImageService;
 use App\Models\User;
+use App\Models\UserFavorite;
 class ArtistProfileService
 {
     protected $repo;
@@ -42,19 +43,95 @@ class ArtistProfileService
         return $this->repo->getById($userId);
     }
 
+    // public function getStudios(int $perPage = 10)
+    // {
+    //     $artistId = auth()->id();
+    //     return User::where('user_type', 'studio')
+    //          ->withCount([
+    //             'favoritedBy as is_favorite' => function ($query) use ($artistId) {
+    //                 $query->where('artist_id', $artistId);
+    //             }
+    //         ])
+    //         ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path'])
+    //         ->paginate($perPage);
+    //     // return $this->repo->getAllStudios($perPage);
+    // }
+
     public function getStudios(int $perPage = 10)
     {
+        $artistId = auth()->id();
+        $longitude = auth()->user()->longitude;
+        $latitude = auth()->user()->latitude;
+        $radius = null; // Optional: Default radius in kilometers
+        $query = User::where('user_type', 'studio')
+            ->withCount([
+                'favoritedBy as is_favorite' => function ($query) use ($artistId) {
+                    $query->where('artist_id', $artistId);
+                }
+            ])
+            ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path']);
 
-        return User::where('user_type', 'studio')
-            ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path'])
-            ->paginate($perPage);
-        // return $this->repo->getAllStudios($perPage);
+        // If latitude & longitude are provided, calculate distance
+        if ($latitude && $longitude) {
+            $query->select('*')
+                ->selectRaw("
+                    (6371 * acos(
+                        cos(radians(?)) *
+                        cos(radians(latitude)) *
+                        cos(radians(longitude) - radians(?)) +
+                        sin(radians(?)) *
+                        sin(radians(latitude))
+                    )) AS distance
+                ", [$latitude, $longitude, $latitude])
+                ->orderBy('distance', 'asc');
+
+            // Optional: Filter by radius if provided
+            if ($radius) {
+                $query->having('distance', '<=', $radius);
+            }
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function getStudio(int $id)
     {
 
         return $this->repo->findStudio($id);
+    }
+
+
+    public function toggle(int $artistId, int $studioId): array
+    {
+        // Ensure studio is actually a studio
+        if (!User::where('id', $studioId)->where('user_type', 'studio')->exists()) {
+            return [
+                'status' => false,
+                'message' => 'Invalid studio',
+            ];
+        }
+
+        $favorite = UserFavorite::where('artist_id', $artistId)
+            ->where('studio_id', $studioId)
+            ->first();
+
+        if ($favorite) {
+            $favorite->delete();
+            return [
+                'status' => true,
+                'message' => 'Favorite removed',
+            ];
+        }
+
+        UserFavorite::create([
+            'artist_id' => $artistId,
+            'studio_id' => $studioId,
+        ]);
+
+        return [
+            'status' => true,
+            'message' => 'Studio added to favorites',
+        ];
     }
 
 }

@@ -138,4 +138,17 @@ class User extends Authenticatable
         return $this->belongsToMany(DesignSpecialty::class);
     }
 
+
+    public function favorites()
+    {
+
+        return $this->hasMany(\App\Models\UserFavorite::class, 'artist_id');
+    }
+
+    public function favoritedBy()
+    {
+
+        return $this->hasMany(\App\Models\UserFavorite::class, 'studio_id');
+    }
+
 }

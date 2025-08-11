@@ -9,7 +9,9 @@ use App\Http\Requests\API\Auth\RegisterRequest;
 use App\Http\Requests\API\Auth\LoginRequest;
 use App\Http\Requests\API\Auth\SocialAuthRequest;
 use App\Http\Requests\API\Auth\VerifyEmailRequest;
-
+use Hash;
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use App\Services\AuthService;
 use Str;
 
@@ -35,6 +37,24 @@ class AuthController extends BaseController
 
 
 
+    }
+
+    public function updatePassword(Request $request){
+         $validator = Validator::make($request->all(), [
+            'email'    => 'required|email|exists:users,email',
+            'password' => 'required|min:6|confirmed',
+            'code'     => 'required',
+
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first());
+        }
+        if (!$this->authService->resetPassword($request->email, $request->code, $request->password)) {
+            return $this->sendError('Invalid or expired code');
+        }
+
+        return $this->sendResponse([], 'Password updated successfully');
     }
 
     public function login(LoginRequest $request)

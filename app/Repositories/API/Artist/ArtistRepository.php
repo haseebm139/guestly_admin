@@ -60,11 +60,29 @@ class ArtistRepository implements ArtistRepositoryInterface
 
     public function findStudio(int $id)
     {
+        $artistId = auth()->id();
+        $longitude = auth()->user()->longitude;
+        $latitude = auth()->user()->latitude;
         return User::where('user_type', 'studio')
             ->with(['supplies:id,name',
                     'stationAmenities:id,name',
                     'studioImages:id,user_id,image_path',
                     'tattooStyles:id,name'])
+            ->withCount([
+            'favoritedBy as is_favorite' => function ($q) use ($artistId) {
+                $q->where('artist_id', $artistId);
+            }
+            ])
+            ->select('*')
+                ->selectRaw("
+                    (6371 * acos(
+                        cos(radians(?)) *
+                        cos(radians(latitude)) *
+                        cos(radians(longitude) - radians(?)) +
+                        sin(radians(?)) *
+                        sin(radians(latitude))
+                    )) AS distance
+                ", [$latitude, $longitude, $latitude])
             ->first();
     }
 

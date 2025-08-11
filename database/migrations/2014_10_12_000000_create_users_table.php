@@ -55,8 +55,9 @@ return new class extends Migration
             $table->enum('accept_bookings', ['0', '1'])->default('0');
             $table->enum('preferred_duration', ['0', '1'])->default('0');
 
-            $table->decimal('longitude', 10, 6)->nullable()->default(67.001137); // Adjust precision and scale as needed
-            $table->decimal('latitude', 10, 6)->nullable()->default(24.860735);
+
+            $table->decimal('latitude', 10, 7)->nullable()->after('email');
+            $table->decimal('longitude', 10, 7)->nullable()->after('latitude');
             $table->date('date_of_birth')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

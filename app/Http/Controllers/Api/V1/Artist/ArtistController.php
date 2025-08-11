@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 
 use App\Services\Artist\ArtistProfileService;
 use App\Http\Requests\API\Artist\ArtistUpdateProfileRequest;
-
+use App\Models\UserFavorite;
+use App\Models\User;
 use App\Http\Controllers\Api\BaseController as BaseController;
 class ArtistController extends BaseController
 {
@@ -76,12 +77,12 @@ class ArtistController extends BaseController
     public function studios(Request $request)
     {
 
+        $perPage = $request->get('per_page', 10);
+        $studios = $this->service->getStudios($perPage);
+        return $studios
+            ? $this->sendResponse($studios, 'Studios fetched successfully.')
+            : $this->sendError('No studios found.',$errorMessages = [], 404);
         try {
-            $perPage = $request->get('per_page', 10);
-            $studios = $this->service->getStudios($perPage);
-            return $studios
-                ? $this->sendResponse($studios, 'Studios fetched successfully.')
-                : $this->sendError('No studios found.',$errorMessages = [], 404);
         } catch (\Throwable $th) {
             return $this->sendError('Failed to fetch studios.',$errorMessages = [], 500);
         }
@@ -101,6 +102,22 @@ class ArtistController extends BaseController
         } catch (\Throwable $th) {
             return $this->sendError('Failed to fetch studio.', 500);
         }
+    }
+
+    public function toggle(Request $request)
+    {
+        $request->validate([
+            'studio_id' => 'required|exists:users,id',
+        ]);
+        $result = $this->service->toggle(auth()->id(), $request->studio_id);
+
+        if ($result['status'] == true) {
+            return $this->sendResponse([],$result['message']);
+
+        }elseif ($result['status'] == false) {
+            return $this->sendError($result['message']);
+        }
+        return $this->sendError('Something went wrong');
     }
 
 

@@ -12,4 +12,7 @@ interface UserRepositoryInterface
     public function updateVerificationImages(User $user, array $paths, string $type);
     public function confirmVerification(User $user);
     public function getVerificationStatus(User $user);
+
+    public function verifyCode(string $email, int $code);
+    public function updatePassword(string $email, string $password);
 }

@@ -24,6 +24,7 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
         // List of all studios
         Route::get('studios','studios');
         Route::get('studio/{id}','studio');
+        Route::post('/studios/favorite','toggle');
     });
     Route::controller(CustomFormController::class)->group(function () {
         Route::get('/forms','index');

@@ -166,4 +166,16 @@ class AuthService extends BaseController
 
         return $this->sendResponse(['otp' => $otp], 'Code sent successfully');
     }
+    public function resetPassword(string $email, string $code, string $password): bool
+    {
+        // Check if code is valid
+        if (!$this->userRepo->verifyCode($email, $code)) {
+            return false;
+        }
+
+        // Update password
+        return $this->userRepo->updatePassword($email, $password);
+    }
+
+
 }

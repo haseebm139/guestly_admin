@@ -3,7 +3,7 @@ namespace App\Repositories\API;
 
 use App\Models\User;
 use App\Repositories\API\UserRepositoryInterface;
-
+use Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -84,4 +84,27 @@ class UserRepository implements UserRepositoryInterface
             'back' => $user->document_back,
         ];
     }
+
+    public function verifyCode(string $email, int $code)
+    {
+        $reset = User::where('email', $email)
+            ->where('otp', $code)
+            ->first();
+
+        if (!$reset) {
+            return false;
+        }
+
+
+
+        return true;
+    }
+
+    public function updatePassword(string $email, string $password)
+    {
+        return User::where('email', $email)
+            ->update(['password' => Hash::make($password),
+            'otp' => null]);
+    }
+
 }
