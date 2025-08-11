@@ -32,6 +32,23 @@ class LoginRequest extends FormRequest
             'longitude' => 'nullable|numeric|between:-180,180',
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'email.required'    => 'Please provide your email address.',
+            'email.email'       => 'The email address format is invalid.',
+            'password.required' => 'Please enter your password.',
+
+            'user_type.required' => 'User type is required.',
+            'user_type.in'       => 'User type must be either artist or studio.',
+
+            'latitude.numeric'   => 'Latitude must be a number.',
+            'latitude.between'   => 'Latitude must be between -90 and 90 degrees.',
+
+            'longitude.numeric'  => 'Longitude must be a number.',
+            'longitude.between'  => 'Longitude must be between -180 and 180 degrees.',
+        ];
+    }
 
     public function failedValidation(Validator $validator)
     {
