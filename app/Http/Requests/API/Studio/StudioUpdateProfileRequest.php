@@ -34,7 +34,7 @@ class StudioUpdateProfileRequest extends FormRequest
             'require_portfolio' => 'nullable|boolean',
             'accept_bookings' => 'nullable|boolean',
             'preferred_duration' => 'nullable|string',
-            'commission_percent' => 'nullable|numeric|min:0|max:100',
+            'commission_type' => 'nullable|in:0,1,2', // fixed, percentage, custom
 
             // Array fields
             'supplies_provided' => 'nullable|array|max:10',
@@ -52,6 +52,12 @@ class StudioUpdateProfileRequest extends FormRequest
             /* ✅ NEW: design specialties (exists in `design_specialties` table) */
             'design_specialties'   => 'nullable|array|max:10',
             'design_specialties.*' => 'integer|exists:design_specialties,id',
+
+            /* ✅ NEW: guest-related fields */
+            'guest_to_choose' => 'nullable|boolean',
+            'guest_policy'    => 'nullable|file|mimes:png,jpeg,jpg,pdf|max:20480',
+
+
         ];
     }
 

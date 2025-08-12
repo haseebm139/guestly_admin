@@ -31,6 +31,10 @@ class StudioProfileService
             $galleryPaths = $this->imageService->uploadGalleryImages($data['studio_images']);
             $this->repo->saveGalleryImages($userId, $galleryPaths);
         }
+        if (isset($data['guest_policy']) ) {
+
+            $data['guest_policy'] = $this->imageService->uploadImage($data['guest_policy'], 'guest_policy', 'guest_policy');
+        }
 
         return $this->repo->updateProfile($userId, $data);
     }

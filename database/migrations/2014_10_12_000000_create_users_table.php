@@ -53,7 +53,7 @@ return new class extends Migration
             $table->enum('verification_status', ['0', '1', '2'])->default('0');
             $table->enum('require_portfolio', ['0', '1'])->default('0');
             $table->enum('accept_bookings', ['0', '1'])->default('0');
-            $table->enum('preferred_duration', ['0', '1'])->default('0');
+            // $table->enum('preferred_duration', ['0', '1'])->default('0');
 
 
             $table->decimal('latitude', 10, 7)->nullable()->after('email');
