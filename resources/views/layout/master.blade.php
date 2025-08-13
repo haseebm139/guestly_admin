@@ -33,7 +33,7 @@
         .menu-column {
             flex-direction: column;
             width: 100%;
-            gap: 1.9rem;
+            /* gap: 1.9rem; */
         }
 
         [data-kt-app-layout=dark-sidebar] .app-sidebar .menu>.menu-item .menu-link.active {
