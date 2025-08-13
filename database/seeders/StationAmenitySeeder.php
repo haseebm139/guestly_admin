@@ -107,9 +107,13 @@ class StationAmenitySeeder extends Seeder
 
 
         foreach ($stationAmenities as $amenityData) {
-            StationAmenity::firstOrCreate(
-                ['name' => $amenityData['name']],
-                $amenityData
+            // StationAmenity::firstOrCreate(
+            //     ['name' => $amenityData['name']],
+            //     $amenityData
+            // );
+            StationAmenity::updateOrCreate(
+                ['name' => $amenityData['name']], // Search condition
+                $amenityData // Always updates if found, creates if not
             );
         }
     }
