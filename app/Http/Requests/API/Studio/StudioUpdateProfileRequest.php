@@ -57,6 +57,9 @@ class StudioUpdateProfileRequest extends FormRequest
             'guest_to_choose' => 'nullable|boolean',
             'guest_policy'    => 'nullable|file|mimes:png,jpeg,jpg,pdf|max:20480',
 
+            'latitude'  => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+
 
         ];
     }
