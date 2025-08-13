@@ -15,6 +15,7 @@ return new class extends Migration
             $table->enum('guest_to_choose', ['0', '1'])->nullable()->default('0');
             $table->string('guest_policy')->nullable();
             $table->enum('commission_type', ['0','1','2'])->nullable()->default('0')->comment('0 = fixed, 1 = percentage, 2 = custom');
+            $table->decimal('commission_value', 8, 2)->nullable()->default(0.00);
         });
     }
 
@@ -24,7 +25,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn([
+                'guest_to_choose',
+                'guest_policy',
+                'commission_type',
+                'commission_value'
+            ]);
         });
     }
 };
