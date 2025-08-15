@@ -19,7 +19,7 @@ use App\Http\Controllers\Apps\Admin\DesignSpecialityController;
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Artisan;
-
+use Illuminate\Support\Facades\Mail;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,6 +30,15 @@ use Illuminate\Support\Facades\Artisan;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/test-email', function () {
+    Mail::raw('This is a test email from Laravel using privateemail.com SMTP.', function ($message) {
+        $message->to('recipient@example.com')
+                ->subject('Test Email - PrivateEmail SMTP');
+    });
+
+    return 'Email sent!';
+});
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 

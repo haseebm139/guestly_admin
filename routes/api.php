@@ -73,10 +73,10 @@ Route::prefix('v1')->group(function () {
             Route::get('/reschedule_post', 'reschedulePost');
             // reschedulePost
             // Studio can approve
-            Route::post('/{id}/approve', 'approve') ;
+            Route::get('/{id}/approve', 'approve') ;
 
             // Studio can reject
-            Route::post('/{id}/reject', 'reject');
+            Route::get('/{id}/reject', 'reject');
 
             // List all bookings for the current user (artist or studio)
             Route::get('/', 'index');
