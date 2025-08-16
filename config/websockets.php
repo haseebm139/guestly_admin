@@ -49,6 +49,8 @@ return [
      */
     'allowed_origins' => [
         //
+        'https://guestly.space',
+        'https://www.guestly.space',
     ],
 
     /*
@@ -71,6 +73,7 @@ return [
     'middleware' => [
         'web',
         Authorize::class,
+        'ws.dashboard',
     ],
 
     'statistics' => [
