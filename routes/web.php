@@ -40,7 +40,7 @@ Route::get('/test-email', function () {
     return 'Email sent!';
 });
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('admin1')->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {
         // Only allow in local / staging or if you add auth
