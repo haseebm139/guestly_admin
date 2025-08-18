@@ -32,15 +32,16 @@ return [
 
         'pusher' => [
             'driver' => 'pusher',
-            'key' => env('PUSHER_APP_KEY', 'local'),
-            'secret' => env('PUSHER_APP_SECRET', 'local'),
-            'app_id' => env('PUSHER_APP_ID', 'local'),
+            'key' => env('PUSHER_APP_KEY', 'guestly_key'),
+            'secret' => env('PUSHER_APP_SECRET', 'guestly_secret'),
+            'app_id' => env('PUSHER_APP_ID', 'guestly'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'),
-                'host' => env('PUSHER_HOST'),
-                'port' => env('PUSHER_PORT', 443),
-                'scheme' => env('PUSHER_SCHEME', 'https'), 
+                'encrypted' => true,
                 'useTLS' => true,
+                'host' => env('PUSHER_HOST','guestly.space'),
+                'port' => env('PUSHER_PORT', 6001),
+                'scheme' => env('PUSHER_SCHEME', 'https'),
             ],
         ],
 
