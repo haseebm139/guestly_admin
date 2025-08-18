@@ -74,7 +74,9 @@ return [
      */
     'middleware' => [
         'web',
-        \App\Http\Middleware\VerifyWebSocketAccess::class, // We'll create this
+        // \App\Http\Middleware\VerifyWebSocketAccess::class, // We'll create this
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Session\Middleware\StartSession::class,
         // Authorize::class,
         // 'ws.dashboard',
     ],
