@@ -74,6 +74,7 @@ return [
      */
     'middleware' => [
         'web',
+        \App\Http\Middleware\VerifyWebSocketAccess::class, // We'll create this
         // Authorize::class,
         // 'ws.dashboard',
     ],
