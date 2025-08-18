@@ -42,7 +42,7 @@ return [
                 'host' => env('PUSHER_HOST', '127.0.0.1'),
                 'port' => env('PUSHER_PORT', 443),
                 'scheme' => env('PUSHER_SCHEME', 'https'),
-                'path' => '/app', // 👈 important to fix double slash issue
+                'path' => '', // 👈 important to fix double slash issue
             ],
         ],
 
