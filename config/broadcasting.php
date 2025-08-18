@@ -38,9 +38,11 @@ return [
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'useTLS' => true,
-                'host' => 'guestly.space',
-                'port' => 443,
-                'scheme' => 'https',
+                'encrypted' => true,
+                'host' => env('PUSHER_HOST', '127.0.0.1'),
+                'port' => env('PUSHER_PORT', 443),
+                'scheme' => env('PUSHER_SCHEME', 'https'),
+                'path' => '/app', // 👈 important to fix double slash issue
             ],
         ],
 
