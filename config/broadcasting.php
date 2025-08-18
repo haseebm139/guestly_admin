@@ -40,7 +40,7 @@ return [
                 'encrypted' => true,
                 'useTLS' => true,
                 'host' => env('PUSHER_HOST','guestly.space'),
-                'port' => env('PUSHER_PORT', 6001),
+                'port' => env('PUSHER_PORT', 443),
                 'scheme' => env('PUSHER_SCHEME', 'https'),
             ],
         ],
