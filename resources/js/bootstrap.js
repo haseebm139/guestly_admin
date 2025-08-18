@@ -8,7 +8,7 @@ window.Echo = new Echo({
     key: import.meta.env.VITE_PUSHER_APP_KEY,
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
     wsHost: window.location.hostname,
-    wsPath: "/app",   // 👈 THIS is what was missing
+    wsPath: "app",   // 👈 THIS is what was missing
     wsPort: 443,
     wssPort: 443,
     forceTLS: true,
