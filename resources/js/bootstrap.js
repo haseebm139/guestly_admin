@@ -7,17 +7,12 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: import.meta.env.VITE_PUSHER_APP_KEY,
     wsHost: window.location.hostname,
-    wsPort: 443,
-    wssPort: 443,
+    wsPort: 6001,  // Match your WebSocket server port
+    wssPort: 443,  // For secure connections
     forceTLS: true,
     enabledTransports: ['ws', 'wss'],
     disableStats: true,
     authEndpoint: '/broadcasting/auth',
-    auth: {
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        },
-    },
 });
 
 
