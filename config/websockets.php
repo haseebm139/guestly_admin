@@ -27,8 +27,10 @@ return [
             'name' => env('APP_NAME','Laravel'),
             'key' => env('PUSHER_APP_KEY','local'),
             'secret' => env('PUSHER_APP_SECRET','local'),
-            'enable_client_messages' => true,
+            'enable_client_messages' => false,
             'enable_statistics' => true,
+
+
         ],
     ],
 
@@ -46,14 +48,8 @@ return [
      * Leave this empty if you want to accept requests from all hosts.
      */
     'allowed_origins' => [
-    'https://guestly.space',
-    'https://www.guestly.space',
-    'http://localhost',      // For local development
-    'http://127.0.0.1',     // For direct testing
+        //
     ],
-    'allowed_origins_patterns' => [],
-    'allowed_headers' => ['*'],
-    'allowed_methods' => ['GET', 'POST'],
 
     /*
      * The maximum request size in kilobytes that is allowed for an incoming WebSocket request.
@@ -74,9 +70,6 @@ return [
      */
     'middleware' => [
         'web',
-        // \App\Http\Middleware\VerifyWebSocketAccess::class, // We'll create this
-        \App\Http\Middleware\EncryptCookies::class,
-        \Illuminate\Session\Middleware\StartSession::class,
         // Authorize::class,
         // 'ws.dashboard',
     ],
