@@ -1,22 +1,52 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {!! printHtmlAttributes('html') !!}>
+<html
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    {!! printHtmlAttributes('html') !!}
+>
 <!--begin::Head-->
 
 <head>
     <base href="" />
     <title>{{ config('app.name', 'Laravel') }}</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
     <meta charset="utf-8" />
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content="" />
-    <link rel="canonical" href="" />
+    <meta
+        name="description"
+        content=""
+    />
+    <meta
+        name="keywords"
+        content=""
+    />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    />
+    <meta
+        property="og:locale"
+        content="en_US"
+    />
+    <meta
+        property="og:type"
+        content="article"
+    />
+    <meta
+        property="og:title"
+        content=""
+    />
+    <link
+        rel="canonical"
+        href=""
+    />
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.css">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@4.3.0/dist/jquery.bootstrap-touchspin.min.css"
+    >
 
     <style>
         [data-kt-app-layout=dark-sidebar] .app-sidebar {
@@ -96,7 +126,10 @@
 
 <!--begin::Body-->
 
-<body {!! printHtmlClasses('body') !!} {!! printHtmlAttributes('body') !!}>
+<body
+    {!! printHtmlClasses('body') !!}
+    {!! printHtmlAttributes('body') !!}
+>
 
     @include('partials/theme-mode/_init')
 
