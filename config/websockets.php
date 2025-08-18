@@ -72,8 +72,8 @@ return [
      */
     'middleware' => [
         'web',
-        Authorize::class,
-        'ws.dashboard',
+        // Authorize::class,
+        // 'ws.dashboard',
     ],
 
     'statistics' => [
