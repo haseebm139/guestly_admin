@@ -41,7 +41,9 @@
         rel="canonical"
         href=""
     />
-    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    @push('scripts')
+        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    @endpush
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
     <link
         rel="stylesheet"
