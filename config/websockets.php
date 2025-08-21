@@ -23,13 +23,13 @@ return [
      */
     'apps' => [
         [
-            'id' => env('PUSHER_APP_ID','local'),
-            'name' => env('APP_NAME','Laravel'),
-            'key' => env('PUSHER_APP_KEY','local'),
-            'secret' => env('PUSHER_APP_SECRET','local'),
+            'id' => env('PUSHER_APP_ID','guestly'),
+            'name' => env('APP_NAME','Guestly'),
+            'key' => env('PUSHER_APP_KEY','guestlykey'),
+            'secret' => env('PUSHER_APP_SECRET','guestlysecret'),
             'enable_client_messages' => false,
             'enable_statistics' => true,
-
+            'allowed_origins' => ['https://guestly.space'],
 
         ],
     ],

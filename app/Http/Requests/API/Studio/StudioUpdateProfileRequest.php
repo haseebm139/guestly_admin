@@ -24,6 +24,7 @@ class StudioUpdateProfileRequest extends FormRequest
     {
         return [
             'studio_name' => 'nullable|string|max:255',
+            'bio' => 'nullable|string',
             'business_email' => 'nullable|email',
             'studio_address' => 'nullable|string',
             'address' => 'nullable|string',

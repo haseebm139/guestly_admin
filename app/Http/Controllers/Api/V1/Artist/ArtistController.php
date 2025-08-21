@@ -21,18 +21,14 @@ class ArtistController extends BaseController
 
     public function update(ArtistUpdateProfileRequest $request)
     {
-        $artist = auth()->user();
-        $data = $request->validated();
-        $updatedArtist = $this->service->updateProfile($artist->id, $data);
-        if (!$updatedArtist) {
-            return $this->sendError('Artist not found or update failed', 404);
-        }
-
-        return $this->sendResponse(
-            $updatedArtist,
-            'Artist profile updated successfully.'
-        );
         try {
+            $artist = auth()->user();
+            $updatedArtist = $this->service->updateProfile($artist->id, $request->validated());
+            if (!$updatedArtist) {
+                return $this->sendError('Artist not found or update failed', 404);
+            }
+
+            return $this->sendResponse($updatedArtist,'Artist profile updated successfully.');
         }catch (\Throwable $th) {
             return $this->sendError('Something went wrong while updating the profile', 500);
 
