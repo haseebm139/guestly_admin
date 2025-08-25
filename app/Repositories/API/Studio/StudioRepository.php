@@ -84,7 +84,8 @@ class StudioRepository implements StudioRepositoryInterface
               });
         })
         ->with(['studio:id,studio_name', 'artist:id,name,avatar']) // adjust relationships
-        ->latest();
+        ->orderBy('start_date', 'asc')
+        ->get();
 
         $data['guests'] = $query->paginate($perPage);
 
