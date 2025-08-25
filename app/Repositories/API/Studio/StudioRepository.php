@@ -49,27 +49,28 @@ class StudioRepository implements StudioRepositoryInterface
     }
     public function getGuests(int $userId, string $range, int $perPage){
         $today = now();
-        $startDate = $today->copy()->startOfDay();
-        $endDate = $today->copy()->endOfDay();
 
         switch ($range) {
             case 'week':
-                $startDate = now()->startOfWeek();
-                $endDate = now()->endOfWeek();
-                break;
-            case '15days':
-                $startDate = now()->subDays(7);
-                $endDate = now()->addDays(7);
-                break;
-            case 'month':
-                $startDate = now()->startOfMonth();
-                $endDate = now()->endOfMonth();
-                break;
-            case 'today':
-            default:
-                $startDate = $startDate;
-                $endDate = $endDate;
-                break;
+            $startDate = $today->copy()->startOfWeek();
+            $endDate   = $today->copy()->endOfWeek();
+            break;
+
+        case '15days':
+            $startDate = $today->copy()->subDays(7);
+            $endDate   = $today->copy()->addDays(7);
+            break;
+
+        case 'month':
+            $startDate = $today->copy()->startOfMonth();
+            $endDate   = $today->copy()->endOfMonth();
+            break;
+
+        case 'today':
+        default:
+            $startDate = $today->copy()->startOfDay();
+            $endDate   = $today->copy()->endOfDay();
+            break;
         }
 
         $query = SpotBooking::where('studio_id', $userId)
