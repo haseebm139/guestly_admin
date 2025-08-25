@@ -114,4 +114,23 @@ class StudioController extends BaseController
 
         return $this->sendResponse($data, 'Guest artist requests retrieved successfully.');
     }
+
+    public function artist(Request $request)
+    {
+
+        $filters = $request->only([
+            'search',
+            'name',
+            'city',
+            'country',
+            'language',
+            'latitude',
+            'longitude',
+            'radius',
+            'per_page'
+        ]);
+
+        $artist = $this->service->getArtist($filters);
+        return $this->sendResponse($artist, 'Artist profile fetched successfully.');
+    }
 }

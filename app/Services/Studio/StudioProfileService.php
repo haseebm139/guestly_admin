@@ -3,7 +3,7 @@ namespace App\Services\Studio;
 
 use App\Repositories\API\Studio\StudioRepositoryInterface;
 use App\Services\Studio\StudioImageService;
-
+use App\Models\User;
 class StudioProfileService
 {
     protected $repo;
@@ -59,6 +59,21 @@ class StudioProfileService
     public function getGuestRequests(int $studioId, string $status, int $perPage)
     {
         return $this->repo->getRequestsByStatus($studioId, $status, $perPage);
+    }
+
+    public function getArtist($filters)
+    {
+        $query = User::query()->where('user_type', 'artist');
+        if (!empty($filters['search'])) {
+        $query->where(function($q) use ($filters) {
+            $q->where('name', 'like', "%{$filters['search']}%")
+              ->orWhere('last_name', 'like', "%{$filters['search']}%")
+              ->orWhere('email', 'like', "%{$filters['search']}%");
+        });
+    }
+        // 🔹 Pagination
+        $perPage = $filters['per_page'] ?? 15;
+        return $query->paginate($perPage);
     }
 
 }

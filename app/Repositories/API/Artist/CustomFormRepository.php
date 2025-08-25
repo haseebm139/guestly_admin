@@ -30,7 +30,8 @@ class CustomFormRepository implements CustomFormRepositoryInterface
 
     public function getById($id)
     {
-        return CustomForm::with('fields')->findOrFail($id);
+
+        return CustomForm::with('fields')->find($id);
     }
 
     public function update($id, array $data)

@@ -26,6 +26,7 @@ Route::middleware(['auth:sanctum', 'studio'])->group(function () {
         Route::get('/guests', 'getGuests');
         Route::get('/upcomming/guests', 'upcommingGuests');
         Route::get('/guest-requests', 'requestGuests');
+        Route::get('/artist', 'artist');
     });
 
     Route::controller(BoostAdController::class)->group(function () {

@@ -71,13 +71,16 @@ class CustomFormController extends BaseController
     public function destroy($id)
     {
 
+        $form = $this->formRepo->getById($id);
+
+        if (!$form) {
+            return $this->sendError('Form not found.', 404);
+        }
         try {
-
-            $form = $this->formRepo->getById($id);
-
 
             $this->formRepo->delete($id);
             return $this->sendResponse([], 'Form deleted successfully.');
+
         } catch (\Exception $e) {
             return $this->sendError('Something went wrong.', 500);
         }

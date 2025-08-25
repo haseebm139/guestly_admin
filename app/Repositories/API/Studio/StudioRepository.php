@@ -131,4 +131,6 @@ class StudioRepository implements StudioRepositoryInterface
             ->orderByDesc('start_date')
             ->paginate($perPage);
     }
+
+
 }
