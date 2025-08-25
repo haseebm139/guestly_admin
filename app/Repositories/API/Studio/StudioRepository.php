@@ -49,8 +49,8 @@ class StudioRepository implements StudioRepositoryInterface
     }
     public function getGuests(int $userId, string $range, int $perPage){
         $today = now();
-        $startDate = $today;
-        $endDate = $today;
+        $startDate = $today->copy()->startOfDay();
+        $endDate = $today->copy()->endOfDay();
 
         switch ($range) {
             case 'week':
@@ -67,8 +67,8 @@ class StudioRepository implements StudioRepositoryInterface
                 break;
             case 'today':
             default:
-                $startDate = $today;
-                $endDate = $today;
+                $startDate = $startDate;
+                $endDate = $endDate;
                 break;
         }
 
