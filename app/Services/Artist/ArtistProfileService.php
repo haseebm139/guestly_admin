@@ -69,7 +69,7 @@ class ArtistProfileService
                     $query->where('artist_id', $artistId);
                 }
             ])
-            ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path']);
+            ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path','designSpecialties:id,name']);
 
         // If latitude & longitude are provided, calculate distance
         if ($latitude && $longitude) {

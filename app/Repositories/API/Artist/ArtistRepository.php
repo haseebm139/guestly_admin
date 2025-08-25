@@ -67,6 +67,7 @@ class ArtistRepository implements ArtistRepositoryInterface
             ->with(['supplies:id,name',
                     'stationAmenities:id,name',
                     'studioImages:id,user_id,image_path',
+                    'designSpecialties:id,name',
                     'tattooStyles:id,name'])
             ->withCount([
             'favoritedBy as is_favorite' => function ($q) use ($artistId) {
