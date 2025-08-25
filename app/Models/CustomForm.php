@@ -4,13 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Str;
 class CustomForm extends Model
 {
 
     use HasFactory;
 
     protected $guarded = [];
+
+    protected static function booted()
+    {
+        static::creating(function ($form) {
+            if (empty($form->share_token)) {
+                do {
+                    $token = Str::random(8); // ✅ secure random string
+                } while (static::where('share_token', $token)->exists());
+
+                $form->share_token = $token;
+            }
+        });
+    }
     public function fields()
     {
         return $this->hasMany(CustomFormField::class)->orderBy('order', 'asc');

@@ -22,9 +22,9 @@ class CustomFormController extends BaseController
         $validated = $request->validated();
         $validated['artist_id'] = auth()->id();
 
+        $form = $this->formRepo->create($validated);
+        return $this->sendResponse($form, 'Form created successfully.', 201);
         try {
-            $form = $this->formRepo->create($validated);
-            return $this->sendResponse($form, 'Form created successfully.', 201);
         } catch (\Throwable $e) {
             return $this->sendError('Something went wrong.', 500);
         }
