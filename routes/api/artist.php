@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\V1\Artist\ArtistController;
 use App\Http\Controllers\Api\V1\Artist\CustomFormController;
+use App\Http\Controllers\Api\V1\Artist\FlashTattooController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,6 +35,12 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
         Route::delete('/forms/destroy/{id}', 'destroy');
     });
 
+    Route::prefix('flash-tattoos')->group(function () {
+        Route::get('/', [FlashTattooController::class, 'index']);   // list with search & pagination
+        Route::post('/', [FlashTattooController::class, 'store']);  // create
+        Route::put('/{id}', [FlashTattooController::class, 'update']); // update
+        Route::delete('/{id}', [FlashTattooController::class, 'destroy']); // delete
+    });
 
 
 

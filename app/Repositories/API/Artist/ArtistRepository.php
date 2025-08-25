@@ -54,6 +54,7 @@ class ArtistRepository implements ArtistRepositoryInterface
                 'supplies:id,name',
                 'stationAmenities:id,name',
                 'studioImages:id,user_id,image_path',
+                'designSpecialties:id,name',
             ])
             ->paginate($perPage);
     }
