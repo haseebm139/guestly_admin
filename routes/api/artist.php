@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
     Route::prefix('flash-tattoos')->group(function () {
         Route::get('/', [FlashTattooController::class, 'index']);   // list with search & pagination
         Route::post('/', [FlashTattooController::class, 'store']);  // create
-        Route::put('/{id}', [FlashTattooController::class, 'update']); // update
+        Route::post('update/{id}', [FlashTattooController::class, 'update']); // update
         Route::delete('/{id}', [FlashTattooController::class, 'destroy']); // delete
     });
 

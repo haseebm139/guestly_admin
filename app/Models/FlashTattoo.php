@@ -16,4 +16,6 @@ class FlashTattoo extends Model
     {
         return $this->belongsTo(User::class, 'artist_id');
     }
+
+
 }
