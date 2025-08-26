@@ -31,6 +31,8 @@ class CardController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'payment_type' =>'required|in:paypal,visa,master,stripe',
+            'is_selected' => 'boolean',
             'card_number' => 'required',
             'expiry_date' => 'required|date_format:m/y',
             'cvc' => 'required|digits:3',
@@ -42,6 +44,8 @@ class CardController extends BaseController
 
         try {
             $data['user_id'] = Auth::id();
+            $data['is_selected'] = $request->is_selected;
+            $data['payment_type'] = $request->payment_type;
             $data['card_number'] = $request->card_number;
             $data['expiry_date'] = $request->expiry_date;
             $data['cvc'] = $request->cvc;
@@ -76,6 +80,8 @@ class CardController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            'payment_type' =>'sometimes|in:paypal,visa,master,stripe',
+            'is_selected' => 'boolean',
             'card_number' => 'sometimes',
             'expiry_date' => 'sometimes|date_format:m/y',
             'cvc' => 'sometimes|digits:3',
@@ -116,4 +122,6 @@ class CardController extends BaseController
              return $this->sendError('Something went wrong.');
         }
     }
+
+    
 }

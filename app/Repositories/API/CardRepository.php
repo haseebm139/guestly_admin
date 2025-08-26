@@ -16,7 +16,10 @@ class CardRepository implements CardRepositoryInterface
 
     public function store(array $data)
     {
-
+        if (!empty($data['is_selected']) && $data['is_selected']) {
+            // Unselect all other cards for this user
+            Card::where('user_id', $data['user_id'])->update(['is_selected' => false]);
+        }
         return Card::create($data);
     }
 
@@ -24,6 +27,10 @@ class CardRepository implements CardRepositoryInterface
     {
         $card = $this->find($id, $userId);
         if ($card) {
+            if (!empty($data['is_selected']) && $data['is_selected']) {
+                // Unselect all other cards for this user
+                Card::where('user_id', $userId)->update(['is_selected' => false]);
+            }
             $card->update($data);
         }
         return $card;

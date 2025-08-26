@@ -58,6 +58,9 @@ Route::prefix('v1')->group(function () {
             Route::post('plans/{planId}/subscribe', 'buyPlan');
         });
         Route::apiResource('cards', CardController::class);
+        Route::controller(CardController::class)->group(function () {
+            Route::get('cards/change_status', 'changeStatus');
+        });
         Route::controller(SpotBookingController::class)->prefix('bookings')->group(function () {
 
             // Artist books a new spot
