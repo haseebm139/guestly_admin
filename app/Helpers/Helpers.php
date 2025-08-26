@@ -481,3 +481,120 @@ if (!function_exists('calculate_duration_days')) {
         };
     }
 }
+
+if (!function_exists('renderField')) {
+    function renderField($field)
+    {
+        $html = '';
+
+        switch ($field['type']) {
+
+            case 'email':
+                $html .='<div class="col-md-6">
+                            <div class="form-floating">
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="'.$field['name'].'"
+                                    name="'.$field['name'].'"
+                                    placeholder="'.$field['label'].'"
+                                    '.($field['is_required'] ? 'required' : '').'
+                                >
+                                <label for="firstName">'.$field['label'].'</label>
+                            </div>
+                        </div>';
+                break;
+            case 'text':
+                $html .='<div class="col-md-6">
+                            <div class="form-floating">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="'.$field['name'].'"
+                                    name="'.$field['name'].'"
+                                    placeholder="'.$field['label'].'"
+                                    '.($field['is_required'] ? 'required' : '').'
+                                >
+                                <label for="firstName">'.$field['label'].'</label>
+                            </div>
+                        </div>';
+                break;
+            case 'datatime':
+                $html .='<div class="col-md-6">
+                            <div class="form-floating">
+                                <input
+                                    type="datetime"
+                                    class="form-control"
+                                    id="'.$field['name'].'"
+                                    name="'.$field['name'].'"
+                                    placeholder="'.$field['label'].'"
+                                    '.($field['is_required'] ? 'required' : '').'
+                                >
+                                <label for="firstName">'.$field['label'].'</label>
+                            </div>
+                        </div>';
+                break;
+            case 'date':
+                $html .='<div class="col-md-6">
+                            <div class="form-floating">
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="'.$field['name'].'"
+                                    name="'.$field['name'].'"
+                                    placeholder="'.$field['label'].'"
+                                    '.($field['is_required'] ? 'required' : '').'
+                                >
+                                <label for="firstName">'.$field['label'].'</label>
+                            </div>
+                        </div>';
+                break;
+                case 'textarea':
+                $html .= '
+                <div class="form-floating">
+                    <textarea class="form-control"
+                              id="'.$field['name'].'"
+                              name="'.$field['name'].'"
+                              placeholder="'.$field['label'].'"
+                              style="height:120px"
+                              '.($field['is_required'] ? 'required' : '').'></textarea>
+                    <label for="'.$field['name'].'">'.$field['label'].'</label>
+                </div>';
+                break;
+
+            case 'dropdown':
+
+                $cleanString = trim($field['options'], '"');
+                $options = json_decode($cleanString, true);
+
+                $html .= '
+                <div class="form-floating">
+                    <select class="form-select" id="'.$field['name'].'" name="'.$field['name'].'" '.($field['is_required'] ? 'required' : '').'>
+                        <option value="" disabled selected>Select an option</option>';
+                        foreach ($options  as $option) {
+                            $html .= '<option value="'.$option.'">'.$option.'</option>';
+                        }
+                $html .= '</select>
+                    <label for="'.$field['name'].'">'.$field['label'].'</label>
+                </div>';
+                break;
+
+            case 'multi_select':
+                $cleanString = trim($field['options'], '"');
+                $options = json_decode($cleanString, true);
+                $html .= '
+                <div class="form-group">
+                    <label for="'.$field['name'].'" class="form-label">'.$field['label'].'</label>
+                    <select class="form-select select2" id="'.$field['name'].'" name="'.$field['name'].'[]" multiple '.($field['is_required'] ? 'required' : '').'>';
+                        foreach ($options as $option) {
+                            $html .= '<option value="'.$option.'">'.$option.'</option>';
+                        }
+                $html .= '</select>
+                </div>';
+                break;
+        }
+
+        return $html;
+    }
+}
+

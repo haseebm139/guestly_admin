@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('custom_form_id')->constrained('custom_forms')->onDelete('cascade');
             $table->string('label'); // e.g. "Full Name"
-            $table->enum('type', ['text', 'textarea', 'dropdown', 'multi_select']);
+            $table->enum('type', ['text', 'email', 'phone', 'textarea', 'dropdown', 'multi_select']);
             $table->json('options')->nullable(); // for dropdown/multiselect
             $table->tinyInteger('is_required')->default(1);
             $table->integer('order')->default(0); // for sorting

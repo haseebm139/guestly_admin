@@ -16,6 +16,8 @@ use App\Http\Controllers\Apps\Admin\StationAmenityController;
 use App\Http\Controllers\Apps\Admin\TattooStyleController;
 use App\Http\Controllers\Apps\Admin\DesignSpecialityController;
 
+
+use App\Http\Controllers\Apps\Client\ClientController;
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Artisan;
@@ -39,7 +41,7 @@ Route::get('/test-email', function () {
 
     return 'Email sent!';
 });
-
+Route::get('booking/{artist_name}/{share_token}', [ClientController::class, 'index'])->name('client.index');
 Route::middleware(['auth', 'verified'])->prefix('admin1')->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {

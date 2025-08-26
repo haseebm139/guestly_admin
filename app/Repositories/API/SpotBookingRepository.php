@@ -31,8 +31,8 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
         // If current user is a studio, return bookings for their studio.
         if ($user->user_type === 'studio') {
             return SpotBooking::where('studio_id', $user->id)
-                 ->with(['studio:id,studio_name,avatar',
-                    'artist:id,name,avatar', // only load artist.id
+                 ->with(['studio:id,studio_name,avatar,country,city,phone',
+                    'artist:id,name,avatar,country,city,phone', // only load artist.id
                     'artist.portfolioFile']) // load artist's portfolio files])
                 ->latest()
                 ->paginate($perPage);
@@ -40,8 +40,8 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
 
         // Else treat as artist.
         return SpotBooking::where('artist_id', $user->id)
-            ->with(['studio:id,studio_name',
-        'artist:id,name,avatar', // only load artist.id
+            ->with(['studio:id,studio_name,avatar,country,city,phone',
+        'artist:id,name,avatar,country,city,phone', // only load artist.id
         'artist.portfolioFile']) // load artist's portfolio files])
             ->latest()
             ->paginate($perPage);

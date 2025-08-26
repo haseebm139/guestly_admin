@@ -26,7 +26,7 @@ class UpdateCustomFormRequest extends FormRequest
             'title' => 'nullable|string|max:255',
             'fields' => 'nullable|array|min:1',
             'fields.*.label' => 'nullable|string|max:255',
-            'fields.*.type' => 'nullable|in:text,textarea,dropdown,multi_select',
+            'fields.*.type' => 'nullable|in:text,email,phone,textarea,dropdown,multi_select',
             'fields.*.options' => 'nullable|array',
             'fields.*.is_required' => 'nullable|integer|in:0,1',
             'fields.*.order' => 'nullable|integer',
