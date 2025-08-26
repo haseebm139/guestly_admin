@@ -84,6 +84,20 @@ class ArtistController extends BaseController
         }
     }
 
+    public function bookedStudios(Request $request)
+    {
+
+        $perPage = $request->get('per_page', 10);
+        $studios = $this->service->bookedStudios($perPage);
+        return $studios
+            ? $this->sendResponse($studios, 'Booked Studios fetched successfully.')
+            : $this->sendError('No booked studios found.',$errorMessages = [], 404);
+        try {
+        } catch (\Throwable $th) {
+            return $this->sendError('Failed to fetch booked studios.',$errorMessages = [], 500);
+        }
+    }
+
     public function studio(int $id)
     {
 

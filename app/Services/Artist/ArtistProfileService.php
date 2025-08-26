@@ -94,6 +94,12 @@ class ArtistProfileService
         return $query->paginate($perPage);
     }
 
+    public function bookedStudios(int $perPage = 10)
+    {
+
+        return $this->repo->bookedStudios($perPage);
+
+    }
     public function getStudio(int $id)
     {
 

@@ -24,6 +24,8 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
         Route::post('/profile/update-image', 'updateImages');
         // List of all studios
         Route::get('studios','studios');
+        Route::get('booked_studios','bookedStudios');
+
         Route::get('studio/{id}','studio');
         Route::post('/studios/favorite','toggle');
     });

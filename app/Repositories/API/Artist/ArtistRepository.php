@@ -2,6 +2,8 @@
 namespace App\Repositories\API\Artist;
 
 use App\Models\User;
+use App\Models\SpotBooking;
+
 use Illuminate\Support\Arr;
 
 
@@ -57,6 +59,28 @@ class ArtistRepository implements ArtistRepositoryInterface
                 'designSpecialties:id,name',
             ])
             ->paginate($perPage);
+    }
+
+
+
+    public function bookedStudios(int $perPage = 10)
+    {
+        $artistId = auth()->id();
+        // $studio_id = SpotBooking::where('artist_id', $artistId)->pluck('studio_id');
+        $studioIds = SpotBooking::where('artist_id', $artistId)
+                ->where('status', 'approved')  // only approved bookings
+                ->whereDate('end_date', '>=', now()) // ongoing/future bookings
+                ->pluck('studio_id')
+                ->unique()
+                ->toArray();
+        $studio_id = array_values($studioIds);
+        return User::where('user_type', 'studio')->whereIn('id', $studio_id)
+            ->with([
+                'supplies:id,name',
+                'stationAmenities:id,name',
+                'studioImages:id,user_id,image_path',
+                'designSpecialties:id,name',
+            ])->paginate($perPage);
     }
 
     public function findStudio(int $id)
