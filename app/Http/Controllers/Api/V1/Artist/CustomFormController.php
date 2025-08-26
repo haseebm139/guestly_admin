@@ -107,6 +107,7 @@ class CustomFormController extends BaseController
                 'booking_date' => $request->booking_date,
                 'booking_time' => $request->booking_time,
                 'booking_url' => "booking/".auth()->user()->name."/",
+                'status' => 'creating',
             ]);
             return $this->sendResponse($data, 'Booking URL created successfully.');
         } catch (\Exception $e) {

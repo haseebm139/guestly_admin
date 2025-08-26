@@ -36,7 +36,7 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
         Route::post('/forms/update/{id}', 'update');
         Route::delete('/forms/destroy/{id}', 'destroy');
 
-        Route::post('/create/bookingUrl', 'bookingUrl');
+        Route::post('/create/booking-url', 'bookingUrl');
 
     });
 
