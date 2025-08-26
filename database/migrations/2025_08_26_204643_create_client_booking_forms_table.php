@@ -27,9 +27,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->onDelete('cascade');
-
+            $table->foreignId('custom_form_id')->nullable()->constrained('custom_forms')->onDelete('cascade');
             $table->date('booking_date')->nullable();
             $table->time('booking_time')->nullable();
+            $table->string('booking_url')->nullable();
 
             $table->string('shared_code')->unique(); // instead of full link
 

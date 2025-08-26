@@ -35,6 +35,9 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
         Route::get('forms/{id}','show');
         Route::post('/forms/update/{id}', 'update');
         Route::delete('/forms/destroy/{id}', 'destroy');
+
+        Route::post('/create/bookingUrl', 'bookingUrl');
+
     });
 
     Route::prefix('flash-tattoos')->group(function () {

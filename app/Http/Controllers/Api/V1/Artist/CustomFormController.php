@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Repositories\API\Artist\CustomFormRepositoryInterface;
 use App\Http\Requests\API\Artist\StoreCustomFormRequest;
 use App\Http\Requests\API\Artist\UpdateCustomFormRequest;
-
+use Illuminate\Support\Facades\Validator;
+use App\Models\ClientBookingForm;
 use App\Http\Controllers\Api\BaseController as BaseController;
 class CustomFormController extends BaseController
 {
@@ -86,7 +87,32 @@ class CustomFormController extends BaseController
         }
     }
 
+    public function bookingUrl(Request $request){
+        $validator = Validator::make($request->all(), [
+            'studio_id'    => 'required|exists:users,id',
+            'custom_form_id' => 'required|exists:custom_forms,id',
+            'booking_date' => 'required|date|after_or_equal:today',
+            'booking_time' => 'required|date_format:H:i:s',
+        ]);
 
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors(), 400);
+        }
+
+        try {
+            $data = ClientBookingForm::create([
+                'artist_id' => auth()->id(),
+                'studio_id' => $request->studio_id,
+                'custom_form_id' => $request->custom_form_id,
+                'booking_date' => $request->booking_date,
+                'booking_time' => $request->booking_time,
+                'booking_url' => "booking/".auth()->user()->name."/",
+            ]);
+            return $this->sendResponse($data, 'Booking URL created successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Something went wrong.', 500);
+        }
+    }
 
 
 }
