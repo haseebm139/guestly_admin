@@ -483,118 +483,96 @@ if (!function_exists('calculate_duration_days')) {
 }
 
 if (!function_exists('renderField')) {
-    function renderField($field)
+    function renderField($field, $value = null)
     {
         $html = '';
-
-        switch ($field['type']) {
-
+        $field_name = \Illuminate\Support\Str::snake($field->label);
+        $name = $field_name.'|'.$field->id;
+        switch ($field->type) {
             case 'email':
-                $html .='<div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="'.$field['name'].'"
-                                    name="'.$field['name'].'"
-                                    placeholder="'.$field['label'].'"
-                                    '.($field['is_required'] ? 'required' : '').'
-                                >
-                                <label for="firstName">'.$field['label'].'</label>
-                            </div>
-                        </div>';
-                break;
             case 'text':
-                $html .='<div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="'.$field['name'].'"
-                                    name="'.$field['name'].'"
-                                    placeholder="'.$field['label'].'"
-                                    '.($field['is_required'] ? 'required' : '').'
-                                >
-                                <label for="firstName">'.$field['label'].'</label>
-                            </div>
-                        </div>';
+                $html .= '<div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="'.$field->type.'" class="form-control"
+                               id="'.$name.'" name="'.$name.'"
+                               placeholder="'.$field->label.'"
+                               value="'.($value ?? '').'" '.($field->is_required ? 'required' : '').'>
+                        <label for="'.$name.'">'.$field->label.'</label>
+                    </div>
+                </div>';
                 break;
-            case 'datatime':
-                $html .='<div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="datetime"
-                                    class="form-control"
-                                    id="'.$field['name'].'"
-                                    name="'.$field['name'].'"
-                                    placeholder="'.$field['label'].'"
-                                    '.($field['is_required'] ? 'required' : '').'
-                                >
-                                <label for="firstName">'.$field['label'].'</label>
-                            </div>
-                        </div>';
-                break;
+
             case 'date':
-                $html .='<div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="date"
-                                    class="form-control"
-                                    id="'.$field['name'].'"
-                                    name="'.$field['name'].'"
-                                    placeholder="'.$field['label'].'"
-                                    '.($field['is_required'] ? 'required' : '').'
-                                >
-                                <label for="firstName">'.$field['label'].'</label>
-                            </div>
-                        </div>';
+                $html .= '<div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="date" class="form-control"
+                               id="'.$name.'" name="'.$name.'"
+                               value="'.($value ? \Carbon\Carbon::parse($value)->format('Y-m-d') : '').'"
+                               placeholder="'.$field->label.'" '.($field->is_required ? 'required' : '').'>
+                        <label for="'.$name.'">'.$field->label.'</label>
+                    </div>
+                </div>';
                 break;
-                case 'textarea':
-                $html .= '
-                <div class="form-floating">
-                    <textarea class="form-control"
-                              id="'.$field['name'].'"
-                              name="'.$field['name'].'"
-                              placeholder="'.$field['label'].'"
-                              style="height:120px"
-                              '.($field['is_required'] ? 'required' : '').'></textarea>
-                    <label for="'.$field['name'].'">'.$field['label'].'</label>
+
+            case 'datetime':
+                $html .= '<div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="datetime-local" class="form-control"
+                               id="'.$name.'" name="'.$name.'"
+                               value="'.($value ? \Carbon\Carbon::parse($value)->format('Y-m-d\TH:i') : '').'"
+                               placeholder="'.$field->label.'" '.($field->is_required ? 'required' : '').'>
+                        <label for="'.$name.'">'.$field->label.'</label>
+                    </div>
+                </div>';
+                break;
+
+            case 'textarea':
+                $html .= '<div class="form-floating">
+                    <textarea class="form-control" id="'.$name.'" name="'.$name.'"
+                              placeholder="'.$field->label.'" style="height:120px" '.($field->is_required ? 'required' : '').'>'.($value ?? '').'</textarea>
+                    <label for="'.$name.'">'.$field->label.'</label>
                 </div>';
                 break;
 
             case 'dropdown':
-
-                $cleanString = trim($field['options'], '"');
-                $options = json_decode($cleanString, true);
-
-                $html .= '
-                <div class="form-floating">
-                    <select class="form-select" id="'.$field['name'].'" name="'.$field['name'].'" '.($field['is_required'] ? 'required' : '').'>
-                        <option value="" disabled selected>Select an option</option>';
-                        foreach ($options  as $option) {
-                            $html .= '<option value="'.$option.'">'.$option.'</option>';
-                        }
-                $html .= '</select>
-                    <label for="'.$field['name'].'">'.$field['label'].'</label>
-                </div>';
-                break;
-
             case 'multi_select':
-                $cleanString = trim($field['options'], '"');
-                $options = json_decode($cleanString, true);
-                $html .= '
-                <div class="form-group">
-                    <label for="'.$field['name'].'" class="form-label">'.$field['label'].'</label>
-                    <select class="form-select select2" id="'.$field['name'].'" name="'.$field['name'].'[]" multiple '.($field['is_required'] ? 'required' : '').'>';
-                        foreach ($options as $option) {
-                            $html .= '<option value="'.$option.'">'.$option.'</option>';
+                $options = json_decode($field->options, true) ?? [];
+                $isMulti = $field->type === 'multi_select';
+
+                // Use snake_case for name/id
+                $fieldBaseName = \Illuminate\Support\Str::snake($field->label);
+                $baseName = $fieldBaseName.'|'.$field->id;
+                $nameAttr = $isMulti ? $baseName.'[]' : $baseName;
+                $idAttr = $baseName;
+
+                $html .= '<div class="form-floating mb-3">
+                            <select class="form-select'.($isMulti?' select2':'').'"
+                                    id="'.$idAttr.'" name="'.$nameAttr.'" '.($field->is_required ? 'required' : '').($isMulti?' multiple':'').'>';
+
+                if (!$isMulti) {
+                    $html .= '<option value="" disabled selected>Select an option</option>';
+                }
+
+                foreach ($options as $option) {
+                    $selected = '';
+                    if ($value) {
+                        if ($isMulti && is_array($value) && in_array($option, $value)) {
+                            $selected = 'selected';
+                        } elseif (!$isMulti && $option == $value) {
+                            $selected = 'selected';
                         }
+                    }
+                    $html .= '<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
+                }
+
                 $html .= '</select>
-                </div>';
+                        <label for="'.$idAttr.'">'.$field->label.'</label>
+                        </div>';
                 break;
-        }
+            }
 
         return $html;
     }
 }
+
 

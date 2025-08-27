@@ -25,4 +25,26 @@ class ClientBookingForm extends Model
             }
         });
     }
+
+    public function studio()
+    {
+        return $this->belongsTo(User::class, 'studio_id');
+    }
+    public function customForm()
+    {
+        return $this->belongsTo(CustomForm::class, 'custom_form_id');
+    }
+
+    // Relation: Access the fields of the custom form
+    public function customFormFields()
+    {
+        return $this->customForm()->with('fields');
+    }
+
+    // Relation: Responses submitted by the client
+    public function responses()
+    {
+        return $this->hasMany(ClientBookingFormResponse::class, 'client_booking_form_id');
+    }
+
 }

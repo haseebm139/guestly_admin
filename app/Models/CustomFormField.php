@@ -20,4 +20,16 @@ class CustomFormField extends Model
     {
         return $this->belongsTo(CustomForm::class);
     }
+
+
+    public function customForm()
+    {
+        return $this->belongsTo(CustomForm::class, 'custom_form_id');
+    }
+
+    // Optional: Responses for this field
+    public function responses()
+    {
+        return $this->hasMany(ClientBookingFormResponse::class, 'custom_form_field_id');
+    }
 }

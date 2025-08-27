@@ -41,7 +41,8 @@ Route::get('/test-email', function () {
 
     return 'Email sent!';
 });
-Route::get('booking/{artist_name}/{share_token}', [ClientController::class, 'index'])->name('client.index');
+Route::get('booking/{artist_id}/{artist_name}/{shared_code}', [ClientController::class, 'index'])->name('client.index');
+Route::post('/booking/{shared_code}/submit', [ClientController::class, 'submitForm'])->name('client.booking.submit');
 Route::middleware(['auth', 'verified'])->prefix('admin1')->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {

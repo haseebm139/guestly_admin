@@ -113,129 +113,87 @@
                 <p class="text-muted">Fill Out Your Information</p>
             </div>
 
-            <form>
+            <form
+                action="{{ route('client.booking.submit', $data->shared_code ?? '') }}"
+                method="POST"
+            >
+                @csrf
                 <!-- THIS NEW DIV MAKES THE CONTENT SCROLLABLE -->
                 <div class="form-scroll-area">
                     <!-- Using Bootstrap Grid for a responsive 2-column layout -->
                     <div class="row g-3">
-                        @if (isset($clientForm) && isset($clientForm->fields) && count($clientForm->fields) > 0)
-                            @foreach ($clientForm->fields as $field)
-                                {!! renderField($field) !!}
+
+                        @if (isset($data) &&
+                                isset($data->customForm) &&
+                                isset($data->customForm->fields) &&
+                                count($data->customForm->fields) > 0)
+                            @php
+                                $bookingDate = isset($data->booking_date)
+                                    ? \Carbon\Carbon::parse($data->booking_date)->format('Y-m-d')
+                                    : '';
+                                $bookingTime = isset($data->booking_time)
+                                    ? \Carbon\Carbon::parse($data->booking_time)->format('H:i')
+                                    : '';
+                            @endphp
+                            <input
+                                type="hidden"
+                                name="shared_code"
+                                value="{{ $data->shared_code ?? '' }}"
+                            >
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="studio_name"
+                                        value="{{ $data->studio->studio_name ?? 'Studio' }}"
+                                        name="studio_name"
+                                        placeholder="Studio Name"
+                                        readonly
+                                    >
+                                    <label for="studio_name">Studio Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="booking_date"
+                                        value="{{ $bookingDate }}"
+                                        name="booking_date"
+                                        placeholder="Booking Date"
+                                        readonly
+                                    >
+                                    <label for="booking_date">Booking Date</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="booking_time"
+                                        value="{{ $bookingTime }}"
+                                        name="booking_time"
+                                        placeholder="Booking Date"
+                                        readonly
+                                    >
+                                    <label for="booking_time">Booking Time</label>
+                                </div>
+                            </div>
+                            @foreach ($data->customForm->fields as $field)
+                                @php
+                                    $value =
+                                        $data->responses->where('custom_form_field_id', $field->id)->first()->value ??
+                                        null;
+                                @endphp
+                                {!! renderField($field, $value) !!}
                             @endforeach
                         @endif
                     </div>
-                    {{-- <div class="row g-3">
-                        <!-- First Name Field -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="firstName"
-                                    name="first_name"
-                                    placeholder="First Name"
-                                    required
-                                >
-                                <label for="firstName">First Name</label>
-                            </div>
-                        </div>
 
-                        <!-- Last Name Field -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="lastName"
-                                    name="last_name"
-                                    placeholder="Last Name"
-                                    required
-                                >
-                                <label for="lastName">Last Name</label>
-                            </div>
-                        </div>
-
-                        <!-- Email Field -->
-                        <div class="col-6">
-                            <div class="form-floating">
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="email"
-                                    name="email"
-                                    placeholder="Email"
-                                    required
-                                >
-                                <label for="email">Email</label>
-                            </div>
-                        </div>
-
-                        <!-- Date Field -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input
-                                    type="date"
-                                    class="form-control"
-                                    id="date"
-                                    name="date"
-                                    placeholder="Enter Date"
-                                    required
-                                >
-                                <label for="email">Date</label>
-                            </div>
-                        </div>
-
-                        <!-- Dropdown Field -->
-                        <div class="form-floating">
-                            <select
-                                class="form-select"
-                                id="field_1"
-                                name="field_1"
-                            >
-                                <option
-                                    value=""
-                                    disabled
-                                    selected
-                                >Select an option</option>
-                                <option value="Option 1">Option 1</option>
-                                <option value="Option 2">Option 2</option>
-                                <option value="Option 3">Option 3</option>
-                            </select>
-                            <label for="field_1">Dropdown</label>
-                        </div>
-
-                        <!-- MultiSelect Field -->
-                        <div class="form-group">
-                            <label
-                                for="multi_select"
-                                class="form-label"
-                            >Multi Select</label>
-                            <select
-                                class="form-select select2"
-                                id="multi_select"
-                                name="multi_select[]"
-                                multiple
-                            >
-                                <option value="Option 1">Option 1</option>
-                                <option value="Option 2">Option 2</option>
-                                <option value="Option 3">Option 3</option>
-                            </select>
-                        </div>
-
-                        <!-- Textarea Field -->
-                        <div class="form-floating">
-                            <textarea
-                                class="form-control"
-                                placeholder="Enter your message"
-                                id="message"
-                                name="message"
-                                style="height: 120px"
-                                required
-                            ></textarea>
-                            <label for="field_1">Message</label>
-                        </div>
-
-                    </div> --}}
                 </div>
 
                 <!-- Submit Button Area -->

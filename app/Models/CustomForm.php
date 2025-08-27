@@ -28,4 +28,14 @@ class CustomForm extends Model
     {
         return $this->hasMany(CustomFormField::class)->orderBy('order', 'asc');
     }
+
+    public function artist()
+    {
+        return $this->belongsTo(User::class, 'artist_id');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(ClientBookingForm::class, 'custom_form_id');
+    }
 }
