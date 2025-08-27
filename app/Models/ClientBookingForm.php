@@ -30,6 +30,11 @@ class ClientBookingForm extends Model
     {
         return $this->belongsTo(User::class, 'studio_id');
     }
+
+    public function client()
+    {
+        return $this->belongsTo(User::class, 'client_id');
+    }
     public function customForm()
     {
         return $this->belongsTo(CustomForm::class, 'custom_form_id');
@@ -39,6 +44,11 @@ class ClientBookingForm extends Model
     public function customFormFields()
     {
         return $this->customForm()->with('fields');
+    }
+
+    public function customFormFieldsWithResponses()
+    {
+        return $this->customFormFields()->with('responses');
     }
 
     // Relation: Responses submitted by the client

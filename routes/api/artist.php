@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Artist\ArtistController;
 use App\Http\Controllers\Api\V1\Artist\CustomFormController;
 use App\Http\Controllers\Api\V1\Artist\FlashTattooController;
+use App\Http\Controllers\Api\V1\Artist\ClientController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,6 +46,12 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
         Route::post('/', [FlashTattooController::class, 'store']);  // create
         Route::post('update/{id}', [FlashTattooController::class, 'update']); // update
         Route::delete('/{id}', [FlashTattooController::class, 'destroy']); // delete
+    });
+
+    Route::prefix('clients')->controller(ClientController::class)->group(function () {
+        Route::get('requests', 'clientsRequests');
+        Route::get('update-status/{id}/{status}', 'updateStatusClientRequest');
+        Route::post('set_estimate/{id}', 'setEstimate');
     });
 
 
