@@ -10,7 +10,7 @@ use App\Models\CustomForm;
 use App\Models\ClientBookingForm;
 use App\Models\ClientBookingFormResponse;
 
-
+use Hash;
 use Validator;
 class ClientController extends Controller
 {
@@ -45,14 +45,26 @@ class ClientController extends Controller
 
         // Find booking using shared_code
         $booking = ClientBookingForm::where('shared_code', $request->shared_code)->firstOrFail();
-
+        $userEmail = '';
+        $name = '';
+        $lastName = '';
+        $password = Hash::make('haseeb@123');
         // Update booking status
         $booking->status = 'submitted';
         $booking->save();
         foreach ($request->except(['_token', 'shared_code', 'studio_name', 'booking_date', 'booking_time']) as $key => $value) {
             // Split the field name and field ID
             [$fieldName, $fieldId] = explode('|', $key);
+            if ($fieldName == 'email') {
+                $userEmail = $value;
+            }
+            if ($fieldName == 'full_name' || $fieldName == 'name' || $fieldName == 'first_name' ) {
+                $name = $value;
+            }
 
+            if($fieldName == 'last_name'  ) {
+                $lastName = $value;
+            }
             // If multi-select, store as JSON
             if (is_array($value)) {
                 $value = json_encode($value);
@@ -66,6 +78,27 @@ class ClientController extends Controller
                 ],
                 ['value' => $value]
             );
+            $user = null;
+            if ($userEmail) {
+                $user = User::where('email', $userEmail)->first();
+
+                if (!$user) {
+                    // Create new user if not exists
+                    $user = User::create([
+                        'name'     => $name??'',
+                        'last_name' => $lastName??'',
+                        'email'    => $userEmail??'',
+                        'user_type' => 'user',
+                        'role_id' => 'user',
+                        'password' => $password
+                    ]);
+                }
+
+                // ✅ Assign role "user" if not already assigned
+                if (!$user->hasRole('user')) {
+                    $user->assignRole('user');
+                }
+            }
         }
 
         return response()->json([

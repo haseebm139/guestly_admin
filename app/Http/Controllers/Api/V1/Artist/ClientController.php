@@ -9,19 +9,35 @@ use App\Http\Controllers\Api\BaseController as BaseController;
 use Validator;
 class ClientController extends BaseController
 {
-    public function clientsRequests(Request $request) {
-        $data = ClientBookingForm::with([
+    public function clientsRequests(Request $request)
+    {
+        $status = $request->status;
+
+        if ($status) {
+            // ✅ If status is provided → return filtered
+            $data = $this->getClientRequest($status);
+            return $this->sendResponse($data, "Clients requests with status: $status");
+        }
+
+        // ✅ If no status → return all, grouped by status
+        $all = ClientBookingForm::with([
+            'studio',
+            'client',
+            'customForm.fields.responses',
+        ])->where('status',['pending', 'approve', 'decline'])->get()
+        ->groupBy('status'); // group by status field
+
+        return $this->sendResponse($all, 'All Clients requests grouped by status');
+    }
+
+    public function getClientRequest($status){
+        return $data = ClientBookingForm::with([
             'studio',
             'client',
             'customForm.fields.responses',
         ])
         // ->where('artist_id', $request->artist_id)
-        ->where('status','!=', 'creating')->get();
-        return $this->sendResponse($data, 'Clients requests');
-    }
-
-    public function getClientRequest(){
-        $data = '';
+        ->where('status', $status)->get();
     }
 
 
