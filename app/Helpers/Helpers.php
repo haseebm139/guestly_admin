@@ -536,7 +536,10 @@ if (!function_exists('renderField')) {
 
             case 'dropdown':
             case 'multi_select':
-                $options = json_decode($field->options, true) ?? [];
+                $options = is_string($field->options)
+                    ? (json_decode($field->options, true) ?? [])
+                    : ($field->options ?? []);
+
                 $isMulti = $field->type === 'multi_select';
 
                 // Use snake_case for name/id
