@@ -16,7 +16,7 @@ class ClientController extends Controller
 {
     public function index($artist_id,$artist_name,$shared_code)
     {
-
+        
         $artist = User::where('user_type', 'artist')->where('name', $artist_name)->where('id', $artist_id)->first();
         if(empty($artist)){
             dd('artist not found');
