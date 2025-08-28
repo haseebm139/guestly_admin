@@ -24,7 +24,9 @@ class ClientController extends BaseController
             'studio',
             'client',
             'customForm.fields.responses',
-        ])->where('status',['pending', 'approve', 'decline'])->get()
+        ])
+        // ->where('status',['pending', 'approve', 'decline'])
+        ->get()
         ->groupBy('status'); // group by status field
 
         return $this->sendResponse($all, 'All Clients requests grouped by status');
