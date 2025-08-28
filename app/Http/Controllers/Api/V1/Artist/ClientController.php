@@ -52,6 +52,9 @@ class ClientController extends BaseController
         }
 
         $data = ClientBookingForm::where('id', $id)->first();
+        if (!$data) {
+            return $this->sendError('Client Booking Form not found');
+        }
         $data->update(['status' => $status]);
         return $this->sendResponse($data, 'Clients requests'.$status);
     }
