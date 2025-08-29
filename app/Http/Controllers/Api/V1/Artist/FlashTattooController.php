@@ -55,7 +55,7 @@ class FlashTattooController extends BaseController
             'size'        => 'nullable|string',
             'repeatable'  => 'boolean',
             'price'       => 'required|numeric',
-            'image'       => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image'       => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:5120',
             'description' => 'nullable|string',
         ]);
 
@@ -83,7 +83,7 @@ class FlashTattooController extends BaseController
             'size'        => 'sometimes|string',
             'repeatable'  => 'boolean',
             'price'       => 'sometimes|numeric',
-            'image'       => 'sometimes|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image'       => 'sometimes|file|mimes:jpeg,png,jpg,gif,svg|max:5120',
             'description' => 'sometimes|string',
         ]);
         try {

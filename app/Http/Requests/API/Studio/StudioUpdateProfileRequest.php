@@ -48,10 +48,10 @@ class StudioUpdateProfileRequest extends FormRequest
             'amenities.*' => 'integer|exists:station_amenities,id',
 
             // File fields
-            'studio_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:20480',
-            'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:20480',
+            'studio_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'studio_images' => 'nullable|array|max:5',
-            'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:20480',
+            'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
 
             /* ✅ NEW: design specialties (exists in `design_specialties` table) */
             'design_specialties'   => 'nullable|array|max:10',
@@ -59,7 +59,7 @@ class StudioUpdateProfileRequest extends FormRequest
 
             /* ✅ NEW: guest-related fields */
             'guest_to_choose' => 'nullable|boolean',
-            'guest_policy'    => 'nullable|file|mimes:png,jpeg,jpg,pdf|max:20480',
+            'guest_policy'    => 'nullable|file|mimes:png,jpeg,jpg,pdf|max:5120',
 
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
