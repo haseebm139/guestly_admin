@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('artist_id')->constrained('users')->onDelete('cascade');
             $table->string('title')->nullable();
+            $table->string('share_token')->nullable();
             $table->timestamps();
         });
     }
