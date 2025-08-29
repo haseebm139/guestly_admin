@@ -44,13 +44,6 @@ class DatabaseSeeder extends Seeder
 
             $user->assignRole($role);
         });
-        // \App\Models\User::factory(30)->create();
-
-        // \App\Models\User::factory(10)->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        //     'longitude' => 67.001137,
-        //     'latitude' => 24.860735,
-        // ]);
+        
     }
 }
