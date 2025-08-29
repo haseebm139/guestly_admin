@@ -25,7 +25,7 @@ class ClientController extends BaseController
             'client',
             'customForm.fields.responses',
         ])
-        // ->where('status',['pending', 'approve', 'decline'])
+        ->where('status',['pending', 'approve', 'decline'])
         ->get()
         ->groupBy('status'); // group by status field
 

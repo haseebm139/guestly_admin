@@ -34,7 +34,7 @@ return new class extends Migration
 
             $table->string('shared_code')->unique(); // instead of full link
 
-            $table->enum('status', ['creating', 'pending', 'submitted', 'approve', 'decline', 'cancelled'])
+            $table->enum('status', ['creating', 'pending', 'submitted', 'approve', 'decline'])
                 ->default('creating');
 
             $table->timestamps();
