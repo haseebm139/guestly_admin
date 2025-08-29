@@ -83,7 +83,7 @@ class StudioRepository implements StudioRepositoryInterface
                      ->where('end_date', '>', $endDate);
               });
         })
-        ->with(['studio:id,studio_name,avatar,country,city,phone', 'artist:id,name,avatar,country,city,phone']) // adjust relationships
+        ->with(['studio', 'artist']) // adjust relationships
         ->orderBy('start_date', 'asc');
 
         $data['guests'] = $query->paginate($perPage);
@@ -116,7 +116,7 @@ class StudioRepository implements StudioRepositoryInterface
         $query = SpotBooking::where('studio_id', $studioId)
             ->where('status', 'approved')
             ->whereDate('start_date', '>', $today)
-            ->with(['studio:id,studio_name,avatar,country,city,phone', 'artist:id,name,email,avatar,country,city,phone']);
+            ->with(['studio', 'artist']);
 
         return $query->orderBy('start_date')->paginate($perPage);
     }
@@ -126,8 +126,8 @@ class StudioRepository implements StudioRepositoryInterface
         return SpotBooking::where('studio_id', $studioId)
             ->where('status', $status)
             ->with([
-                'artist:id,name,email,avatar,country,city,phone',
-                'studio:id,studio_name,avatar'
+                'artist',
+                'studio'
             ])
             ->orderByDesc('start_date')
             ->paginate($perPage);
