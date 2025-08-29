@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('apple_id')->nullable();
             $table->string('verification_type')->nullable();
 
-            $table->string('avatar')->nullable()->default('avatar/001-boy.svg');
+            $table->string('avatar')->nullable()->default('avatar/default.png');
             $table->string('document_front')->nullable();
             $table->string('document_back')->nullable();
             $table->string('studio_logo')->nullable();
