@@ -56,8 +56,8 @@ return new class extends Migration
             // $table->enum('preferred_duration', ['0', '1'])->default('0');
 
 
-            $table->decimal('latitude', 10, 7)->nullable()->after('email');
-            $table->decimal('longitude', 10, 7)->nullable()->after('latitude');
+            $table->decimal('latitude', 10, 7)->nullable() ;
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->date('date_of_birth')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
