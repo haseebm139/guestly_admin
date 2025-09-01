@@ -67,8 +67,8 @@ class SpotBookingController extends BaseController
         $data = Validator::make($request->all(), [
             'start_date'        => 'required|date',
             'end_date'          => 'required|date|after_or_equal:start_date',
-            // 'reschedule_note'          => 'required',
-            // 'rescheduled_by'          => 'required|in:artist,studio',
+            'reschedule_note'          => 'required',
+            'rescheduled_by'          => 'required|in:artist,studio',
         ]);
          if ($data->fails()) {
             return $this->sendError($data->errors()->first(),$errorMessages = [], 422);
