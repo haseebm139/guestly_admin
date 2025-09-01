@@ -53,7 +53,7 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
             'start_date'     => $data['start_date'],
             'end_date'       => $data['end_date'],
             'status'         => 'rescheduled',
-            'rescheduled_by' => $data['rescheduled_by'], // 'artist' or 'studio'
+            'rescheduled_by' => $data['rescheduled_by']?? 'studio', // 'artist' or 'studio'
             'reschedule_note'=> $data['reschedule_note'] ?? null,
         ]);
     }
