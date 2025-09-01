@@ -9,6 +9,7 @@ use App\Services\Artist\ArtistProfileService;
 use App\Http\Requests\API\Artist\ArtistUpdateProfileRequest;
 use App\Models\UserFavorite;
 use App\Models\User;
+use App\Models\ClientBookingForm;
 use App\Http\Controllers\Api\BaseController as BaseController;
 class ArtistController extends BaseController
 {
@@ -138,7 +139,7 @@ class ArtistController extends BaseController
         $bookings = ClientBookingForm::with(['studio', 'client'])
             ->where('artist_id', $artistId)
             ->where('booking_date', '>=', now()->toDateString()) // upcoming only
-            // ->whereIn('status', ['pending', 'submitted', 'approve']) // ignore draft/declined
+            ->whereIn('status', ['pending', 'approve']) // ignore draft/declined
             ->get()
             ->groupBy(function ($item) {
                 return $item->studio_id . '_' . $item->booking_date;
@@ -147,17 +148,23 @@ class ArtistController extends BaseController
         $data = $bookings->map(function ($group) {
             return [
                 'studio_id'    => $group->first()->studio_id,
-                'studio_name'  => $group->first()->studio?->name,
+                'studio_name'  => $group->first()->studio?->studio_name,
+                'studio_logo'  => $group->first()->studio?->studio_logo,
+                'studio_country' => $group->first()->studio?->country,
                 'studio_city'  => $group->first()->studio?->city,
+                'studio_address'   => $group->first()->studio?->address,
                 'booking_date' => $group->first()->booking_date,
                 'clients'      => $group->map(function ($booking) {
                     return [
                         'client_id'   => $booking->client_id,
                         'client_name' => $booking->client?->name,
+                        'client_email' => $booking->client?->email,
+                        'client_avatar' => $booking->client?->avatar,
                         'status'      => $booking->status,
                         'booking_id'  => $booking->id,
                     ];
                 })->values(),
+                'client_count'   => $group->count(),
             ];
         })->values();
 

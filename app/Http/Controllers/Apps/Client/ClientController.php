@@ -50,7 +50,7 @@ class ClientController extends Controller
         $lastName = '';
         $password = Hash::make('haseeb@123');
         // Update booking status
-        $booking->status = 'submitted';
+        $booking->status = 'pending';
         $booking->save();
         foreach ($request->except(['_token', 'shared_code', 'studio_name', 'booking_date', 'booking_time']) as $key => $value) {
             // Split the field name and field ID

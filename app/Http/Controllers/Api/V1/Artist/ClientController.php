@@ -25,7 +25,7 @@ class ClientController extends BaseController
             'client',
             'customForm.fields.responses',
         ])
-        ->where('status',['pending', 'approve', 'decline'])
+        ->whereIn('status',['pending', 'approve', 'decline'])
         ->get()
         ->groupBy('status'); // group by status field
 
@@ -44,14 +44,14 @@ class ClientController extends BaseController
 
 
     public function updateStatusClientRequest($id, $status) {
-        $status1 = '';
-        if ($status == 'decline') {
-            $status = 'cancelled';
-        }elseif ($status == 'approve') {
-            $status = 'confirmed';
-        }else{
-            return $this->sendError('Invalid status');
-        }
+        // $status1 = '';
+        // if ($status == 'decline') {
+        //     $status = 'cancelled';
+        // }elseif ($status == 'approve') {
+        //     $status = 'approve';
+        // }else{
+        //     return $this->sendError('Invalid status');
+        // }
 
         $data = ClientBookingForm::where('id', $id)->first();
         if (!$data) {
