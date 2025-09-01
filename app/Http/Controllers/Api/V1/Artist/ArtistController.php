@@ -130,7 +130,39 @@ class ArtistController extends BaseController
         return $this->sendError('Something went wrong');
     }
 
+    public function upcomingGuestSpots(Request $request)
+    {
+        $artistId = auth()->id(); // current logged in artist
 
+        $bookings = ClientBookingForm::with(['studio', 'client'])
+            ->where('artist_id', $artistId)
+            ->where('booking_date', '>=', now()->toDateString()) // upcoming only
+            // ->whereIn('status', ['pending', 'submitted', 'approve']) // ignore draft/declined
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->studio_id . '_' . $item->booking_date;
+            });
+
+        $data = $bookings->map(function ($group) {
+            return [
+                'studio_id'    => $group->first()->studio_id,
+                'studio_name'  => $group->first()->studio?->name,
+                'studio_city'  => $group->first()->studio?->city,
+                'booking_date' => $group->first()->booking_date,
+                'clients'      => $group->map(function ($booking) {
+                    return [
+                        'client_id'   => $booking->client_id,
+                        'client_name' => $booking->client?->name,
+                        'status'      => $booking->status,
+                        'booking_id'  => $booking->id,
+                    ];
+                })->values(),
+            ];
+        })->values();
+
+        return $this->sendResponse($data, 'Upcoming guest spots fetched successfully.');
+
+    }
 
 
 }
