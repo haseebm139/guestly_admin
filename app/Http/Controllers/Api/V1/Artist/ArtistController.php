@@ -136,10 +136,10 @@ class ArtistController extends BaseController
     {
         $artistId = auth()->id(); // current logged in artist
 
-        $bookings = ClientBookingForm::with(['studio', 'client'])
+        $bookings = ClientBookingForm::with(['studio', 'client','responses.field'])
             ->where('artist_id', $artistId)
             ->where('booking_date', '>=', now()->toDateString()) // upcoming only
-            ->whereIn('status', ['pending', 'approve']) // ignore draft/declined
+            // ->whereIn('status', ['pending', 'approve']) // ignore draft/declined
             ->get()
             ->groupBy(function ($item) {
                 return $item->studio_id . '_' . $item->booking_date;
@@ -162,6 +162,8 @@ class ArtistController extends BaseController
                         'client_avatar' => $booking->client?->avatar,
                         'status'      => $booking->status,
                         'booking_id'  => $booking->id,
+                        'responses'   => $booking->responses
+
                     ];
                 })->values(),
                 'client_count'   => $group->count(),
