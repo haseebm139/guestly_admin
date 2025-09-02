@@ -139,7 +139,7 @@ class ArtistController extends BaseController
         $bookings = ClientBookingForm::with(['studio', 'client','responses.field'])
             ->where('artist_id', $artistId)
             ->where('booking_date', '>=', now()->toDateString()) // upcoming only
-            // ->whereIn('status', ['pending', 'approve']) // ignore draft/declined
+            ->whereIn('status', ['pending', 'approve']) // ignore draft/declined
             ->get()
             ->groupBy(function ($item) {
                 return $item->studio_id . '_' . $item->booking_date;
@@ -147,6 +147,7 @@ class ArtistController extends BaseController
 
         $data = $bookings->map(function ($group) {
             return [
+                'id'           => $group->first()->id,
                 'studio_id'    => $group->first()->studio_id,
                 'studio_name'  => $group->first()->studio?->studio_name,
                 'studio_logo'  => $group->first()->studio?->studio_logo,

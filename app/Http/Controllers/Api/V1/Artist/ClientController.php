@@ -55,23 +55,7 @@ class ClientController extends BaseController
 
     }
 
-    public function getClientRequest1($status){
-        return ClientBookingForm::with([
-            'studio',
-            'client',
-            'customForm.fields'
-        ])
-        ->where('status', $status)
-        ->get()->map(function ($booking) {
-            // Map each field’s response for this booking
-            foreach ($booking->customForm->fields as $field) {
-                $field->responseForBooking = $field->responses
-                    ->where('client_booking_form_id', $booking->id)
-                    ->first();
-            }
-            return $booking;
-        });
-    }
+     
 
 
     public function updateStatusClientRequest($id, $status) {
