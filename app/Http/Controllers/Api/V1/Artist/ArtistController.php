@@ -150,7 +150,7 @@ class ArtistController extends BaseController
             return [
                 'id'           => $group->first()->id,
                 'studio_id'    => $group->first()->studio_id,
-                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('artist_id', auth()->id())->latest()->first(),
+                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('status', 'approved')->where('artist_id', auth()->id())->latest()->first(),
                 'studio_name'  => $group->first()->studio?->studio_name,
                 'studio_logo'  => $group->first()->studio?->studio_logo,
                 'studio_country' => $group->first()->studio?->country,
@@ -195,7 +195,7 @@ class ArtistController extends BaseController
             return [
                 'id'             => $group->first()->id,
                 'studio_id'      => $group->first()->studio_id,
-                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('artist_id', auth()->id())->latest()->first(),
+                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('artist_id', auth()->id())->where('status', 'approved')->latest()->first(),
                 'studio_name'    => $group->first()->studio?->studio_name,
                 'studio_logo'    => $group->first()->studio?->studio_logo,
                 'studio_country' => $group->first()->studio?->country,
