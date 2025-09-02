@@ -38,4 +38,9 @@ class CustomForm extends Model
     {
         return $this->hasMany(ClientBookingForm::class, 'custom_form_id');
     }
+
+    public function clientBookingForms()
+    {
+        return $this->hasMany(ClientBookingForm::class, 'custom_form_id');
+    }
 }

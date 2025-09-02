@@ -32,4 +32,21 @@ class CustomFormField extends Model
     {
         return $this->hasMany(ClientBookingFormResponse::class, 'custom_form_field_id');
     }
+
+    public function response()
+    {
+        return $this->hasMany(ClientBookingFormResponse::class, 'custom_form_field_id');
+    }
+
+    // Scoped relationship: responses only for one booking form
+    public function responsesForBooking($bookingFormId)
+    {
+        return $this->responses()->where('client_booking_form_id', $bookingFormId);
+    }
+
+    public function responseForBooking($bookingId)
+    {
+        return $this->hasOne(ClientBookingFormResponse::class, 'custom_form_field_id')
+                    ->where('client_booking_form_id', $bookingId);
+    }
 }

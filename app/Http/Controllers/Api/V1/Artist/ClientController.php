@@ -23,23 +23,54 @@ class ClientController extends BaseController
         $all = ClientBookingForm::with([
             'studio',
             'client',
-            'customForm.fields.responses',
+            'responses.field'
         ])
-        ->whereIn('status',['pending', 'approve', 'decline'])
+        ->whereIn('status', ['pending', 'approve', 'decline'])
         ->get()
-        ->groupBy('status'); // group by status field
+        ->map(function ($booking) {
+            // filter responses per booking
+            $booking->customForm->fields->each(function ($field) use ($booking) {
+                $field->setRelation(
+                    'responses',
+                    $field->responsesForBooking($booking->id)->get()
+                );
+            });
+            return $booking;
+        })
+        ->groupBy('status');
 
         return $this->sendResponse($all, 'All Clients requests grouped by status');
     }
 
     public function getClientRequest($status){
-        return $data = ClientBookingForm::with([
+        return ClientBookingForm::with([
             'studio',
             'client',
-            'customForm.fields.responses',
+            'responses.field' // load fields
         ])
-        // ->where('artist_id', $request->artist_id)
-        ->where('status', $status)->get();
+        ->where('status', $status)
+        ->latest()
+        ->get();
+
+
+    }
+
+    public function getClientRequest1($status){
+        return ClientBookingForm::with([
+            'studio',
+            'client',
+            'customForm.fields'
+        ])
+        ->where('status', $status)
+        ->get()->map(function ($booking) {
+            // Map each field’s response for this booking
+            foreach ($booking->customForm->fields as $field) {
+                $field->responseForBooking = $field->responses
+                    ->where('client_booking_form_id', $booking->id)
+                    ->first();
+            }
+            return $booking;
+        });
     }
 
 

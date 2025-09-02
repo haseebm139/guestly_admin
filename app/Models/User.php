@@ -151,4 +151,23 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\UserFavorite::class, 'studio_id');
     }
 
+    public function customForms()
+    {
+        return $this->hasMany(CustomForm::class, 'artist_id');
+    }
+
+    public function clientBookingFormsAsArtist()
+    {
+        return $this->hasMany(ClientBookingForm::class, 'artist_id');
+    }
+    public function clientBookingFormsAsStudio()
+    {
+        return $this->hasMany(ClientBookingForm::class, 'studio_id');
+    }
+
+    public function clientBookingFormsAsClient()
+    {
+        return $this->hasMany(ClientBookingForm::class, 'client_id');
+    }
+
 }
