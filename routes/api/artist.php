@@ -31,6 +31,9 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
         Route::post('/studios/favorite','toggle');
 
         Route::get('/upcoming-guest-spots','upcomingGuestSpots');
+        Route::get('/past-guest-spots','pastGuestSpots');
+
+
     });
     Route::controller(CustomFormController::class)->group(function () {
         Route::get('/forms','index');

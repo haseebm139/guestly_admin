@@ -175,4 +175,46 @@ class ArtistController extends BaseController
 
     }
 
+
+    public function pastGuestSpots(Request $request)
+    {
+        $artistId = auth()->id(); // current logged in artist
+
+        $bookings = ClientBookingForm::with(['studio', 'client','responses.field'])
+            ->where('artist_id', $artistId)
+            ->where('booking_date', '<', now()->toDateString()) // past only
+            ->whereIn('status', ['pending', 'approve', 'decline']) // include all except draft
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->studio_id . '_' . $item->booking_date;
+            });
+
+        $data = $bookings->map(function ($group) {
+            return [
+                'id'             => $group->first()->id,
+                'studio_id'      => $group->first()->studio_id,
+                'studio_name'    => $group->first()->studio?->studio_name,
+                'studio_logo'    => $group->first()->studio?->studio_logo,
+                'studio_country' => $group->first()->studio?->country,
+                'studio_city'    => $group->first()->studio?->city,
+                'studio_address' => $group->first()->studio?->address,
+                'booking_date'   => $group->first()->booking_date,
+                'clients'        => $group->map(function ($booking) {
+                    return [
+                        'client_id'     => $booking->client_id,
+                        'client_name'   => $booking->client?->name,
+                        'client_email'  => $booking->client?->email,
+                        'client_avatar' => $booking->client?->avatar,
+                        'status'        => $booking->status,
+                        'booking_id'    => $booking->id,
+                        'responses'     => $booking->responses
+                    ];
+                })->values(),
+                'client_count'   => $group->count(),
+            ];
+        })->values();
+
+        return $this->sendResponse($data, 'Past guest spots fetched successfully.');
+    }
+
 }
