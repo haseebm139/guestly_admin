@@ -9,6 +9,7 @@ use App\Services\Artist\ArtistProfileService;
 use App\Http\Requests\API\Artist\ArtistUpdateProfileRequest;
 use App\Models\UserFavorite;
 use App\Models\User;
+use App\Models\SpotBooking;
 use App\Models\ClientBookingForm;
 use App\Http\Controllers\Api\BaseController as BaseController;
 class ArtistController extends BaseController
@@ -149,6 +150,7 @@ class ArtistController extends BaseController
             return [
                 'id'           => $group->first()->id,
                 'studio_id'    => $group->first()->studio_id,
+                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('artist_id', auth()->id())->latest()->first(),
                 'studio_name'  => $group->first()->studio?->studio_name,
                 'studio_logo'  => $group->first()->studio?->studio_logo,
                 'studio_country' => $group->first()->studio?->country,
@@ -193,6 +195,7 @@ class ArtistController extends BaseController
             return [
                 'id'             => $group->first()->id,
                 'studio_id'      => $group->first()->studio_id,
+                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('artist_id', auth()->id())->latest()->first(),
                 'studio_name'    => $group->first()->studio?->studio_name,
                 'studio_logo'    => $group->first()->studio?->studio_logo,
                 'studio_country' => $group->first()->studio?->country,
