@@ -31,6 +31,11 @@ class ClientBookingForm extends Model
         return $this->belongsTo(User::class, 'studio_id');
     }
 
+    public function booking()
+    {
+        return $this->belongsTo(SpotBooking::class, 'spot_booking_id');
+    }
+
     public function client()
     {
         return $this->belongsTo(User::class, 'client_id');

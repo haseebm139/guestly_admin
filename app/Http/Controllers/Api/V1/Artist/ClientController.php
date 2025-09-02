@@ -23,6 +23,7 @@ class ClientController extends BaseController
         $all = ClientBookingForm::with([
             'studio',
             'client',
+            'booking',
             'responses.field'
         ])
         ->whereIn('status', ['pending', 'approve', 'decline'])
@@ -46,6 +47,7 @@ class ClientController extends BaseController
         return ClientBookingForm::with([
             'studio',
             'client',
+            'booking',
             'responses.field' // load fields
         ])
         ->where('status', $status)
@@ -55,7 +57,7 @@ class ClientController extends BaseController
 
     }
 
-     
+
 
 
     public function updateStatusClientRequest($id, $status) {

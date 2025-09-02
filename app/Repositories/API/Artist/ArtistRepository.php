@@ -69,10 +69,12 @@ class ArtistRepository implements ArtistRepositoryInterface
         // $studio_id = SpotBooking::where('artist_id', $artistId)->pluck('studio_id');
         $studioIds = SpotBooking::where('artist_id', $artistId)
                 ->where('status', 'approved')  // only approved bookings
-                // ->whereDate('end_date', '>=', now()) // ongoing/future bookings
+                ->whereDate('end_date', '>=', now()) // ongoing/future bookings
                 ->pluck('studio_id')
                 ->unique()
                 ->toArray();
+
+
         $studio_id = array_values($studioIds);
         return User::where('user_type', 'studio')->whereIn('id', $studio_id)
             ->with([

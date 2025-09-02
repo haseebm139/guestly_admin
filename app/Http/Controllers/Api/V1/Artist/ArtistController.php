@@ -137,7 +137,7 @@ class ArtistController extends BaseController
     {
         $artistId = auth()->id(); // current logged in artist
 
-        $bookings = ClientBookingForm::with(['studio', 'client','responses.field'])
+        $bookings = ClientBookingForm::with(['studio', 'client','booking','responses.field'])
             ->where('artist_id', $artistId)
             ->where('booking_date', '>=', now()->toDateString()) // upcoming only
             ->whereIn('status', ['pending', 'approve']) // ignore draft/declined
@@ -150,13 +150,13 @@ class ArtistController extends BaseController
             return [
                 'id'           => $group->first()->id,
                 'studio_id'    => $group->first()->studio_id,
-                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('status', 'approved')->where('artist_id', auth()->id())->latest()->first(),
                 'studio_name'  => $group->first()->studio?->studio_name,
                 'studio_logo'  => $group->first()->studio?->studio_logo,
                 'studio_country' => $group->first()->studio?->country,
                 'studio_city'  => $group->first()->studio?->city,
                 'studio_address'   => $group->first()->studio?->address,
                 'booking_date' => $group->first()->booking_date,
+                'booking' => $group->first()->booking,
                 'clients'      => $group->map(function ($booking) {
                     return [
                         'client_id'   => $booking->client_id,
@@ -182,7 +182,7 @@ class ArtistController extends BaseController
     {
         $artistId = auth()->id(); // current logged in artist
 
-        $bookings = ClientBookingForm::with(['studio', 'client','responses.field'])
+        $bookings = ClientBookingForm::with(['studio', 'client','booking','responses.field'])
             ->where('artist_id', $artistId)
             ->where('booking_date', '<', now()->toDateString()) // past only
             ->whereIn('status', ['pending', 'approve', 'decline']) // include all except draft
@@ -195,13 +195,13 @@ class ArtistController extends BaseController
             return [
                 'id'             => $group->first()->id,
                 'studio_id'      => $group->first()->studio_id,
-                'spot_booking'   => SpotBooking::where('studio_id', $group->first()->studio_id)->where('artist_id', auth()->id())->where('status', 'approved')->latest()->first(),
                 'studio_name'    => $group->first()->studio?->studio_name,
                 'studio_logo'    => $group->first()->studio?->studio_logo,
                 'studio_country' => $group->first()->studio?->country,
                 'studio_city'    => $group->first()->studio?->city,
                 'studio_address' => $group->first()->studio?->address,
                 'booking_date'   => $group->first()->booking_date,
+                'booking'   => $group->first()->booking,
                 'clients'        => $group->map(function ($booking) {
                     return [
                         'client_id'     => $booking->client_id,

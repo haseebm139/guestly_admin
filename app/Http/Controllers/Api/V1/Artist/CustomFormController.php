@@ -9,6 +9,7 @@ use App\Http\Requests\API\Artist\StoreCustomFormRequest;
 use App\Http\Requests\API\Artist\UpdateCustomFormRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ClientBookingForm;
+use App\Models\SpotBooking;
 use App\Http\Controllers\Api\BaseController as BaseController;
 class CustomFormController extends BaseController
 {
@@ -96,19 +97,31 @@ class CustomFormController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError($validator->errors(), 400);
+            return $this->sendError($validator->errors()->first());
         }
 
         try {
+            // 🔹 Find matching spot booking
+            $spotBooking = SpotBooking::where('studio_id', $request->studio_id)
+                ->whereDate('start_date', '<=', $request->booking_date)
+                ->whereDate('end_date', '>=', $request->booking_date)
+                ->first();
+
+            if (!$spotBooking) {
+                return $this->sendError('No matching spot booking found for this date.');
+            }
+
             $data = ClientBookingForm::create([
                 'artist_id' => auth()->id(),
                 'studio_id' => $request->studio_id,
+                'spot_booking_id' => $spotBooking->id ?? null,
                 'custom_form_id' => $request->custom_form_id,
                 'booking_date' => $request->booking_date,
                 'booking_time' => $request->booking_time,
                 'booking_url' => "booking/".auth()->id()."/".auth()->user()->name."/",
                 'status' => 'creating',
             ]);
+
             return $this->sendResponse($data, 'Booking URL created successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Something went wrong.', 500);
