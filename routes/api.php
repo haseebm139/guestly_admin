@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\UserController  ;
 
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\CardController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\SpotBooking\SpotBookingController;
 use App\Http\Controllers\Api\V1\Studio\HomeController;
 
@@ -94,6 +95,11 @@ Route::prefix('v1')->group(function () {
             Route::post('/{chat}/messages', [MessageController::class,'store']);
         });
         Route::get('lookups', [HomeController::class, 'lookups']);
+        Route::controller(NotificationController::class)->prefix('notification')->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/read/{id}', 'markAsRead');
+        });
 
 
 

@@ -123,5 +123,5 @@ class CardController extends BaseController
         }
     }
 
-    
+
 }
