@@ -29,6 +29,7 @@ class ArtistUpdateProfileRequest extends FormRequest
             'address' => 'nullable|string',
             'email' => 'nullable|email',
             'phone' => 'nullable|string',
+            'fcm_token' => 'nullable|string',
             'emergency_phone' => 'nullable|string',
             'bio' => 'nullable|string',
             'city' => 'nullable|string',

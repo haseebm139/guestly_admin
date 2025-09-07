@@ -53,6 +53,10 @@ class AuthService extends BaseController
             $data['user']->longitude = $credentials['longitude'];
             $data['user']->save();
         }
+        if(isset($credentials['fcm_token']) ){
+            $data['user']->fcm_token = $credentials['fcm_token'];
+            $data['user']->save();
+        }
         $data['token'] = $data['user']->createToken('guestly')->plainTextToken;
 
         return $data;

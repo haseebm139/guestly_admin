@@ -30,6 +30,7 @@ class LoginRequest extends FormRequest
             'user_type' => 'required|in:artist,studio',
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
+            'fcm_token' => 'nullable|string'
         ];
     }
     public function messages(): array
