@@ -35,7 +35,7 @@ class ArtistUpdateProfileRequest extends FormRequest
             'country' => 'nullable|string',
             'state' => 'nullable|string',
             'zip_code' => 'nullable|string',
-
+            'phone_verified'=>'nullable|boolean',
             'tattoo_style' => 'nullable|array',
             'tattoo_style.*' => 'integer|exists:tattoo_styles,id',
 

@@ -170,4 +170,25 @@ class User extends Authenticatable
         return $this->hasMany(ClientBookingForm::class, 'client_id');
     }
 
+    public function boostAds()
+    {
+        return $this->hasMany(BoostAd::class, 'user_id');
+    }
+    public function getIsBoostedAttribute()
+    {
+        return $this->boostAds()
+            ->where('status', 'completed')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->exists();
+    }
+    public function activeBoost()
+    {
+        return $this->hasOne(BoostAd::class, 'user_id')
+            ->where('status', 'completed')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now());
+    }
+
+
 }

@@ -43,21 +43,88 @@ class ArtistProfileService
         return $this->repo->getById($userId);
     }
 
+    public function getStudios(int $perPage = 10)
+    {
+        $artistId = auth()->id();
+        return User::where('user_type', 'studio')
+             ->withCount([
+                'favoritedBy as is_favorite' => function ($query) use ($artistId) {
+                    $query->where('artist_id', $artistId);
+                }
+            ])
+            ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path'])
+            ->paginate($perPage);
+        // return $this->repo->getAllStudios($perPage);
+    }
+
     // public function getStudios(int $perPage = 10)
     // {
-    //     $artistId = auth()->id();
-    //     return User::where('user_type', 'studio')
-    //          ->withCount([
-    //             'favoritedBy as is_favorite' => function ($query) use ($artistId) {
-    //                 $query->where('artist_id', $artistId);
-    //             }
-    //         ])
-    //         ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path'])
-    //         ->paginate($perPage);
-    //     // return $this->repo->getAllStudios($perPage);
+    //      $artistId  = auth()->id();
+    // $longitude = auth()->user()->longitude;
+    // $latitude  = auth()->user()->latitude;
+
+    // // Normal vs Boost radius
+    // $normalRadius = 20;  // km
+    // $boostRadius  = 100; // km
+
+    // $query = User::where('user_type', 'studio')
+    //     ->withCount([
+    //         'favoritedBy as is_favorite' => function ($query) use ($artistId) {
+    //             $query->where('artist_id', $artistId);
+    //         }
+    //     ])
+    //     ->with([
+    //         'supplies:id,name',
+    //         'stationAmenities:id,name',
+    //         'studioImages:id,user_id,image_path',
+    //         'designSpecialties:id,name'
+    //     ]);
+
+    // if ($latitude && $longitude) {
+    //     $query->select('users.*')
+    //         ->selectRaw("
+    //             (6371 * acos(
+    //                 cos(radians(?)) *
+    //                 cos(radians(latitude)) *
+    //                 cos(radians(longitude) - radians(?)) +
+    //                 sin(radians(?)) *
+    //                 sin(radians(latitude))
+    //             )) AS distance
+    //         ", [$latitude, $longitude, $latitude]);
+
+    //     // Hybrid radius filter
+    //     $query->where(function ($q) use ($normalRadius, $boostRadius, $latitude, $longitude) {
+    //         $q->whereHas('boostAds', function ($sub) use ($boostRadius) {
+    //             $sub->where('status', 'completed')
+    //                 ->where('start_date', '<=', now())
+    //                 ->where('end_date', '>=', now());
+    //         })
+    //         ->orWhereRaw("
+    //             (6371 * acos(
+    //                 cos(radians(?)) *
+    //                 cos(radians(latitude)) *
+    //                 cos(radians(longitude) - radians(?)) +
+    //                 sin(radians(?)) *
+    //                 sin(radians(latitude))
+    //             )) <= ?
+    //         ", [$latitude, $longitude, $latitude, $normalRadius]);
+    //     });
+    // // }
+
+    // // Order boosted first, then nearest distance
+    // $query->orderByRaw('CASE WHEN EXISTS (
+    //         SELECT 1 FROM boost_ads
+    //         WHERE boost_ads.user_id = users.id
+    //           AND boost_ads.status = "completed"
+    //           AND boost_ads.start_date <= NOW()
+    //           AND boost_ads.end_date >= NOW()
+    //     ) THEN 0 ELSE 1 END')
+    //     ->orderBy('distance', 'asc');
+
+    //     return $query->paginate($perPage);
     // }
 
-    public function getStudios(int $perPage = 10)
+    public function getStudios1(int $perPage = 10)
     {
         $artistId = auth()->id();
         $longitude = auth()->user()->longitude;

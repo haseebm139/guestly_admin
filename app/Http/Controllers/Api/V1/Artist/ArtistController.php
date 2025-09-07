@@ -24,6 +24,7 @@ class ArtistController extends BaseController
     public function update(ArtistUpdateProfileRequest $request)
     {
         try {
+
             $artist = auth()->user();
             $updatedArtist = $this->service->updateProfile($artist->id, $request->validated());
             if (!$updatedArtist) {
