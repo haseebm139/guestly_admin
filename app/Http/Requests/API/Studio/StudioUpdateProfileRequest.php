@@ -28,6 +28,7 @@ class StudioUpdateProfileRequest extends FormRequest
             'business_email' => 'nullable|email',
             'studio_address' => 'nullable|string',
             'address' => 'nullable|string',
+            'fcm_token' => 'nullable|string',
             'city' => 'nullable|string',
             'country' => 'nullable|string',
             'language' => 'nullable|string',
