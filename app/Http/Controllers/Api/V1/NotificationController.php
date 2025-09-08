@@ -15,7 +15,7 @@ class NotificationController extends BaseController
     public function index(Request $request)
     {
         try {
-            $notifications = Notification::where('receiver_id', $request->user()->id)
+            $notifications = Notification::where('receiver_id', auth()->user()->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
     
@@ -45,7 +45,7 @@ class NotificationController extends BaseController
         try {
             $receiver = User::find($request->receiver_id);
             $sender   = $request->user();
-    
+            
             $notification = Notification::create([
                 'sender_id'     => $sender->id ?? null,
                 'receiver_id'   => $receiver->id,
@@ -56,7 +56,7 @@ class NotificationController extends BaseController
                 'body'          => $request->body ?? null,
                 'studio_name'   => $request->studio_name ?? null,
                 'artist_name'   => $request->artist_name ?? null,
-                'url'           => $request->url ?? null, 
+                // 'url'           => $request->url ?? null, 
             ]);
             return $this->sendResponse($notification, 'Notification sent successfully.');
         } catch (\Throwable $th) {
