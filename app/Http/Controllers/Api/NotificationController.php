@@ -30,30 +30,46 @@ class NotificationController extends BaseController
     public function sendToUser(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'receiver_id' => 'required|exists:users,id',
-            'title'   => 'required|string',
-            'body'    => 'required|string',
-            'data'    => 'nullable|array',
+            'receiver_id'   => 'required|exists:users,id',
+            'title'         => 'required|string|max:255',
+            'body'          => 'nullable|string',
+            'type'          => 'nullable|string',
+            'studio_name'   => 'nullable|string',
+            'artist_name'   => 'nullable|string',
+            'url'           => 'nullable|string',
+            'token'         => 'nullable|string', 
         ]);
 
         if ($validator->fails()) {
             return $this->sendError($validator->errors()->first());
         }
 
-        $user = User::find($request->receiver_id);
-
-        if (!$user->fcm_token) {
+        $receiver = User::find($request->receiver_id);
+        $sender   = $request->user();
+        if (!$receiver->fcm_token) {
             return $this->sendError('Target user does not have an FCM token.');
         }
         
         try {
             $this->firebase->sendToToken(
-                $user->fcm_token,
+                $receiver->fcm_token,
                 $request->title,
                 $request->body,
                  
             );
-
+            $notification = Notification::create([
+                'sender_id'     => $sender->id ?? null,
+                'receiver_id'   => $receiver->id,
+                'sender_role'   => $sender->role_id ?? null,
+                'receiver_role' => $receiver->role_id ?? null,
+                'type'          => $request->type ?? null,
+                'title'         => $request->title ?? null,
+                'body'          => $request->body ?? null,
+                'studio_name'   => $request->studio_name ?? null,
+                'artist_name'   => $request->artist_name ?? null,
+                'token'         => $request->token ?? null,
+                 
+            ]);
             return $this->sendResponse([], 'Notification sent successfully.');
         } catch (\Throwable $e) {
             Log::error('SendToUser error: '.$e->getMessage());
