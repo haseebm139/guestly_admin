@@ -33,7 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('v1')->group(function () {
 
-    Route::post('/send-bulk-notification', [NotificationController::class, 'sendToMany']);
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('google_login', [AuthController::class, 'googleLogin']);
@@ -45,6 +44,7 @@ Route::prefix('v1')->group(function () {
     
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('user/profile', [AuthController::class, 'profile']);
+        Route::post('/send-bulk-notification', [NotificationController::class, 'sendToMany']);
         Route::post('/send-notification', [NotificationController::class, 'sendToUser']);
 
         Route::prefix('user/')->group(function () {

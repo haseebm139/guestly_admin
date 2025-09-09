@@ -20,7 +20,35 @@ class NotificationController extends BaseController
     {
         $this->firebase = $firebase;
     }
+    public function index(Request $request)
+    {
+        try {
+            $notifications = Notification::where('receiver_id', auth()->user()->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+    
+            return $this->sendResponse($notifications, 'Notification fetched successfully.');
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
+        }
+    }
 
+    public function markAsRead(Request $request, $id)
+    {
+        try {
+            $notification = Notification::where('receiver_id', auth()->user()->id)->find($id);
+            if(!$notification){
+                return $this->sendError('Notification not Found');
+            }
+            $notification->update([
+                'is_read' => true,  
+                'read_at' => now(),
+            ]);
+            return $this->sendResponse([], 'Notification marked as read.'); 
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong');
+        }
+    }
     /**
      * Save or update FCM token for authenticated user
      */
