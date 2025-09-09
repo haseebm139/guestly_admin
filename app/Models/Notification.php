@@ -20,6 +20,7 @@ class Notification extends Model
         'studio_name',
         'artist_name',
         'url',
+        'token',
         'data',
         'is_read',
         'read_at',
