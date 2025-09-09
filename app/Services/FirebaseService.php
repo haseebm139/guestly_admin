@@ -21,7 +21,7 @@ class FirebaseService
         // Use the path from .env; base_path() ensures it's relative to project root
         // $serviceAccountPath = base_path(env('FIREBASE_CREDENTIALS'));
 
-        $serviceAccountPath = storage_path('firebase_credentials.json');
+        $serviceAccountPath = storage_path('firebase/firebase_credentials.json');
          
         $factory = (new Factory)
             ->withServiceAccount($serviceAccountPath);
