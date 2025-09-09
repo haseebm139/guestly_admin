@@ -45,7 +45,7 @@ class NotificationController extends BaseController
         }
 
         $receiver = User::find($request->receiver_id);
-        $sender   = $request->user();
+        $sender   = auth()->user();
         if (!$receiver->fcm_token) {
             return $this->sendError('Target user does not have an FCM token.');
         }
