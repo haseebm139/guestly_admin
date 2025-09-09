@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Notifications\PushNotification;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use Validator;
-  
+use App\Models\Notification;
 use App\Services\FirebaseService; 
 use Illuminate\Support\Facades\Log;
 class NotificationController extends BaseController
