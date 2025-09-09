@@ -46,15 +46,15 @@ class NotificationController extends BaseController
             return $this->sendError('Target user does not have an FCM token.');
         }
         
-        $this->firebase->sendToToken(
-            $user->fcm_token,
-            $request->title,
-            $request->body,
-             
-        );
-
-        return $this->sendResponse([], 'Notification sent successfully.');
         try {
+            $this->firebase->sendToToken(
+                $user->fcm_token,
+                $request->title,
+                $request->body,
+                 
+            );
+
+            return $this->sendResponse([], 'Notification sent successfully.');
         } catch (\Throwable $e) {
             Log::error('SendToUser error: '.$e->getMessage());
             return $this->sendError('Failed to send notification.');

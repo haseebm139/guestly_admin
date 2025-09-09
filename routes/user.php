@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/', [DashboardController::class, 'index']);
 
-    Route::get('/upload-image', [DashboardController::class, 'uploadImage'])->name('upload.image');
+    // Route::get('/upload-image', [DashboardController::class, 'uploadImage'])->name('upload.image');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/store-token', [DashboardController::class, 'storeToken'])->name('store.token');
