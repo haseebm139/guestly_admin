@@ -4,10 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController  ;
 use App\Http\Controllers\Api\V1\UserController  ;
-
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\CardController;
-use App\Http\Controllers\Api\V1\NotificationController;
+// use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\SpotBooking\SpotBookingController;
 use App\Http\Controllers\Api\V1\Studio\HomeController;
 
@@ -33,7 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('v1')->group(function () {
 
-
+    Route::post('/send-notification', [NotificationController::class, 'sendToUser']);
+    Route::post('/send-bulk-notification', [NotificationController::class, 'sendToMany']);
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('google_login', [AuthController::class, 'googleLogin']);

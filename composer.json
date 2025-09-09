@@ -10,6 +10,8 @@
         "diglactic/laravel-breadcrumbs": "^8.1",
         "fruitcake/laravel-cors": "dev-develop",
         "guzzlehttp/guzzle": "^7.2",
+        "kreait/laravel-firebase": "^5.10",
+        "laravel-notification-channels/fcm": "^4.5",
         "laravel/framework": "^10.0",
         "laravel/passport": "^12.4",
         "laravel/sanctum": "^3.0",
