@@ -33,7 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('v1')->group(function () {
 
-    Route::post('/send-notification', [NotificationController::class, 'sendToUser']);
     Route::post('/send-bulk-notification', [NotificationController::class, 'sendToMany']);
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
@@ -43,9 +42,10 @@ Route::prefix('v1')->group(function () {
     Route::post('send-code-to-email', [AuthController::class, 'sendCodeToEmail']);
     Route::post('/update-password',[AuthController::class, 'updatePassword']);
     Route::post('/auto-login-register',[AuthController::class, 'autoLoginOrRegister']);
-
+    
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('user/profile', [AuthController::class, 'profile']);
+        Route::post('/send-notification', [NotificationController::class, 'sendToUser']);
 
         Route::prefix('user/')->group(function () {
 
