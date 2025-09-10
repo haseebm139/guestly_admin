@@ -15,17 +15,24 @@ class AddUserModal extends Component
 {
     use WithFileUploads;
 
-    public $name;
+    public $name;     
+    public $last_name;
     public $email;
+    public $phone;
     public $role;
     public $avatar;
     public $saved_avatar;
 
+
+    public $role_id;
+    public $role_name;
     public $edit_mode = false;
 
     protected $rules = [
         'name' => 'required|string',
-        'email' => 'required|email',
+        'last_name'  => 'required|string|max:100',
+        'email'      => 'required|email',
+        'phone'      => 'required|string|max:20', 
         'role' => 'required|string',
         'avatar' => 'nullable|sometimes|image|max:1024',
     ];
@@ -35,22 +42,44 @@ class AddUserModal extends Component
         'update_user' => 'updateUser',
     ];
 
+    public function mount($role_id = null)
+    {
+        if ($role_id) {
+            $this->role_id = $role_id;
+            $this->role_name = Role::find($role_id)?->name; // get role name
+        }
+    }
+
     public function render()
     {
-        $roles = Role::all();
+        if ($this->role_id) {
+            // Show only the single role passed in
+            $roles = Role::where('id', $this->role_id)->get();
+        } elseif ($this->role_name) {
+            // Or fetch by role name
+            $roles = Role::where('name', $this->role_name)->get();
+        } else {
+            // Default: all roles
+            $roles = Role::all();
+        }
+        
 
         $roles_description = [
             'administrator' => 'Best for business owners and company administrators',
-            'developer' => 'Best for developers or people primarily using the API',
-            'analyst' => 'Best for people who need full access to analytics data, but don\'t need to update business settings',
-            'support' => 'Best for employees who regularly refund payments and respond to disputes',
-            'trial' => 'Best for people who need to preview content data, but don\'t need to make any updates',
+        'developer' => 'Best for developers or people primarily using the API',
+        'analyst' => 'Best for people who need full access to analytics data, but don\'t need to update business settings',
+        'support' => 'Best for employees who regularly refund payments and respond to disputes',
+        'trial' => 'Best for people who need to preview content data, but don\'t need to make any updates',
+        'artist' => 'Best for studio artists to manage bookings and services',
+        'studio' => 'Best for studios to manage services and clients',
+        'user' => 'Best for users who need to view content data, but don\'t need to make any updates',
         ];
-
         foreach ($roles as $i => $role) {
             $roles[$i]->description = $roles_description[$role->name] ?? '';
         }
-
+        if ($roles->count() === 1) {
+            $this->role = $roles->first()->name;
+        }
         return view('livewire.user.add-user-modal', compact('roles'));
     }
 
@@ -58,13 +87,14 @@ class AddUserModal extends Component
     {
         // Validate the form input data
         $this->validate();
-
         DB::transaction(function () {
             // Prepare the data for creating a new user
             $data = [
                 'name' => $this->name,
+                'last_name'  => $this->last_name,
+                'phone'      => $this->phone,
             ];
-
+            
             if ($this->avatar) {
                 $data['profile_photo_path'] = $this->avatar->store('avatars', 'public');
             } else {
@@ -74,8 +104,10 @@ class AddUserModal extends Component
             if (!$this->edit_mode) {
                 $data['password'] = Hash::make($this->email);
             }
-
+            
             // Create a new user record in the database
+            $data['user_type'] = $this->role??'user';
+            $data['role_id'] = $this->role??'user';
             $user = User::updateOrCreate([
                 'email' => $this->email,
             ], $data);
@@ -85,7 +117,7 @@ class AddUserModal extends Component
                 $user->syncRoles($this->role);
 
                 // Emit a success event with a message
-                $this->emit('success', __('User updated'));
+                $this->emit('success', ucfirst($this->role_name) . " updated successfully");
             } else {
                 // Assign selected role for user
                 $user->assignRole($this->role);
@@ -94,7 +126,7 @@ class AddUserModal extends Component
                 Password::sendResetLink($user->only('email'));
 
                 // Emit a success event with a message
-                $this->emit('success', __('New user created'));
+                $this->emit('success', ucfirst($this->role_name) . " added successfully");
             }
         });
 
@@ -106,7 +138,7 @@ class AddUserModal extends Component
     {
         // Prevent deletion of current user
         if ($id == Auth::id()) {
-            $this->emit('error', 'User cannot be deleted');
+            $this->emit('error', ucfirst($this->role_name) . ' cannot be deleted');
             return;
         }
 
@@ -114,7 +146,7 @@ class AddUserModal extends Component
         User::destroy($id);
 
         // Emit a success event with a message
-        $this->emit('success', 'User successfully deleted');
+        $this->emit('success', ucfirst($this->role_name) . ' successfully deleted');
     }
 
     public function updateUser($id)
@@ -125,6 +157,8 @@ class AddUserModal extends Component
 
         $this->saved_avatar = $user->profile_photo_url;
         $this->name = $user->name;
+        $this->last_name    = $user->last_name;
+        $this->phone        = $user->phone;
         $this->email = $user->email;
         $this->role = $user->roles?->first()->name ?? '';
     }

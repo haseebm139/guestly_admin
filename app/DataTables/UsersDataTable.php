@@ -44,18 +44,7 @@ class UsersDataTable extends DataTable
             ->editColumn('created_at', function (User $user) {
                 return $user->created_at->format('d M Y, h:i a');
             })
-            ->editColumn('verification_status', function (User $user) {
-                if ($user->verification_status === '0') {
-                    return '<span class="badge badge-warning">Pending</span>';
-                }
-                if ($user->verification_status === '1') {
-                    return '<span class="badge badge-success">Verified</span>';
-                }
-                if ($user->verification_status === '2') {
-                    return '<span class="badge badge-danger">Rejected</span>';
-                }
-                return '<span class="badge badge-info">Unknown</span>';
-            })
+             
             ->addColumn('action', function (User $user) {
                 return view('pages.apps.user-management.studios.columns._actions', compact('user'));
             })
@@ -111,12 +100,7 @@ class UsersDataTable extends DataTable
             Column::make('created_at')
                 ->title('Joined Date')
                 ->addClass('text-nowrap')
-                ->name('users.created_at'), // relation, not sortable
-
-            Column::make('verification_status')
-                ->title('Verification Status')
-                ->name('users.verification_status')
-                ->addClass('text-nowrap '),
+                ->name('users.created_at'), 
                 
             Column::computed('action')
                 ->addClass('text-end text-nowrap')

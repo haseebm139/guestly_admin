@@ -46,79 +46,79 @@ Route::get('/test-email', function () {
 });
     Route::get('booking/{artist_id}/{artist_name}/{shared_code}', [ClientController::class, 'index'])->name('client.index');
     Route::post('/booking/{shared_code}/submit', [ClientController::class, 'submitForm'])->name('client.booking.submit');
-    Route::middleware(['auth', 'verified'])->prefix('admin1')->group(function () {
+    Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
-    Route::get('/maintenance/clear-caches', function () {
-        // Only allow in local / staging or if you add auth
-        if (! app()->isLocal()) {
-            abort(403, 'Forbidden');
-        }
+        Route::get('/maintenance/clear-caches', function () {
+            // Only allow in local / staging or if you add auth
+            if (! app()->isLocal()) {
+                abort(403, 'Forbidden');
+            }
 
-        Artisan::call('cache:clear');
-        Artisan::call('route:clear');
-        Artisan::call('config:clear');
-        Artisan::call('view:clear');
+            Artisan::call('cache:clear');
+            Artisan::call('route:clear');
+            Artisan::call('config:clear');
+            Artisan::call('view:clear');
 
 
-        return response()->json([
-            'message' => 'All caches cleared.',
-            'output'  => Artisan::output(),
-        ]);
-    });
+            return response()->json([
+                'message' => 'All caches cleared.',
+                'output'  => Artisan::output(),
+            ]);
+        });
 
-    Route::get('/', [DashboardController::class, 'index']);
+        Route::get('/', [DashboardController::class, 'index']);
 
-    Route::get('/upload-image', [DashboardController::class, 'uploadImage'])->name('upload.image');
+        Route::get('/upload-image', [DashboardController::class, 'uploadImage'])->name('upload.image');
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/store-token', [DashboardController::class, 'storeToken'])->name('store.token');
-    Route::get('/web-push', [DashboardController::class, 'webPush']);
-    Route::get('/my-profile', [DashboardController::class,'myProfile'])->name('myprofile');
-    Route::get('/my-profile-update-email', [UserManagementController::class,'myProfileUpdateEmail'])->name('myprofileUpdateEmail');
-    Route::get('/my-profile-update-name', [UserManagementController::class,'myProfileUpdateName'])->name('myprofileUpdateName');
-    Route::get('/my-profile-update-password', [UserManagementController::class,'myProfileUpdatePassword'])->name('myprofileUpdatePassword');
-    Route::controller(ChatController::class)->group(function () {
-        Route::get('/chat', 'index')->name('chat');
-
-    });
-    Route::name('user-management.')->group(function () {
-        // Route::resource('/user-management/users', UserManagementController::class);
-        Route::resource('/user-management/administrators', UserManagementController::class);
-
-        Route::resource('/user-management/studios', StudioManagementController::class);
-        Route::resource('/user-management/artists', ArtistManagementController::class);
-        Route::resource('/user-management/roles', RoleManagementController::class);
-        Route::resource('/user-management/permissions', PermissionManagementController::class);
-    });
-    Route::name('product-management.')->group(function () {
-
-    });
-
-    Route::name('plan-management.')->group(function () {
-            Route::resource('plans', PlanManagementController::class);
-            Route::get('plan-change-status', [PlanManagementController::class,'change_status'])->name('plans.change.status');
-            Route::resource('/plan-management/features', FeatureManagementController::class);
-            Route::get('feature-change-status', [FeatureManagementController::class,'change_status'])->name('features.change.status');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/store-token', [DashboardController::class, 'storeToken'])->name('store.token');
+        Route::get('/web-push', [DashboardController::class, 'webPush']);
+        Route::get('/my-profile', [DashboardController::class,'myProfile'])->name('myprofile');
+        Route::get('/my-profile-update-email', [UserManagementController::class,'myProfileUpdateEmail'])->name('myprofileUpdateEmail');
+        Route::get('/my-profile-update-name', [UserManagementController::class,'myProfileUpdateName'])->name('myprofileUpdateName');
+        Route::get('/my-profile-update-password', [UserManagementController::class,'myProfileUpdatePassword'])->name('myprofileUpdatePassword');
+        Route::controller(ChatController::class)->group(function () {
+            Route::get('/chat', 'index')->name('chat');
 
         });
-        Route::name('creative-management.')->group(function () {
-            Route::resource('supplies', SupplyController::class);
-            Route::resource('station-amenities', StationAmenityController::class);
-            Route::resource('tattoo-styles', TattooStyleController::class);
-            Route::resource('design-specialities', DesignSpecialityController::class);
+        Route::name('user-management.')->group(function () {
+            // Route::resource('/user-management/users', UserManagementController::class);
+            Route::resource('/user-management/administrators', UserManagementController::class);
 
+            Route::resource('/user-management/studios', StudioManagementController::class);
+            Route::resource('/user-management/artists', ArtistManagementController::class);
+            Route::resource('/user-management/roles', RoleManagementController::class);
+            Route::resource('/user-management/permissions', PermissionManagementController::class);
+        });
+        Route::name('product-management.')->group(function () {
 
         });
 
+        Route::name('plan-management.')->group(function () {
+                Route::resource('plans', PlanManagementController::class);
+                Route::get('plan-change-status', [PlanManagementController::class,'change_status'])->name('plans.change.status');
+                Route::resource('/plan-management/features', FeatureManagementController::class);
+                Route::get('feature-change-status', [FeatureManagementController::class,'change_status'])->name('features.change.status');
 
-    Route::resource('image/upload', ImageUpload::class);
+            });
+            Route::name('creative-management.')->group(function () {
+                Route::resource('supplies', SupplyController::class);
+                Route::resource('station-amenities', StationAmenityController::class);
+                Route::resource('tattoo-styles', TattooStyleController::class);
+                Route::resource('design-specialities', DesignSpecialityController::class);
 
 
-        // Route::resource('vendor/product', ProductController::class);
+            });
+
+
+        Route::resource('image/upload', ImageUpload::class);
+
+
+            // Route::resource('vendor/product', ProductController::class);
 
 
 
-});
+    });
 
 Route::get('/error', function () {
     abort(500);

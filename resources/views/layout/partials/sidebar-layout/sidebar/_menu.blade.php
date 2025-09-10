@@ -48,7 +48,7 @@
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
-                            <span class="menu-title">Users</span>
+                            <span class="menu-title">Administrators</span>
                         </a>
                         <!--end:Menu link-->
                         <!--begin:Menu link-->
