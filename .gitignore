@@ -3,12 +3,14 @@
 /public/hot
 /public/storage
 /public/verification
-/public/ckeditor
-/public/ckeditor
+/public/ckeditor 
 /public/amenities_icon
 /public/assets
 /public/studios
 /public/artists
+/public/documents/
+ 
+/public/storage/
 /public/mix-manifest.json
 /storage/*.key
 /vendor
