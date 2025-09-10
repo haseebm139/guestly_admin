@@ -36,9 +36,19 @@ class StudioManagementController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($id)
     {
-        return view('pages.apps.user-management.studios.show', compact('user'));
+        $user = User::where('id',$id)->first();
+        try {
+            //code...
+            if (!$user) {
+                return abort(404);
+            }
+             
+            return view('pages.apps.user-management.studios.show', compact('user'));
+        } catch (\Throwable $th) {
+            return redirect()->bac()->with(['message'=>'Something went wrong','type'=>'error']);
+        }
     }
 
     /**
