@@ -71,9 +71,26 @@ class UserManagementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
-    {
-        //
+    public function destroy($id)
+    { 
+        $user = User::withTrashed()->find($id);
+        $role_name = $user->roles()->first()->name ?? 'User';
+
+        if ($user->trashed()) {
+            $user->restore();
+            return response()->json([
+                'success' => true,
+                'message' => ucfirst($role_name) . ' Restored successfully',
+                'status' => 'Restored'
+            ]);
+        } else {
+            $user->delete();
+            return response()->json([
+                'success' => true,
+                'message' => ucfirst($role_name) . ' Deleted successfully',
+                'status' => 'Deleted'
+            ]);
+        }
     }
     public function myProfile(){
 
@@ -180,4 +197,17 @@ class UserManagementController extends Controller
 
         }
     }
+
+    public function toggleStatus(User $user)
+    {
+        $user->is_active = !$user->is_active;
+        $user->save();
+        return response()->json([
+            'success' => true,
+            'status' => $user->is_active ? 'Active' : 'Inactive',
+        ]);
+    
+    }
+
+    
 }

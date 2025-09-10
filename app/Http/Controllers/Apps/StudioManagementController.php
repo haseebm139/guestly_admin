@@ -38,7 +38,7 @@ class StudioManagementController extends Controller
      */
     public function show($id)
     {
-        $user = User::where('id',$id)->first();
+        $user = User::where('id',$id)->withTrashed()->first();
         try {
             //code...
             if (!$user) {
@@ -47,7 +47,7 @@ class StudioManagementController extends Controller
              
             return view('pages.apps.user-management.studios.show', compact('user'));
         } catch (\Throwable $th) {
-            return redirect()->bac()->with(['message'=>'Something went wrong','type'=>'error']);
+            return redirect()->back()->with(['message'=>'Something went wrong','type'=>'error']);
         }
     }
 

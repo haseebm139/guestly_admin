@@ -45,16 +45,20 @@ class StudiosDataTable extends DataTable
                 return $user->created_at->format('d M Y, h:i a');
             })
             ->editColumn('verification_status', function (User $user) {
-                if ($user->verification_status === '0') {
-                    return '<span class="badge badge-warning">Pending</span>';
+                if ($user->trashed()) {
+                    return '<span class="badge badge-danger">Deleted</span>';
                 }
-                if ($user->verification_status === '1') {
-                    return '<span class="badge badge-success">Verified</span>';
+
+                switch ($user->verification_status) {
+                    case '0':
+                        return '<span class="badge badge-warning">Pending</span>';
+                    case '1':
+                        return '<span class="badge badge-success">Verified</span>';
+                    case '2':
+                        return '<span class="badge badge-danger">Rejected</span>';
+                    default:
+                        return '<span class="badge badge-info">Unknown</span>';
                 }
-                if ($user->verification_status === '2') {
-                    return '<span class="badge badge-danger">Rejected</span>';
-                }
-                return '<span class="badge badge-info">Unknown</span>';
             })
             ->addColumn('action', function (User $user) {
                 return view('pages.apps.user-management.studios.columns._actions', compact('user'));
@@ -68,7 +72,7 @@ class StudiosDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->where('user_type', 'studio');
+        return $model->newQuery()->where('user_type', 'studio')->withTrashed();
     }
 
     /**

@@ -192,6 +192,7 @@ return [
         ],
         'amcharts' => [
             'js' => [
+                
                 'https://cdn.amcharts.com/lib/5/index.js',
                 'https://cdn.amcharts.com/lib/5/xy.js',
                 'https://cdn.amcharts.com/lib/5/percent.js',
@@ -213,6 +214,7 @@ return [
         ],
         'amcharts-stock' => [
             'js' => [
+                
                 'https://cdn.amcharts.com/lib/5/index.js',
                 'https://cdn.amcharts.com/lib/5/xy.js',
                 'https://cdn.amcharts.com/lib/5/themes/Animated.js',

@@ -84,7 +84,7 @@ Route::get('/test-email', function () {
         Route::name('user-management.')->group(function () {
             // Route::resource('/user-management/users', UserManagementController::class);
             Route::resource('/user-management/administrators', UserManagementController::class);
-
+            Route::patch('/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('toggle-status');
             Route::resource('/user-management/studios', StudioManagementController::class);
             Route::resource('/user-management/artists', ArtistManagementController::class);
             Route::resource('/user-management/roles', RoleManagementController::class);

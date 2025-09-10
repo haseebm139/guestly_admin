@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 // use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
     use HasRoles;
 
     /**
@@ -35,7 +36,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
+    protected $dates = ['deleted_at'];
     /**
      * The attributes that should be cast.
      *

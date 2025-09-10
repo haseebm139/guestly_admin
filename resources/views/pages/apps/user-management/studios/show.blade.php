@@ -265,9 +265,9 @@
             <!--begin:::Tabs-->
             <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8">
                 <!--begin:::Tab item-->
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_user_view_overview_tab">Overview</a>
-                </li>
+                </li> --}}
                 <!--end:::Tab item-->
                 <!--begin:::Tab item-->
                 <li class="nav-item">
@@ -275,9 +275,9 @@
                 </li>
                 <!--end:::Tab item-->
                 <!--begin:::Tab item-->
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_user_view_overview_events_and_logs_tab">Events & Logs</a>
-                </li>
+                </li> --}}
                 <!--end:::Tab item-->
                 <!--begin:::Tab item-->
                 <li class="nav-item ms-auto">
@@ -287,7 +287,7 @@
                     <!--begin::Menu-->
                     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold py-4 w-250px fs-6" data-kt-menu="true">
                         <!--begin::Menu item-->
-                        <div class="menu-item px-5">
+                        {{-- <div class="menu-item px-5">
                             <div class="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">Payments</div>
                         </div>
                         <!--end::Menu item-->
@@ -349,9 +349,9 @@
                         </div>
                         <!--end::Menu item-->
                         <!--begin::Menu separator-->
-                        <div class="separator my-3"></div>
+                        <div class="separator my-3"></div> --}}
                         <!--end::Menu separator-->
-                        <!--begin::Menu item-->
+                        {{-- <!--begin::Menu item-->
                         <div class="menu-item px-5">
                             <div class="menu-content text-muted pb-2 px-5 fs-7 text-uppercase">Account</div>
                         </div>
@@ -365,11 +365,19 @@
                         <div class="menu-item px-5 my-1">
                             <a href="#" class="menu-link px-5">Account Settings</a>
                         </div>
-                        <!--end::Menu item-->
+                        <!--end::Menu item--> --}}
+                        <div class="menu-item px-5">
+                            <a href="javascript:void(0)"  class="menu-link text-{{ $user->is_active ? 'danger' : 'success' }} px-5 toggle-status"  data-id="{{ $user->id }}">{{ $user->is_active ? 'Deactivate' : 'Activate' }}</a>
+                        </div>
+                        <div class="separator my-3"></div>
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                            <a href="#" class="menu-link text-danger px-5">Delete customer</a>
-                        </div>
+    <a href="javascript:void(0)" 
+       class="menu-link {{ $user->trashed() ? 'text-success' : 'text-danger' }} px-5 delete-user" 
+       data-id="{{ $user->id }}">
+        {{ $user->trashed() ? 'Restore Account ' : 'Delete Account ' }}{{ ucwords($user->user_type) ?? 'User' }}
+    </a>
+</div>
                         <!--end::Menu item-->
                     </div>
                     <!--end::Menu-->
@@ -2758,4 +2766,68 @@
     @include('pages.apps/user-management/studios/modals/_add-task')
     <!--end::Modal - Add task-->
     <!--end::Modals-->
+
+
+     
+        <script>
+$(document).on('click', '.toggle-status', function(e) {
+    e.preventDefault();
+    let userId = $(this).data('id');
+    let $link = $(this);
+
+    $.ajax({
+        url: "{{ route('user-management.toggle-status', ':id') }}".replace(':id', userId),
+        type: 'PATCH',
+        data: { _token: '{{ csrf_token() }}' },
+        success: function(response) {
+            if (response.success) {
+                // update text
+                $link.text(response.status === 'Active' ? 'Deactivate' : 'Activate');
+                // toggle class
+                if (response.status === 'Active') {
+                    $link.removeClass('text-success').addClass('text-danger');
+                } else {
+                    $link.removeClass('text-danger').addClass('text-success');
+                }
+                 
+
+                // notify
+                toastr.success('User status updated to ' + response.status);
+            }
+        },
+        error: function() {
+            toastr.error('Something went wrong. Try again!');
+        }
+    });
+});
+
+$(document).on('click', '.delete-user', function(e) {
+    e.preventDefault();
+    if(!confirm('Are you sure you want to delete this user?')) return;
+
+    let userId = $(this).data('id');
+    let $link = $(this);
+
+    $.ajax({
+        url: "{{ route('user-management.administrators.destroy', ':id') }}".replace(':id', userId),
+        type: 'DELETE',
+        data: { _token: '{{ csrf_token() }}' },
+        success: function(response) {
+            if (response.success) {
+                console.log(response);
+                if (response.status === 'Deleted') {
+                    $link.text('Restore Account').removeClass('text-danger').addClass('text-success');
+                } else {
+                    $link.text('Delete Account').removeClass('text-success').addClass('text-danger');
+                }
+
+                toastr.success(response.message); 
+            }
+             
+        }
+    });
+});
+</script>
+
+     
 </x-default-layout>
