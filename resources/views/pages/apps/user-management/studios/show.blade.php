@@ -2813,8 +2813,7 @@ $(document).on('click', '.delete-user', function(e) {
         type: 'DELETE',
         data: { _token: '{{ csrf_token() }}' },
         success: function(response) {
-            if (response.success) {
-                console.log(response);
+            if (response.success) { 
                 if (response.status === 'Deleted') {
                     $link.text('Restore Account').removeClass('text-danger').addClass('text-success');
                 } else {
