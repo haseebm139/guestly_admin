@@ -111,6 +111,60 @@ Breadcrumbs::for('user-management.users.show', function (BreadcrumbTrail $trail,
     $trail->push(ucwords($user->name), route('user-management.users.show', $user));
 });
 
+  
+  
+
+// Studio
+ 
+// Home > Dashboard > User Management > Users
+Breadcrumbs::for('user-management.studios.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('user-management.index');
+    $trail->push('Studios', route('user-management.studios.index'));
+});
+
+// Home > Dashboard > User Management > Users > [User]
+Breadcrumbs::for('user-management.studios.show', function (BreadcrumbTrail $trail, User $user) {
+    $trail->parent('user-management.studios.index');
+    $trail->push(ucwords($user->name), route('user-management.studios.show', $user));
+});
+
+// Studio
+
+
+// Artists
+ 
+// Home > Dashboard > User Management > Users
+Breadcrumbs::for('user-management.artists.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('user-management.index');
+    $trail->push('Guest Artists', route('user-management.artists.index'));
+});
+
+// Home > Dashboard > User Management > Users > [User]
+Breadcrumbs::for('user-management.artists.show', function (BreadcrumbTrail $trail, User $user) {
+    $trail->parent('user-management.artists.index');
+    $trail->push(ucwords($user->name), route('user-management.artists.show', $user));
+});
+
+// Artists
+
+
+// Admin
+ 
+// Home > Dashboard > User Management > Users
+Breadcrumbs::for('user-management.administrators.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('user-management.index');
+    $trail->push('Administrators', route('user-management.administrators.index'));
+});
+
+// Home > Dashboard > User Management > Users > [User]
+Breadcrumbs::for('user-management.administrators.show', function (BreadcrumbTrail $trail, User $user) {
+    $trail->parent('user-management.administrators.index');
+    $trail->push(ucwords($user->name), route('user-management.administrators.show', $user));
+});
+
+// Admin
+
+
 // Home > Dashboard > User Management > Roles
 Breadcrumbs::for('user-management.roles.index', function (BreadcrumbTrail $trail) {
     $trail->parent('user-management.index');

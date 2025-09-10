@@ -1,7 +1,7 @@
 <?php
 
 namespace App\DataTables;
-
+// StudiosDataTable
 use App\Models\User;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
@@ -9,7 +9,7 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Carbon\Carbon;
-class UsersDataTable extends DataTable
+class StudiosDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -68,7 +68,7 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->where('user_type', 'administrator');
+        return $model->newQuery()->where('user_type', 'studio');
     }
 
     /**
@@ -137,6 +137,4 @@ class UsersDataTable extends DataTable
         return 'Users_' . date('YmdHis');
     }
 }
-
-
 

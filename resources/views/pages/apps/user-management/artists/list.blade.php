@@ -1,11 +1,11 @@
 <x-default-layout>
 
     @section('title')
-        Administrators
+        Artists
     @endsection
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('user-management.users.index') }}
+        {{ Breadcrumbs::render('user-management.artists.index') }}
     @endsection
 
     <div class="card">
@@ -16,7 +16,7 @@
                 <!--begin::Search-->
                 <div class="d-flex align-items-center position-relative my-1">
                     {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search user" id="mySearchInput"/>
+                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search Guest Artists" id="mySearchInput"/>
                 </div>
                 <!--end::Search-->
             </div>

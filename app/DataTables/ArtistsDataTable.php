@@ -1,7 +1,7 @@
 <?php
 
 namespace App\DataTables;
-
+// ArtistDataTable
 use App\Models\User;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
@@ -9,7 +9,7 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Carbon\Carbon;
-class UsersDataTable extends DataTable
+class ArtistsDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -68,7 +68,7 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->where('user_type', 'administrator');
+        return $model->newQuery()->where('user_type', 'artist');
     }
 
     /**
@@ -117,7 +117,7 @@ class UsersDataTable extends DataTable
                 ->title('Verification Status')
                 ->name('users.verification_status')
                 ->addClass('text-nowrap '),
-                
+
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)
@@ -137,6 +137,4 @@ class UsersDataTable extends DataTable
         return 'Users_' . date('YmdHis');
     }
 }
-
-
 

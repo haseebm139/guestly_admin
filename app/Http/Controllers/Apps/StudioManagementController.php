@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers\Apps;
 
-use App\DataTables\UsersDataTable;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\DataTables\StudiosDataTable; 
+use App\Models\User; 
 
-class UserManagementController extends Controller
+class StudioManagementController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(UsersDataTable $dataTable)
+    public function index(StudiosDataTable $dataTable)
     {
-        
-        return $dataTable->render('pages.apps.user-management.administrators.list');
+        return $dataTable->render('pages.apps.user-management.studios.list');
     }
 
     /**
@@ -39,7 +38,7 @@ class UserManagementController extends Controller
      */
     public function show(User $user)
     {
-        return view('pages.apps.user-management.administrators.show', compact('user'));
+        return view('pages.apps.user-management.studios.show', compact('user'));
     }
 
     /**

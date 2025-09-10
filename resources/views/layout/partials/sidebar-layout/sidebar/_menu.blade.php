@@ -43,12 +43,31 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link {{ request()->routeIs('user-management.users.*') ? 'active' : '' }}"
-                            href="{{ route('user-management.users.index') }}">
+                        <a class="menu-link {{ request()->routeIs('user-management.administrators.*') ? 'active' : '' }}"
+                            href="{{ route('user-management.administrators.index') }}">
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
                             <span class="menu-title">Users</span>
+                        </a>
+                        <!--end:Menu link-->
+                        <!--begin:Menu link-->
+                        <a class="menu-link {{ request()->routeIs('user-management.artists.*') ? 'active' : '' }}"
+                            href="{{ route('user-management.artists.index') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Guest Artist</span>
+                        </a>
+                        <!--end:Menu link-->
+
+                        <!--begin:Menu link-->
+                        <a class="menu-link {{ request()->routeIs('user-management.studios.*') ? 'active' : '' }}"
+                            href="{{ route('user-management.studios.index') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Studios</span>
                         </a>
                         <!--end:Menu link-->
                     </div>

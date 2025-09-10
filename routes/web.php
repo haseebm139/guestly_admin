@@ -3,6 +3,9 @@
 use App\Http\Controllers\Apps\PermissionManagementController;
 use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\UserManagementController;
+use App\Http\Controllers\Apps\StudioManagementController;
+use App\Http\Controllers\Apps\ArtistManagementController;
+
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ImageUpload;
 use App\Http\Controllers\DashboardController;
@@ -79,7 +82,11 @@ Route::get('/test-email', function () {
 
     });
     Route::name('user-management.')->group(function () {
-        Route::resource('/user-management/users', UserManagementController::class);
+        // Route::resource('/user-management/users', UserManagementController::class);
+        Route::resource('/user-management/administrators', UserManagementController::class);
+
+        Route::resource('/user-management/studios', StudioManagementController::class);
+        Route::resource('/user-management/artists', ArtistManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
         Route::resource('/user-management/permissions', PermissionManagementController::class);
     });
