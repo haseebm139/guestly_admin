@@ -43,7 +43,7 @@ return new class extends Migration
             $table->string('studio_cover')->nullable();
 
             $table->integer('guest_spots')->nullable();
-            $table->integer('studio_type')->nullable();
+            $table->integer('studio_type')->nullable();   // 1 = walk-in, 2 = appointment, 3 = private studio
             $table->integer('otp')->nullable();
 
             $table->enum('email_verified', ['0', '1'])->nullable()->default('0');   // 1 = active, 0 = inactive

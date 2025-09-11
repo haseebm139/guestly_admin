@@ -77,7 +77,15 @@ class ArtistController extends BaseController
     {
 
         $perPage = $request->get('per_page', 10);
-        $studios = $this->service->getStudios($perPage);
+        $filters = [
+            'search'            => $request->get('search'),
+            'start_date'        => $request->get('start_date'),
+            'end_date'          => $request->get('end_date'),
+            'studio_type'       => $request->get('studio_type'),
+            'country'           => $request->get('country'),
+            'station_amenities' => $request->get('station_amenities'),
+        ];
+        $studios = $this->service->getStudios($perPage, $filters);
         return $studios
             ? $this->sendResponse($studios, 'Studios fetched successfully.')
             : $this->sendError('No studios found.',$errorMessages = [], 404);

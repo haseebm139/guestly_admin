@@ -43,18 +43,54 @@ class ArtistProfileService
         return $this->repo->getById($userId);
     }
 
-    public function getStudios(int $perPage = 10)
+    public function getStudios(int $perPage = 10, array $filters = [])
     {
+         
         $artistId = auth()->id();
-        return User::where('user_type', 'studio')
+        $query = User::where('user_type', 'studio')
              ->withCount([
                 'favoritedBy as is_favorite' => function ($query) use ($artistId) {
                     $query->where('artist_id', $artistId);
                 }
             ])
-            ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path'])
-            ->paginate($perPage);
-        // return $this->repo->getAllStudios($perPage);
+            ->with(['supplies:id,name', 'stationAmenities:id,name', 'studioImages:id,user_id,image_path']);
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('studio_name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('business_email', 'like', "%{$search}%")
+                ->orWhere('country', 'like', "%{$search}%")
+                ->orWhere('city', 'like', "%{$search}%")
+                ->orWhere('address', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        if (!empty($filters['studio_type'])) {
+            $query->where('studio_type', $filters['studio_type']);
+        }
+        if (!empty($filters['country'])) {
+            $query->where('country', $filters['country']);
+        }
+         
+        if (!empty($filters['station_amenities']) ) {
+            $amenities = explode(',', $filters['station_amenities']);
+            $query->whereHas('stationAmenities', function ($q) use ($amenities) {
+                $q->whereIn('station_amenities.id', $amenities);
+            });
+        }
+         
+        return $query->paginate($perPage);
+            // ->paginate($perPage);
+
+        
     }
 
     // public function getStudios(int $perPage = 10)
