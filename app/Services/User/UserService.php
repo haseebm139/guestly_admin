@@ -37,8 +37,8 @@ class UserService extends BaseController
 
         $imageName = $side.'-'.$type.'-'.time().'.'.$file->extension();
 
-        $file->move(public_path('documents/verification'), $imageName);
-        return 'documents/verification/' . $imageName;
+        $file->move(public_path('artists/verification'), $imageName);
+        return 'artists/verification/' . $imageName;
     }
 
     public function confirm($user)

@@ -1,5 +1,16 @@
 <?php
 
+if (!function_exists('slugToWords')) {
+function slugToWords(string $slug): string
+{
+    // Replace - and _ with space
+    $words = str_replace(['-', '_'], ' ', $slug);
+    
+     
+    // Lowercase then ucfirst each word
+    return ucwords(strtolower($words));
+}
+}
 if (!function_exists('theme')) {
     function theme()
     {

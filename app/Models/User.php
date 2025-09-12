@@ -193,7 +193,7 @@ class User extends Authenticatable
 
     public function subscriptions()
     {
-        return $this->hasMany(\App\Models\Subscription::class);
+        return $this->hasMany(\App\Models\Subscription::class)->orderBy('status');
     }
 
     public function activeSubscription()

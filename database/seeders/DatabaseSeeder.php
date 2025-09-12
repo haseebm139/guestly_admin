@@ -31,11 +31,25 @@ class DatabaseSeeder extends Seeder
 
         $faker = Faker::create();
 
-        User::factory(30)->create()->each(function ($user) use ($faker) {
+        User::factory(15)->create()->each(function ($user) use ($faker) {
 
-            $role = collect(['artist', 'studio'])->random();
+            $role = "artist";
+
+            $user->avatar = 'avatar/default.png';
+            $user->password = Hash::make('password123');
+            $user->user_type = $role;
+            $user->role_id = $role;
+            $user->save();
 
 
+            $user->assignRole($role);
+        });
+
+        User::factory(15)->create()->each(function ($user) use ($faker) {
+
+            $role = "studio";
+
+            $user->avatar = 'avatar/default.png';
             $user->password = Hash::make('password123');
             $user->user_type = $role;
             $user->role_id = $role;

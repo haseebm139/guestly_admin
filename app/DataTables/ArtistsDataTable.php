@@ -32,7 +32,7 @@ class ArtistsDataTable extends DataTable
                 $query->where('users.verification_status', 'like', "%{$keyword}%");
             })
             ->editColumn('user', function (User $user) {
-                return view('pages.apps.user-management.studios.columns._user', compact('user'));
+                return view('pages.apps.user-management.artists.columns._user', compact('user'));
             })
             ->editColumn('role', function (User $user) {
                 return ucwords($user->roles->first()?->name);
@@ -57,7 +57,7 @@ class ArtistsDataTable extends DataTable
                 return '<span class="badge badge-info">Unknown</span>';
             })
             ->addColumn('action', function (User $user) {
-                return view('pages.apps.user-management.studios.columns._actions', compact('user'));
+                return view('pages.apps.user-management.artists.columns._actions', compact('user'));
             })
             ->setRowId('id');
     }
