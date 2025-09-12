@@ -41,6 +41,7 @@ class StudioUpdateProfileRequest extends FormRequest
             'preferred_duration' => 'nullable|string',
             'commission_type' => 'nullable|in:0,1,2', // fixed, percentage, custom
             'commission_value' => 'nullable|numeric|min:0',
+            'avatar'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             // Array fields
             'supplies_provided' => 'nullable|array|max:10',
             'supplies_provided.*' => 'integer|exists:supplies,id',

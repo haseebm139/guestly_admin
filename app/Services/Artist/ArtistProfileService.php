@@ -20,10 +20,9 @@ class ArtistProfileService
     public function updateProfile(int $userId, array $data)
     {
 
-        // if (isset($data['studio_logo'])) {
-        //     $data['studio_logo'] = $this->imageService->uploadImage($data['studio_logo'], 'logo', 'logos');
-        // }
-
+        if (isset($data['avatar'])) {
+            $data['avatar'] = $this->imageService->uploadImage($data['avatar'], 'avatar', 'avatar');
+        } 
         // if (isset($data['studio_cover'])) {
         //     $data['studio_cover'] = $this->imageService->uploadImage($data['studio_cover'], 'cover', 'covers');
         // }

@@ -26,7 +26,9 @@ class StudioProfileService
         if (isset($data['studio_cover'])) {
             $data['studio_cover'] = $this->imageService->uploadImage($data['studio_cover'], 'cover', 'covers');
         }
-
+        if (isset($data['avatar'])) {
+            $data['avatar'] = $this->imageService->uploadImage($data['avatar'], 'avatar', 'avatar');
+        }
         if (isset($data['studio_images']) && is_array($data['studio_images'])) {
             $galleryPaths = $this->imageService->uploadGalleryImages($data['studio_images']);
             $this->repo->saveGalleryImages($userId, $galleryPaths);
