@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Password;
 class AddUserModal extends Component
 {
     use WithFileUploads;
-
+    public $user_id;
     public $name;     
     public $last_name;
     public $email;
     public $phone;
     public $role;
     public $avatar;
-    public $saved_avatar;
+    public $saved_avatar; 
 
 
     public $role_id;
@@ -87,51 +87,56 @@ class AddUserModal extends Component
     {
         // Validate the form input data
         $this->validate();
+         
+
         DB::transaction(function () {
-            // Prepare the data for creating a new user
             $data = [
-                'name' => $this->name,
+                'name'       => $this->name,
                 'last_name'  => $this->last_name,
                 'phone'      => $this->phone,
+                'email'      => $this->email,
+                'profile_photo_path' => $this->avatar 
+                    ? $this->avatar->store('avatars', 'public') 
+                    : null,
+                'user_type'  => $this->role ?? 'user',
             ];
-            
-            if ($this->avatar) {
-                $data['profile_photo_path'] = $this->avatar->store('avatars', 'public');
-            } else {
-                $data['profile_photo_path'] = null;
-            }
-
-            if (!$this->edit_mode) {
-                $data['password'] = Hash::make($this->email);
-            }
-            
-            // Create a new user record in the database
-            $data['user_type'] = $this->role??'user';
-            $data['role_id'] = $this->role??'user';
-            $user = User::updateOrCreate([
-                'email' => $this->email,
-            ], $data);
 
             if ($this->edit_mode) {
-                // Assign selected role for user
-                $user->syncRoles($this->role);
+                 
+                $user = User::find($this->user_id);
+                 
+                if(!$user){
+                    $this->emit('error', 'Email not found');
+                }
+                 
 
-                // Emit a success event with a message
+                 
+                $user->update([
+                    'name'       => $this->name,
+                    'last_name'  => $this->last_name,
+                    'phone'      => $this->phone,                     
+                    'profile_photo_path' => $data['profile_photo_path'],
+                    'avatar' => $data['profile_photo_path'],
+                ]);
+
+                 
+
                 $this->emit('success', ucfirst($this->role_name) . " updated successfully");
             } else {
-                // Assign selected role for user
+                // 🔹 Create new user
+                $data['password'] = Hash::make($this->email);
+                $data['avatar'] = $data['profile_photo_path'];
+                $user = User::create($data);
+
                 $user->assignRole($this->role);
 
-                // Send a password reset link to the user's email
-                Password::sendResetLink($user->only('email'));
+                Password::sendResetLink(['email' => $user->email]);
 
-                // Emit a success event with a message
                 $this->emit('success', ucfirst($this->role_name) . " added successfully");
             }
         });
 
-        // Reset the form fields after successful submission
-        $this->reset();
+        $this->resetForm();
     }
 
     public function deleteUser($id)
@@ -151,18 +156,32 @@ class AddUserModal extends Component
 
     public function updateUser($id)
     {
+
         $this->edit_mode = true;
-
+        $this->user_id = $id;     
         $user = User::find($id);
-
-        $this->saved_avatar = $user->profile_photo_url;
+        
+         
+        $this->saved_avatar = $user->avatar??asset('avatar/default.png');
         $this->name = $user->name;
         $this->last_name    = $user->last_name;
         $this->phone        = $user->phone;
         $this->email = $user->email;
         $this->role = $user->roles?->first()->name ?? '';
     }
-
+    private function resetForm()
+    {
+        $this->reset([ 
+            'edit_mode',
+            'name',
+            'last_name',
+            'phone',
+            'email',
+            'avatar',
+            'saved_avatar',
+             
+        ]);
+    }
     public function hydrate()
     {
         $this->resetErrorBag();

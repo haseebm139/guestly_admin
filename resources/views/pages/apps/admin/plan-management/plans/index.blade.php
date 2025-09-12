@@ -99,38 +99,31 @@
                                         data-kt-scroll-offset="300px">
 
                                         <div class="form-group fv-row mb-4">
-                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan
+                                            <label class="required fw-semibold fs-6 mb-2" name="name">Plan
                                                 Name</label>
                                             <input type="text" name="name" class="form-control"
                                                 placeholder="Free Trial" />
                                             <span class="form-text text-muted">Enter a unique name for this plan (e.g.
                                                 Basic, Premium)</span>
                                         </div>
-                                        {{-- <div class="form-group fv-row mb-4">
+                                        <div class="form-group fv-row mb-4">
 
-                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan
-                                                Validity</label>
-                                            <div class="input-group input-group-solid">
-                                                <!-- Integer input -->
-                                                <input type="number" name="validity_value" class="form-control"
-                                                    placeholder="Enter number" required />
+                                            <label class="required fw-semibold fs-6 mb-2"  >User Role</label>
+                                            <div class="input-group input-group-solid">                                                
 
                                                 <!-- Unit select -->
-                                                <select name="validity_unit" class="form-select form-control"
+                                                <select name="user_type" class="form-select form-control"
                                                     style="max-width: 150px;" required>
-                                                    <option value="days">Day(s)</option>
-                                                    <option value="weeks">Week(s)</option>
-                                                    <option value="months" selected>Month(s)</option>
-                                                    <option value="years">Year(s)</option>
+                                                    <option value="studio">Studio</option>
+                                                    <option value="artist">Guest Artist</option> 
                                                 </select>
                                             </div>
-                                            <span class="form-text text-muted">Enter a number and select the duration
-                                                unit (e.g. 3 months)</span>
-                                        </div> --}}
+                                            <span class="form-text text-muted">Select the User Role </span>
+                                        </div>
 
 
                                         <div class="form-group fv-row mb-4">
-                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan Monthly
+                                            <label class="required fw-semibold fs-6 mb-2" name="m_price">Plan Monthly
                                                 Price</label>
                                             <input id="price_touchspin_1" type="text" class="form-control"
                                                 value="55" name="m_price" placeholder="Select time" />
@@ -140,7 +133,7 @@
                                         </div>
 
                                         <div class="form-group fv-row mb-4">
-                                            <label class="required fw-semibold fs-6 mb-2" name="answer">Plan Yearly
+                                            <label class="required fw-semibold fs-6 mb-2" name="y_price">Plan Yearly
                                                 Price</label>
                                             <input id="price_touchspin_2" type="text" class="form-control"
                                                 value="55" name="y_price" placeholder="Select time" />
@@ -261,6 +254,7 @@
 
 
                             <th class="min-w-125px">Name</th>
+                            <th class="min-w-125px">Role</th>
                             <th class="min-w-125px">Price Monthly</th>
                             <th class="min-w-125px">Price Yearly</th>
                             <th class="min-w-125px">Status</th>
@@ -273,6 +267,7 @@
                                 <tr>
 
                                     <td>{{ $item->name ?? '' }}</td>
+                                    <td>{{ ucfirst($item->user_type) ?? '' }}</td>
                                     <td>{{ $item->m_price ?? '' }}/Monthly</td>
                                     <td>{{ $item->y_price ?? '' }}/Yearly</td>
                                     <td>

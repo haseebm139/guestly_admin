@@ -24,7 +24,7 @@ class StorePlanRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-
+            'user_type' => 'required|in:artist,studio',
             'm_price' => 'required|numeric|min:0',
             'y_price' => 'required|numeric|min:0',
             'features' => 'nullable|array',

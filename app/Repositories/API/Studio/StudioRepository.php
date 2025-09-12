@@ -27,7 +27,7 @@ class StudioRepository implements StudioRepositoryInterface
 
     public function getById(int $userId)
     {
-        $user = User::with(['supplies', 'stationAmenities', 'studioImages','designSpecialties'])->where('id', $userId)
+        $user = User::with(['supplies', 'stationAmenities', 'studioImages','designSpecialties','activeSubscription.plan'])->where('id', $userId)
             ->where('user_type', 'studio')
             ->firstOrFail();
 

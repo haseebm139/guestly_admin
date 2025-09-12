@@ -35,7 +35,7 @@ class ArtistRepository implements ArtistRepositoryInterface
         $user = User::where('id', $userId)
             ->where('user_type', 'artist')
             ->firstOrFail();
-        return $user->load(['supplies', 'stationAmenities','studioImages','designSpecialties','tattooStyles']);
+        return $user->load(['supplies', 'stationAmenities','studioImages','designSpecialties','tattooStyles','activeSubscription.plan']);
     }
 
     public function saveGalleryImages(int $userId, array $paths): void

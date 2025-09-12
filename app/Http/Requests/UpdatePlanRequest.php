@@ -25,7 +25,7 @@ class UpdatePlanRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
-
+            'user_type' => 'required|in:artist,studio',
             'm_price' => 'sometimes|numeric|min:0',
             'y_price' => 'sometimes|numeric|min:0',
             'features' => 'nullable|array',

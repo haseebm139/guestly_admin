@@ -191,5 +191,14 @@ class User extends Authenticatable
             ->where('end_date', '>=', now());
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(\App\Models\Subscription::class);
+    }
 
+    public function activeSubscription()
+    {
+        return $this->hasOne(\App\Models\Subscription::class)
+                    ->where('end_date', '>', now())->latest();
+    }
 }

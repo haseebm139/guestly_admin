@@ -20,13 +20,14 @@ class SubscriptionService extends BaseController
     {
 
         $plans = $this->repo->getActivePlans();
-        $plans = $this->repo->getActivePlans();
+        // $plans = $this->repo->getActivePlans();
         return $this->sendResponse($plans, 'Plans fetched successfully.');
     }
 
     public function subscribeUser(array $data, $planId, $user)
     {
         $duration_days = 0;
+        $validity = 3;
         $plan = $this->repo->findPlanById($planId);
         if (!$plan) {
             return $this->sendError('Plan not found.');
@@ -40,8 +41,10 @@ class SubscriptionService extends BaseController
 
         if (isset($data['validity_unit']) && $data['validity_unit'] == 'years') {
             $duration_days = 365;
+            $validity = 365;
         }else if (isset($data['validity_unit']) && $data['validity_unit'] == 'months') {
             $duration_days = 30;
+            $validity = 30;
         }else{
             $duration_days = 3;
         }
@@ -51,11 +54,13 @@ class SubscriptionService extends BaseController
 
         DB::beginTransaction();
         try {
+            $this->repo->deactivateUserSubscriptions($user->id);
             $subscription = $this->repo->createSubscription([
                 'user_id' => $user->id,
                 'plan_id' => $planId,
                 'start_date' => $start,
                 'end_date' => $end,
+                'validity_days' => $validity,
                 'transaction_id' => $data['payment_id'] ?? null,
             ]);
 

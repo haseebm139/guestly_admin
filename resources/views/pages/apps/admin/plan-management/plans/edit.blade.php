@@ -37,6 +37,21 @@
                         <span class="form-text text-muted">Enter a unique name for this plan (e.g.
                             Basic, Premium)</span>
                     </div>
+
+                    <div class="form-group fv-row mb-4">
+
+                        <label class="required fw-semibold fs-6 mb-2">User Role</label>
+                        <div class="input-group input-group-solid">
+
+                            <!-- Unit select -->
+                            <select name="user_type" class="form-select form-control" style="max-width: 150px;"
+                                required>
+                                <option value="studio" @selected($data->user_type == 'studio')>Studio</option>
+                                <option value="artist" @selected($data->user_type == 'artist')>Guest Artist</option>
+                            </select>
+                        </div>
+                        <span class="form-text text-muted">Select the User Role </span>
+                    </div>
                     {{-- <div class="form-group fv-row mb-7">
 
                         <label class="required fw-semibold fs-6 mb-2" name="answer">Plan

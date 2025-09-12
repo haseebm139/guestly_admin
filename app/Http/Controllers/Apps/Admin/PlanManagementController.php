@@ -27,9 +27,9 @@ class PlanManagementController extends Controller
 
     public function store(StorePlanRequest $request)
     {
+         
         try {
-
-            $data = $request->validated();
+            $data = $request->validated(); 
             // $data['duration_days'] = calculate_duration_days($data['validity_value'], $data['validity_unit']);
             // $data['duration_days'] = calculate_duration_days($data['validity_value'], $data['validity_unit']);
             $this->planRepo->createPlan($data);

@@ -75,7 +75,7 @@ class ClientController extends BaseController
             return $this->sendError('Client Booking Form not found');
         }
         $data->update(['status' => $status]);
-        return $this->sendResponse($data, 'Clients requests'.$status);
+        return $this->sendResponse($data, 'Clients Request '.$status);
     }
 
 

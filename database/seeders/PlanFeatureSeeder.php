@@ -36,6 +36,7 @@ class PlanFeatureSeeder extends Seeder
         $freePlan = Plan::firstOrCreate([
             'name' => 'Free Tier',
         ], [
+            'user_type' => 'studio',
             'm_price' => 0.00,
             'y_price' => 0.00,
             'validity_value' => 1,
@@ -46,6 +47,7 @@ class PlanFeatureSeeder extends Seeder
         $proPlan = Plan::firstOrCreate([
             'name' => 'Pro Tier',
         ], [
+            'user_type' => 'studio',
             'm_price' => 9.99,
             'y_price' => 19.99,
             'validity_value' => 1,
@@ -56,6 +58,7 @@ class PlanFeatureSeeder extends Seeder
         $premiumPlan = Plan::firstOrCreate([
             'name' => 'Premium Tier',
         ], [
+            'user_type' => 'studio',
             'm_price' => 19.99,
             'y_price' => 190.99,
             'validity_value' => 1,
@@ -89,5 +92,66 @@ class PlanFeatureSeeder extends Seeder
 
         // Premium Tier Features (all)
         $attach($premiumPlan, collect($features)->pluck('code')->toArray());
+
+
+        $freePlan1 = Plan::firstOrCreate([
+            'name' => 'Free Tier',
+        ], [
+            'user_type' => 'artist',
+            'm_price' => 0.00,
+            'y_price' => 0.00,
+            'validity_value' => 1,
+            'validity_unit' => 'months',
+
+        ]);
+
+        $proPlan1 = Plan::firstOrCreate([
+            'name' => 'Pro Tier',
+        ], [
+            'user_type' => 'artist',
+            'm_price' => 9.99,
+            'y_price' => 19.99,
+            'validity_value' => 1,
+            'validity_unit' => 'months',
+
+        ]);
+
+        $premiumPlan1 = Plan::firstOrCreate([
+            'name' => 'Premium Tier',
+        ], [
+            'user_type' => 'artist',
+            'm_price' => 19.99,
+            'y_price' => 190.99,
+            'validity_value' => 1,
+            'validity_unit' => 'months',
+
+        ]);
+
+        // Attach features
+        $attach1 = function ($plan, $codes) {
+            $features = Feature::whereIn('code', $codes)->pluck('id');
+            $plan->features()->sync($features);
+        };
+
+        // Free Tier Features
+        $attach1($freePlan1, [
+            'studio_request_single',
+            'guest_artist_basic_profile',
+            'studio_messaging_limited',
+            'calendar_read_only',
+            'seat_availability_view',
+        ]);
+
+        // Pro Tier Features
+        $attach1($proPlan1, [
+            'studio_request_multiple',
+            'pro_artist_profile',
+            'unlimited_messaging',
+            'calendar_read_only',
+            'seat_availability_view',
+        ]);
+
+        // Premium Tier Features (all)
+        $attach1($premiumPlan1, collect($features)->pluck('code')->toArray());
     }
 }
