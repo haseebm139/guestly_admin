@@ -104,7 +104,7 @@
                     <!--begin::Details toggle-->
                     <div class="d-flex flex-stack fs-4 py-3">
                         <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_details"
-                            role="button" aria-expanded="false" aria-controls="kt_user_view_details">Artist Info
+                            role="button" aria-expanded="false" aria-controls="kt_user_view_details">Tattoo Artist Info
                             <span class="ms-2 rotate-180">
                                 <i class="ki-duotone ki-down fs-3"></i>
                             </span>
@@ -126,15 +126,13 @@
                             <!--begin::Details item-->
                             <div class="fw-bold mt-5">Email </div>
                             <div class="text-gray-600">
-                                
+
                                 <a href="#" class="text-gray-600 text-hover-primary">{{ $user->email ?? '' }}
                                     @if ($user->email_verified == 1)
-                                    <i
-                                        class="ki-duotone ki-verify fs-1 text-primary ms-2">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-
+                                        <i class="ki-duotone ki-verify fs-1 text-primary ms-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
                                     @endif
                                 </a>
                             </div>
@@ -148,19 +146,19 @@
                             <!--begin::Details item-->
                             <!--begin::Details item-->
                             <div class="fw-bold mt-5">Phone Number</div>
-                            <div class="text-gray-600"> 
-                                
+                            <div class="text-gray-600">
+
                                 @if ($user->phone_verified == 1)
-                                
-                                <a href="#" class="text-gray-600 text-hover-primary">{{ $user->phone ?? '' }}<i
-                                    class="ki-duotone ki-verify fs-1 text-primary ms-2">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                </i>
-                                
-                                </a>
-                            @endif
-                        </div>
+                                    <a href="#"
+                                        class="text-gray-600 text-hover-primary">{{ $user->phone ?? '' }}<i
+                                            class="ki-duotone ki-verify fs-1 text-primary ms-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <!--end::Details content-->
@@ -206,7 +204,6 @@
                         <!--begin::Items-->
                         <div class="py-2">
                             @if ($user->document_front)
-                                 
                                 <div class="d-flex flex-stack">
                                     <div class="d-flex">
                                         <img src="{{ asset($user->document_front) }}" class="w-30px me-6"
@@ -221,15 +218,15 @@
 
 
                                 </div>
-                                 
+
                                 <div class="separator separator-dashed my-5"></div>
                             @endif
                             @if ($user->document_back)
-                                 
                                 <div class="d-flex flex-stack">
                                     <div class="d-flex">
 
-                                        <img src="{{ asset($user->document_back) }}" class="w-30px me-6" alt="" />
+                                        <img src="{{ asset($user->document_back) }}" class="w-30px me-6"
+                                            alt="" />
                                         <div class="d-flex flex-column">
                                             <a href="#"
                                                 class="fs-5 text-dark text-hover-primary fw-bold">{{ slugToWords($user->verification_type ?? '') }}
@@ -239,20 +236,20 @@
                                     </div>
 
                                 </div>
-                                
+
                                 <div class="separator separator-dashed my-5"></div>
                             @endif
-                             
+
                         </div>
                         <!--end::Items-->
                     </div>
-                     
+
                 </div>
             @endif
             <!--end::Connected Accounts-->
 
 
-            
+
         </div>
         <!--end::Sidebar-->
         <!--begin::Content-->
@@ -265,15 +262,16 @@
                 </li> --}}
                 <!--end:::Tab item-->
                 <!--begin:::Tab item-->
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link text-active-primary pb-4" data-kt-countup-tabs="true" data-bs-toggle="tab"
                         href="#kt_user_view_overview_security">Security</a>
-                </li>
+                </li> --}}
                 <!--end:::Tab item-->
                 <!--begin:::Tab item-->
-                {{-- <li class="nav-item">
-                    <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_user_view_overview_events_and_logs_tab">Events & Logs</a>
-                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab"
+                        href="#kt_user_view_payments_methods">Payments Methods</a>
+                </li>
                 <!--end:::Tab item-->
                 <!--begin:::Tab item-->
                 <li class="nav-item ms-auto">
@@ -389,7 +387,7 @@
             <!--begin:::Tab content-->
             <div class="tab-content" id="myTabContent">
                 <!--begin:::Tab pane-->
-                <div class="tab-pane fade show active" id="kt_user_view_overview_tab" role="tabpanel">
+                <div class="tab-pane fade " id="kt_user_view_overview_tab" role="tabpanel">
                     <!--begin::Card-->
                     <div class="card card-flush mb-6 mb-xl-9">
                         <!--begin::Card header-->
@@ -2764,25 +2762,25 @@
                 </div>
                 <!--end:::Tab pane-->
                 <!--begin:::Tab pane-->
-                <div class="tab-pane fade" id="kt_user_view_overview_events_and_logs_tab" role="tabpanel">
+                <div class="tab-pane fade show active" id="kt_user_view_payments_methods" role="tabpanel">
                     <!--begin::Card-->
                     <div class="card pt-4 mb-6 mb-xl-9">
                         <!--begin::Card header-->
                         <div class="card-header border-0">
                             <!--begin::Card title-->
                             <div class="card-title">
-                                <h2>Login Sessions</h2>
+                                <h2>Card Details</h2>
                             </div>
                             <!--end::Card title-->
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar">
                                 <!--begin::Filter-->
-                                <button type="button" class="btn btn-sm btn-flex btn-light-primary"
+                                {{-- <button type="button" class="btn btn-sm btn-flex btn-light-primary"
                                     id="kt_modal_sign_out_sesions">
                                     <i class="ki-duotone ki-entrance-right fs-3">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
-                                    </i>Sign out all sessions</button>
+                                    </i>Sign out all sessions</button> --}}
                                 <!--end::Filter-->
                             </div>
                             <!--end::Card toolbar-->
@@ -2797,37 +2795,32 @@
                                     id="kt_table_users_login_session">
                                     <thead class="border-bottom border-gray-200 fs-7 fw-bold">
                                         <tr class="text-start text-muted text-uppercase gs-0">
-                                            <th class="min-w-100px">Location</th>
-                                            <th>Device</th>
-                                            <th>IP Address</th>
-                                            <th class="min-w-125px">Time</th>
-                                            <th class="min-w-70px">Actions</th>
+                                            <th class="min-w-100px">Card Name</th>
+                                            <th>Card Number</th>
+                                            <th>Expiry Date</th>
+                                            <th class="min-w-125px">Status</th>
+
                                         </tr>
                                     </thead>
                                     <tbody class="fs-6 fw-semibold text-gray-600">
-                                        <tr>
-                                            <td>Australia</td>
-                                            <td>Chome - Windows</td>
-                                            <td>207.20.21.295</td>
-                                            <td>23 seconds ago</td>
-                                            <td>Current session</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Australia</td>
-                                            <td>Safari - iOS</td>
-                                            <td>207.15.21.72</td>
-                                            <td>3 days ago</td>
-                                            <td>
-                                                <a href="#" data-kt-users-sign-out="single_user">Sign out</a>
+                                        @forelse ($data['cards'] as $item)
+                                            <tr>
+                                                <td>{{ slugToWords($item->payment_type ?? '') }}</td>
+                                                <td>{{ $item->card_number }}</td>
+                                                <td>{{ $item->expiry_date }}</td>
+                                                <td>
+                                                    @if ($item->is_selected == '1')
+                                                        <span class="badge badge-success">Selected</span>
+                                                    @endif
+                                                </td>
+
+                                            </tr>
+                                        @empty
+                                            <td colspan="4" class="text-center text-muted py-3">
+                                                No saved cards found.
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Australia</td>
-                                            <td>Chrome - Windows</td>
-                                            <td>207.10.28.325</td>
-                                            <td>last week</td>
-                                            <td>Expired</td>
-                                        </tr>
+                                        @endforelse
+
                                     </tbody>
                                 </table>
                                 <!--end::Table-->
@@ -2838,7 +2831,7 @@
                     </div>
                     <!--end::Card-->
                     <!--begin::Card-->
-                    <div class="card pt-4 mb-6 mb-xl-9">
+                    {{-- <div class="card pt-4 mb-6 mb-xl-9">
                         <!--begin::Card header-->
                         <div class="card-header border-0">
                             <!--begin::Card title-->
@@ -2909,10 +2902,10 @@
                             <!--end::Table wrapper-->
                         </div>
                         <!--end::Card body-->
-                    </div>
+                    </div> --}}
                     <!--end::Card-->
                     <!--begin::Card-->
-                    <div class="card pt-4 mb-6 mb-xl-9">
+                    {{-- <div class="card pt-4 mb-6 mb-xl-9">
                         <!--begin::Card header-->
                         <div class="card-header border-0">
                             <!--begin::Card title-->
@@ -3037,7 +3030,7 @@
                             <!--end::Table-->
                         </div>
                         <!--end::Card body-->
-                    </div>
+                    </div> --}}
                     <!--end::Card-->
                 </div>
                 <!--end:::Tab pane-->

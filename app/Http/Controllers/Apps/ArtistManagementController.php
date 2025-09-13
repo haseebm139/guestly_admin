@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\DataTables\ArtistsDataTable; 
 use App\Models\User; 
+use App\Models\Card; 
 class ArtistManagementController extends Controller
 {
     /**
@@ -37,16 +38,17 @@ class ArtistManagementController extends Controller
      */
     public function show($id)
     {
-        $user = User::where('id',$id)->first();
+        $user = User::where('id',$id)->withTrashed()->first();
+        //code...
+        if (!$user) {
+            return abort(404);
+        }
         try {
-            //code...
-            if (!$user) {
-                return abort(404);
-            }
+            $data['cards'] = $this->cardsData($id); 
              
-            return view('pages.apps.user-management.artists.show', compact('user'));
+            return view('pages.apps.user-management.artists.show', compact('user','data'));
         } catch (\Throwable $th) {
-            return redirect()->bac()->with(['message'=>'Something went wrong','type'=>'error']);
+            return redirect()->back()->with(['message'=>'Something went wrong','type'=>'error']);
         }
     }
 
@@ -177,5 +179,12 @@ class ArtistManagementController extends Controller
             return redirect()->back()->with(['message'=>'Something went wrong','type'=>'error']);
 
         }
+    }
+
+    public function cardsData($id){
+
+       
+         $data = Card::where('user_id',$id)->orderBy('is_selected','desc')->get();
+         return $data;
     }
 }

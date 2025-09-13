@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\DataTables\StudiosDataTable; 
 use App\Models\User; 
+use App\Models\Card;
 
 class StudioManagementController extends Controller
 {
@@ -44,8 +45,8 @@ class StudioManagementController extends Controller
             if (!$user) {
                 return abort(404);
             }
-             
-            return view('pages.apps.user-management.studios.show', compact('user'));
+            $data['cards'] = $this->cardsData($id); 
+            return view('pages.apps.user-management.studios.show', compact('user','data'));
         } catch (\Throwable $th) {
             return redirect()->back()->with(['message'=>'Something went wrong','type'=>'error']);
         }
@@ -178,5 +179,12 @@ class StudioManagementController extends Controller
             return redirect()->back()->with(['message'=>'Something went wrong','type'=>'error']);
 
         }
+    }
+
+    public function cardsData($id){
+
+       
+         $data = Card::where('user_id',$id)->orderBy('is_selected','desc')->get();
+         return $data;
     }
 }
