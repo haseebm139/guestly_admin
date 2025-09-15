@@ -16,15 +16,15 @@ class StudioService
         // ── Artist: only tattoo styles ───────────────────────────────
         if ($user?->user_type === 'artist') {
             return [
-                'tattoo_styles' => TattooStyle::all(),
+                'tattoo_styles' => TattooStyle::where('status', 1)->get(),
             ];
         }
 
         // ── Studio or admin: full tables ─────────────────────────────
         return [
-            'supplies'           => Supply::all(),
-            'station_amenities'  => StationAmenity::all(),
-            'design_specialties' => DesignSpecialty::all(),
+            'supplies'           => Supply::where('status', true)->get(),
+            'station_amenities'  => StationAmenity::where('status', 1)->get(),
+            'design_specialties' => DesignSpecialty::where('status', 1)->get(),
 
         ];
     }
