@@ -84,7 +84,10 @@ Route::get('/test-email', function () {
         Route::name('user-management.')->group(function () {
             // Route::resource('/user-management/users', UserManagementController::class);
             Route::resource('/user-management/administrators', UserManagementController::class);
+            Route::put('/{id}/update-email', [UserManagementController::class, 'updateEmail']) ->name('update-email');
+            Route::put('/user-management/{id}/update-password', [UserManagementController::class, 'updatePassword'])->name('update-password');
             Route::patch('/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('toggle-status');
+            Route::put('/users/verification-status/{user}', [UserManagementController::class, 'updateVerificationStatus'])->name('update-verification-status');
             Route::resource('/user-management/studios', StudioManagementController::class);
             Route::resource('/user-management/artists', ArtistManagementController::class);
             Route::resource('/user-management/roles', RoleManagementController::class);

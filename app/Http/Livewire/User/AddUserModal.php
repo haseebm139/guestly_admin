@@ -124,6 +124,7 @@ class AddUserModal extends Component
                 $this->emit('success', ucfirst($this->role_name) . " updated successfully");
             } else {
                 // 🔹 Create new user
+                
                 $data['password'] = Hash::make($this->email);
                 $data['avatar'] = $data['profile_photo_path'];
                 $user = User::create($data);

@@ -41,7 +41,7 @@ class StudioManagementController extends Controller
     {
         $user = User::where('id',$id)->withTrashed()->first();
         try {
-            //code...
+             
             if (!$user) {
                 return abort(404);
             }
@@ -63,9 +63,61 @@ class StudioManagementController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request,  $id)
     {
-        //
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found',
+            ]);
+            
+        }
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'email'     => 'required|email|unique:users,email,' . $user->id,
+            'bio'       => 'nullable|string',
+            'address'   => 'nullable|string|max:255',
+            'city'      => 'nullable|string|max:255',
+            'country'   => 'nullable|string|max:255',
+            'phone'   => 'nullable|string|max:255',
+            'studio_name'   => 'nullable|string|max:255',
+            'studio_type'   => 'nullable|string|max:255',
+            'commission_type'   => 'nullable|string|max:255',
+            'commission_value'   => 'nullable|string|max:255',
+
+            'avatar'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'studio_logo'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'studio_cover'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+        // update simple fields
+        $user->fill($request->only([
+            'name',
+            'last_name',
+            'email',
+            'bio',
+            'address',
+            'city',
+            'country',
+            'phone',
+            'studio_name',
+            'studio_type',
+            'commission_type',
+            'commission_value',
+        ]));
+        if ($request->hasFile('avatar')) {
+             
+
+            $file     = $request->file('avatar');
+            
+            $filename = 'studios-avatar-' . time() . '.' . $file->getClientOriginalExtension();  
+            $file->move(public_path('studios/avatar'), $filename);
+            $pathUrl = 'studios/avatar/' . $filename;
+         
+            $user->avatar =  $pathUrl;
+        }
+        $user->save();
     }
 
     /**

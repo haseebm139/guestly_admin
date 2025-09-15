@@ -32,7 +32,7 @@ class UsersDataTable extends DataTable
                 $query->where('users.verification_status', 'like', "%{$keyword}%");
             })
             ->editColumn('user', function (User $user) {
-                return view('pages.apps.user-management.studios.columns._user', compact('user'));
+                return view('pages.apps.user-management.administrators.columns._user', compact('user'));
             })
             ->editColumn('role', function (User $user) {
                 return ucwords($user->roles->first()?->name);
@@ -46,7 +46,7 @@ class UsersDataTable extends DataTable
             })
              
             ->addColumn('action', function (User $user) {
-                return view('pages.apps.user-management.studios.columns._actions', compact('user'));
+                return view('pages.apps.user-management.administrators.columns._actions', compact('user'));
             })
             ->setRowId('id');
     }
@@ -57,7 +57,7 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->where('user_type', 'administrator');
+        return $model->newQuery()->where('user_type', 'administrator')->where('id', '!=', auth()->user()->id);
     }
 
     /**

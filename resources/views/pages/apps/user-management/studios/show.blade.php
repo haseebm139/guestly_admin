@@ -8,7 +8,7 @@
         {{ Breadcrumbs::render('user-management.studios.show', $user) }}
     @endsection
 
-     <!--begin::Layout-->
+    <!--begin::Layout-->
     <div class="d-flex flex-column flex-lg-row">
         <!--begin::Sidebar-->
         <div class="flex-column flex-lg-row-auto w-lg-250px w-xl-350px mb-10">
@@ -45,6 +45,21 @@
                                 <!--begin::Badge-->
                             @endforeach
                         </div>
+
+
+                        <select class="form-select form-select-sm w-auto status-dropdown" data-id="{{ $user->id }}"
+                            data-url="{{ route('user-management.update-verification-status', $user->id) }}">
+                            <option value="0" {{ $user->verification_status == 0 ? 'selected' : '' }}>
+                                🕒 Pending
+                            </option>
+                            <option value="1" {{ $user->verification_status == 1 ? 'selected' : '' }}>
+                                ✅ Active
+                            </option>
+                            <option value="2" {{ $user->verification_status == 2 ? 'selected' : '' }}>
+                                ❌ Rejected
+                            </option>
+                        </select>
+
                         <!--end::Position-->
                         <!--begin::Info-->
                         <!--begin::Info heading-->
@@ -109,7 +124,7 @@
                                 <i class="ki-duotone ki-down fs-3"></i>
                             </span>
                         </div>
-                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" title="Edit customer details">
+                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" title="Edit Tattoo Artist details">
                             <a href="#" class="btn btn-sm btn-light-primary" data-bs-toggle="modal"
                                 data-bs-target="#kt_modal_update_details">Edit</a>
                         </span>
@@ -147,10 +162,9 @@
                             <!--begin::Details item-->
                             <div class="fw-bold mt-5">Phone Number</div>
                             <div class="text-gray-600">
-
+                                {{ $user->phone ?? '' }}
                                 @if ($user->phone_verified == 1)
-                                    <a href="#"
-                                        class="text-gray-600 text-hover-primary">{{ $user->phone ?? '' }}<i
+                                    <a href="#" class="text-gray-600 text-hover-primary"><i
                                             class="ki-duotone ki-verify fs-1 text-primary ms-2">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
@@ -159,6 +173,41 @@
                                     </a>
                                 @endif
                             </div>
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-5">Studio Type</div>
+                            <div class="text-gray-600">
+                                @if($user->studio_type == 1)
+                                    Walk-in
+                                    
+                                @elseif($user->studio_type == 2)
+                                    Appointment Only
+                                    
+                                @elseif($user->studio_type == 3)
+                                    Private
+                                     
+                                @else
+                                    Not set
+                                @endif
+                                 
+                                 
+                            </div>
+                            <!--begin::Details item-->
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-5">Commission</div>
+                            <div class="text-gray-600">
+                                @if($user->commission_type == 0)
+                                    Fixed
+                                    <br />{{ $user->commission_value }}
+                                @elseif($user->commission_type == 1)
+                                    Percentage
+                                    <br />{{ $user->commission_value }}%
+                                @else
+                                    Not set
+                                @endif
+                                 
+                                 
+                            </div>
+                            <!--begin::Details item-->
                         </div>
                     </div>
                     <!--end::Details content-->
@@ -3070,7 +3119,7 @@
 
 
     <script>
-        $(document).on('click', '.toggle-status', function(e) {
+         $(document).on('click', '.toggle-status', function(e) {
             e.preventDefault();
             let userId = $(this).data('id');
             let $link = $(this);
@@ -3130,6 +3179,63 @@
                     }
 
                 }
+            });
+        });
+        $(document).on("change", ".status-dropdown", function() {
+            let status = $(this).val();
+            let url = $(this).data("url"); // dynamic route from blade
+
+            $.ajax({
+                url: url,
+                type: "PUT",
+                data: {
+                    status: status,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(res) {
+                    if (res.success) {
+                        toastr.success("User status updated to: " + res.status, "Success");
+                    } else {
+                        toastr.error("Something went wrong", "Error");
+                    }
+                },
+                error: function() {
+                    toastr.error("Failed to update status", "Error");
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $("#updateUserForm").on("submit", function(e) {
+                e.preventDefault();
+
+                let form = $(this);
+                let url = form.attr("action");
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: url,
+                    type: "POST", // Laravel will detect _method=PUT
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        form.find(".indicator-label").addClass("d-none");
+                        form.find(".indicator-progress").removeClass("d-none");
+                    },
+                    success: function(res) {
+                        toastr.success("User updated successfully!");
+                        $("#kt_modal_update_details").modal("hide");
+                        window.location.reload();
+                    },
+                    error: function(xhr) {
+                        toastr.error("Failed to update user");
+                    },
+                    complete: function() {
+                        form.find(".indicator-label").removeClass("d-none");
+                        form.find(".indicator-progress").addClass("d-none");
+                    }
+                });
             });
         });
     </script>

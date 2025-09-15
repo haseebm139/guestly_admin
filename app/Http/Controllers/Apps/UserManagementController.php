@@ -6,7 +6,7 @@ use App\DataTables\UsersDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Hash;
 class UserManagementController extends Controller
 {
     /**
@@ -209,5 +209,88 @@ class UserManagementController extends Controller
     
     }
 
-    
+    public function updateVerificationStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:0,1,2',
+        ]);
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found',
+            ]);
+            
+        }
+        $user->verification_status = $request->status;
+        $user->save();
+        $statusLabels = [
+            0 => 'Pending',
+            1 => 'Active',
+            2 => 'Rejected',
+        ];
+        return response()->json([
+            'success' => true,
+            'status'  => $statusLabels[$user->verification_status],
+        ]);
+         
+    }
+
+    public function updateEmail(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found',
+            ]);
+            
+        }
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
+        $user->email = $request->email;
+        $user->email_verified_at = null; // reset verification
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'email'   => $user->email,
+        ]);
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found',
+            ]);
+            
+        }
+
+        $request->validate([
+            'current_password' => ['required'],
+            'new_password'     => ['required', 'string', 'confirmed'],
+        ]);
+
+        // Check current password
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'The current password is incorrect.',
+                ], 422); // 422 = Unprocessable Entity (validation-like error)
+            }
+
+        // Update password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Password updated successfully',
+        ]);
+    }
 }

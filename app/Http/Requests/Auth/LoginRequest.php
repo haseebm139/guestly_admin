@@ -52,7 +52,15 @@ class LoginRequest extends FormRequest
                 'email' => trans('auth.failed'),
             ]);
         }
+        $user = Auth::user();
+        if ($user->user_type !== 'administrator') {
+            Auth::logout(); // logout if not admin
+            RateLimiter::hit($this->throttleKey());
 
+            throw ValidationException::withMessages([
+                'email' => 'You are not authorized to access this area.',
+            ]);
+        }
         RateLimiter::clear($this->throttleKey());
     }
 

@@ -45,6 +45,21 @@
                                 <!--begin::Badge-->
                             @endforeach
                         </div>
+
+
+                        <select class="form-select form-select-sm w-auto status-dropdown" data-id="{{ $user->id }}"
+                            data-url="{{ route('user-management.update-verification-status', $user->id) }}">
+                            <option value="0" {{ $user->verification_status == 0 ? 'selected' : '' }}>
+                                🕒 Pending
+                            </option>
+                            <option value="1" {{ $user->verification_status == 1 ? 'selected' : '' }}>
+                                ✅ Active
+                            </option>
+                            <option value="2" {{ $user->verification_status == 2 ? 'selected' : '' }}>
+                                ❌ Rejected
+                            </option>
+                        </select>
+
                         <!--end::Position-->
                         <!--begin::Info-->
                         <!--begin::Info heading-->
@@ -109,7 +124,7 @@
                                 <i class="ki-duotone ki-down fs-3"></i>
                             </span>
                         </div>
-                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" title="Edit customer details">
+                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" title="Edit Tattoo Artist details">
                             <a href="#" class="btn btn-sm btn-light-primary" data-bs-toggle="modal"
                                 data-bs-target="#kt_modal_update_details">Edit</a>
                         </span>
@@ -147,10 +162,9 @@
                             <!--begin::Details item-->
                             <div class="fw-bold mt-5">Phone Number</div>
                             <div class="text-gray-600">
-
+                                {{ $user->phone ?? '' }}
                                 @if ($user->phone_verified == 1)
-                                    <a href="#"
-                                        class="text-gray-600 text-hover-primary">{{ $user->phone ?? '' }}<i
+                                    <a href="#" class="text-gray-600 text-hover-primary"><i
                                             class="ki-duotone ki-verify fs-1 text-primary ms-2">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
@@ -3067,4 +3081,126 @@
     <!--end::Modal - Add task-->
     <!--end::Modals-->
 
+
+    <script>
+         $(document).on('click', '.toggle-status', function(e) {
+            e.preventDefault();
+            let userId = $(this).data('id');
+            let $link = $(this);
+
+            $.ajax({
+                url: "{{ route('user-management.toggle-status', ':id') }}".replace(':id', userId),
+                type: 'PATCH',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // update text
+                        $link.text(response.status === 'Active' ? 'Deactivate' : 'Activate');
+                        // toggle class
+                        if (response.status === 'Active') {
+                            $link.removeClass('text-success').addClass('text-danger');
+                        } else {
+                            $link.removeClass('text-danger').addClass('text-success');
+                        }
+
+
+                        // notify
+                        toastr.success('User status updated to ' + response.status);
+                    }
+                },
+                error: function() {
+                    toastr.error('Something went wrong. Try again!');
+                }
+            });
+        });
+
+        $(document).on('click', '.delete-user', function(e) {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to delete this user?')) return;
+
+            let userId = $(this).data('id');
+            let $link = $(this);
+
+            $.ajax({
+                url: "{{ route('user-management.administrators.destroy', ':id') }}".replace(':id', userId),
+                type: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        if (response.status === 'Deleted') {
+                            $link.text('Restore Account').removeClass('text-danger').addClass(
+                                'text-success');
+                        } else {
+                            $link.text('Delete Account').removeClass('text-success').addClass(
+                                'text-danger');
+                        }
+
+                        toastr.success(response.message);
+                    }
+
+                }
+            });
+        });
+        $(document).on("change", ".status-dropdown", function() {
+            let status = $(this).val();
+            let url = $(this).data("url"); // dynamic route from blade
+
+            $.ajax({
+                url: url,
+                type: "PUT",
+                data: {
+                    status: status,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(res) {
+                    if (res.success) {
+                        toastr.success("User status updated to: " + res.status, "Success");
+                    } else {
+                        toastr.error("Something went wrong", "Error");
+                    }
+                },
+                error: function() {
+                    toastr.error("Failed to update status", "Error");
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $("#updateUserForm").on("submit", function(e) {
+                e.preventDefault();
+
+                let form = $(this);
+                let url = form.attr("action");
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: url,
+                    type: "POST", // Laravel will detect _method=PUT
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        form.find(".indicator-label").addClass("d-none");
+                        form.find(".indicator-progress").removeClass("d-none");
+                    },
+                    success: function(res) {
+                        toastr.success("User updated successfully!");
+                        $("#kt_modal_update_details").modal("hide");
+                        window.location.reload();
+                    },
+                    error: function(xhr) {
+                        toastr.error("Failed to update user");
+                    },
+                    complete: function() {
+                        form.find(".indicator-label").removeClass("d-none");
+                        form.find(".indicator-progress").addClass("d-none");
+                    }
+                });
+            });
+        });
+    </script>
 </x-default-layout>
