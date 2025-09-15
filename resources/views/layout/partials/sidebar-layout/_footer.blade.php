@@ -5,7 +5,7 @@
 		<!--begin::Copyright-->
 		<div class="text-dark order-2 order-md-1">
 			<span class="text-muted fw-semibold me-1">{{ date('Y') }}&copy;</span>
-			<a href="{{ env('APP_URL') }}" target="_blank" class="text-gray-800 text-hover-primary">{{ env('APP_NAME') }}</a>
+			<a href="https://guestly.space" target="_blank" class="text-gray-800 text-hover-primary">GUESTLY</a>
 		</div>
 		<!--end::Copyright-->
 		<!--begin::Menu-->
