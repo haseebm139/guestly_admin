@@ -15,7 +15,7 @@
             @include('partials/widgets/cards/_widget-20')
 
             @include('partials/widgets/cards/_widget-7')
-            @include('partials/widgets/cards/_widget-17')
+            {{-- @include('partials/widgets/cards/_widget-17') --}}
         </div>
         <!--end::Col-->
 
