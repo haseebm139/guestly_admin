@@ -58,32 +58,43 @@ class StudioRepository implements StudioRepositoryInterface
                 break;
 
             case '15days':
-                $startDate = $today->copy()->subDays(7);
-                $endDate   = $today->copy()->addDays(7);
+                $startDate = $today->copy()->subDays(7)->startOfDay();
+                $endDate   = $today->copy()->addDays(7)->endOfDay();
                 break;
 
-            case 'month': // custom: next 30 days
+            case 'month':
                 $startDate = $today->copy()->startOfDay();
                 $endDate   = $today->copy()->addDays(30)->endOfDay();
                 break;
 
             case 'today':
+                $startDate = $today->copy()->startOfDay();
+                $endDate   = $today->copy()->endOfDay();
+                break;
+
             default:
-                // keep today's start and end of day
+                // All upcoming bookings from today onwards
+                $startDate = $today->copy()->startOfDay();
+                $endDate   = null;
                 break;
         }
 
         $query = SpotBooking::where('studio_id', $userId)
         ->where('status', 'approved')
-        ->where(function ($q) use ($startDate, $endDate) {
-            $q->whereBetween('start_date', [$startDate, $endDate])
-              ->orWhereBetween('end_date', [$startDate, $endDate])
-              ->orWhere(function ($q2) use ($startDate, $endDate) {
-                  $q2->where('start_date', '<', $startDate)
-                     ->where('end_date', '>', $endDate);
-              });
+        ->when($endDate, function ($q) use ($startDate, $endDate) {
+            $q->where(function ($q2) use ($startDate, $endDate) {
+                $q2->whereBetween('start_date', [$startDate, $endDate])
+                   ->orWhereBetween('end_date', [$startDate, $endDate])
+                   ->orWhere(function ($q3) use ($startDate, $endDate) {
+                       $q3->where('start_date', '<', $startDate)
+                          ->where('end_date', '>', $endDate);
+                   });
+            });
+        }, function ($q) use ($startDate) {
+            // default case: all upcoming from today
+            $q->where('start_date', '>=', $startDate);
         })
-        ->with(['studio', 'artist']) // adjust relationships
+        ->with(['studio', 'artist'])
         ->orderBy('start_date', 'asc');
 
         $data['guests'] = $query->paginate($perPage);
@@ -112,19 +123,10 @@ class StudioRepository implements StudioRepositoryInterface
     public function getUpcomingGuests(int $studioId, int $perPage = 20)
     {
         $today = now()->startOfDay();
-        $startDate = $today->copy()->startOfDay();
-        $endDate   = $today->copy()->endOfDay();
 
         $query = SpotBooking::where('studio_id', $studioId)
             ->where('status', 'approved')
-            ->where(function ($q) use ($startDate, $endDate) {
-            $q->whereBetween('start_date', [$startDate, $endDate])
-              ->orWhereBetween('end_date', [$startDate, $endDate])
-              ->orWhere(function ($q2) use ($startDate, $endDate) {
-                  $q2->where('start_date', '<', $startDate)
-                     ->where('end_date', '>', $endDate);
-              });
-            })
+            ->whereDate('start_date', '>', $today)
             ->with(['studio', 'artist']);
 
         return $query->orderBy('start_date')->paginate($perPage);
