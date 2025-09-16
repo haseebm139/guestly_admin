@@ -84,7 +84,7 @@ class StudioProfileService
         }
 
         if (!empty($filters['email'])) {
-            $query->where('email', 'like', "%{$filters['email']}%") ;
+            $query->where('email', 'like', "{$filters['email']}") ;
         }
 
         // 🔹 Filter by city
