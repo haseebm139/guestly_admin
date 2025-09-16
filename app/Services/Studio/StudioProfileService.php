@@ -89,12 +89,12 @@ class StudioProfileService
 
         // 🔹 Filter by city
         if (!empty($filters['city'])) {
-            $query->where('city', 'like', "%{$filters['city']}%");
+            $query->where('city', 'like', "{$filters['city']}");
         }
 
         // 🔹 Filter by country
         if (!empty($filters['country'])) {
-            $query->where('country', 'like', "%{$filters['country']}%");
+            $query->where('country', 'like', "{$filters['country']}");
         }
 
         // 🔹 Filter by language
