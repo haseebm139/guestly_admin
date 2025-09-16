@@ -49,35 +49,15 @@ class StudioRepository implements StudioRepositoryInterface
     }
     public function getGuests(int $userId, string $range, int $perPage){
         $today = now();
-        $startDate = $today->copy()->startOfDay();
-        $endDate   = $today->copy()->endOfDay();
-        switch ($range) {
-            case 'week':
-                $startDate = $today->copy()->startOfWeek();
-                $endDate   = $today->copy()->endOfWeek();
-                break;
 
-            case '15days':
-                $startDate = $today->copy()->subDays(7)->startOfDay();
-                $endDate   = $today->copy()->addDays(7)->endOfDay();
-                break;
-
-            case 'month':
-                $startDate = $today->copy()->startOfDay();
-                $endDate   = $today->copy()->addDays(30)->endOfDay();
-                break;
-
-            case 'today':
-                $startDate = $today->copy()->startOfDay();
-                $endDate   = $today->copy()->endOfDay();
-                break;
-
-            default:
-                // All upcoming bookings from today onwards
-                $startDate = $today->copy()->startOfDay();
-                $endDate   = null;
-                break;
-        }
+        // Determine the date range based on the $range parameter
+        [$startDate, $endDate] = match($range) {
+            'today' => [$today->copy()->startOfDay(), $today->copy()->endOfDay()],
+            'week'  => [$today->copy()->startOfWeek(), $today->copy()->endOfWeek()],
+            '15days'=> [$today->copy()->subDays(7)->startOfDay(), $today->copy()->addDays(7)->endOfDay()],
+            'month' => [$today->copy()->startOfDay(), $today->copy()->addDays(30)->endOfDay()],
+            default => [$today->copy()->startOfDay(), null], // all upcoming
+        };
 
         $query = SpotBooking::where('studio_id', $userId)
         ->where('status', 'approved')
@@ -91,11 +71,12 @@ class StudioRepository implements StudioRepositoryInterface
                    });
             });
         }, function ($q) use ($startDate) {
-            // default case: all upcoming from today
+            // Default: all upcoming from today
             $q->where('start_date', '>=', $startDate);
         })
         ->with(['studio', 'artist'])
-        ->orderBy('start_date', 'asc');
+        ->orderBy('start_date');
+
 
         $data['guests'] = $query->paginate($perPage);
 
