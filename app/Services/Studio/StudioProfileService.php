@@ -65,14 +65,15 @@ class StudioProfileService
 
     public function getArtist($filters)
     {
-        $query = User::query()->where('user_type', 'artist');
+        $query = User::query()->where('user_type', 'artist')->with('tattooStyles');
         if (!empty($filters['search'])) {
         $query->where(function($q) use ($filters) {
             $q->where('name', 'like', "%{$filters['search']}%")
               ->orWhere('last_name', 'like', "%{$filters['search']}%")
               ->orWhere('email', 'like', "%{$filters['search']}%");
-        });
-    }
+            });
+        }
+
         // 🔹 Pagination
         $perPage = $filters['per_page'] ?? 15;
         return $query->paginate($perPage);
