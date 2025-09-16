@@ -70,10 +70,54 @@ class StudioProfileService
         $query->where(function($q) use ($filters) {
             $q->where('name', 'like', "%{$filters['search']}%")
               ->orWhere('last_name', 'like', "%{$filters['search']}%")
-              ->orWhere('email', 'like', "%{$filters['search']}%");
+              ->orWhere('email', 'like', "%{$filters['search']}%")
+              ->orWhereHas('tattooStyles', function ($styleQuery) use ($search) {
+                  $styleQuery->where('name', 'like', "%{$search}%");
+              });
+            });
+        }
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', "%{$filters['name']}%");
+        }
+
+        // 🔹 Filter by city
+        if (!empty($filters['city'])) {
+            $query->where('city', 'like', "%{$filters['city']}%");
+        }
+
+        // 🔹 Filter by country
+        if (!empty($filters['country'])) {
+            $query->where('country', 'like', "%{$filters['country']}%");
+        }
+
+        // 🔹 Filter by language
+        if (!empty($filters['language'])) {
+            $query->where('language', 'like', "%{$filters['language']}%");
+        }
+
+        // 🔹 Filter by Tattoo Style (exact match if dropdown filter)
+        if (!empty($filters['tattoo_style'])) {
+            $query->whereHas('tattooStyles', function ($styleQuery) use ($filters) {
+                $styleQuery->where('name', $filters['tattoo_style']);
             });
         }
 
+        // 🔹 Radius Search (if lat + lng + radius are given)
+        if (!empty($filters['latitude']) && !empty($filters['longitude']) && !empty($filters['radius'])) {
+            $lat = $filters['latitude'];
+            $lng = $filters['longitude'];
+            $radius = $filters['radius']; // in kilometers
+
+            $query->selectRaw("users.*, (
+                    6371 * acos(
+                        cos(radians(?)) * cos(radians(latitude)) *
+                        cos(radians(longitude) - radians(?)) +
+                        sin(radians(?)) * sin(radians(latitude))
+                    )
+                ) AS distance", [$lat, $lng, $lat])
+                ->having('distance', '<=', $radius)
+                ->orderBy('distance');
+        }
         // 🔹 Pagination
         $perPage = $filters['per_page'] ?? 15;
         return $query->paginate($perPage);
