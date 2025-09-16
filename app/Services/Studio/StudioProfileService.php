@@ -77,8 +77,10 @@ class StudioProfileService
             });
         }
         if (!empty($filters['name'])) {
-            $query->where('name', 'like', "%{$filters['name']}%")
-            ->orWhere('last_name', 'like', "%{$filters['name']}%");
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', "%{$filters['name']}%")
+                ->orWhere('last_name', 'like', "%{$filters['name']}%");
+            });
         }
 
         if (!empty($filters['email'])) {
@@ -107,22 +109,22 @@ class StudioProfileService
             });
         }
 
-        // 🔹 Radius Search (if lat + lng + radius are given)
-        if (!empty($filters['latitude']) && !empty($filters['longitude']) && !empty($filters['radius'])) {
-            $lat = $filters['latitude'];
-            $lng = $filters['longitude'];
-            $radius = $filters['radius']; // in kilometers
+        // // 🔹 Radius Search (if lat + lng + radius are given)
+        // if (!empty($filters['latitude']) && !empty($filters['longitude']) && !empty($filters['radius'])) {
+        //     $lat = $filters['latitude'];
+        //     $lng = $filters['longitude'];
+        //     $radius = $filters['radius']; // in kilometers
 
-            $query->selectRaw("users.*, (
-                    6371 * acos(
-                        cos(radians(?)) * cos(radians(latitude)) *
-                        cos(radians(longitude) - radians(?)) +
-                        sin(radians(?)) * sin(radians(latitude))
-                    )
-                ) AS distance", [$lat, $lng, $lat])
-                ->having('distance', '<=', $radius)
-                ->orderBy('distance');
-        }
+        //     $query->selectRaw("users.*, (
+        //             6371 * acos(
+        //                 cos(radians(?)) * cos(radians(latitude)) *
+        //                 cos(radians(longitude) - radians(?)) +
+        //                 sin(radians(?)) * sin(radians(latitude))
+        //             )
+        //         ) AS distance", [$lat, $lng, $lat])
+        //         ->having('distance', '<=', $radius)
+        //         ->orderBy('distance');
+        // }
         // 🔹 Pagination
         $perPage = $filters['per_page'] ?? 15;
         return $query->paginate($perPage);
