@@ -112,10 +112,19 @@ class StudioRepository implements StudioRepositoryInterface
     public function getUpcomingGuests(int $studioId, int $perPage = 20)
     {
         $today = now()->startOfDay();
+        $startDate = $today->copy()->startOfDay();
+        $endDate   = $today->copy()->endOfDay();
 
         $query = SpotBooking::where('studio_id', $studioId)
             ->where('status', 'approved')
-            ->whereDate('start_date', '>', $today)
+            ->where(function ($q) use ($startDate, $endDate) {
+            $q->whereBetween('start_date', [$startDate, $endDate])
+              ->orWhereBetween('end_date', [$startDate, $endDate])
+              ->orWhere(function ($q2) use ($startDate, $endDate) {
+                  $q2->where('start_date', '<', $startDate)
+                     ->where('end_date', '>', $endDate);
+              });
+            })
             ->with(['studio', 'artist']);
 
         return $query->orderBy('start_date')->paginate($perPage);
