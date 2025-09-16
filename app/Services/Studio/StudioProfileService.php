@@ -77,7 +77,12 @@ class StudioProfileService
             });
         }
         if (!empty($filters['name'])) {
-            $query->where('name', 'like', "%{$filters['name']}%");
+            $query->where('name', 'like', "%{$filters['name']}%")
+            ->orWhere('last_name', 'like', "%{$filters['name']}%");
+        }
+
+        if (!empty($filters['email'])) {
+            $query->where('email', 'like', "%{$filters['email']}%") ;
         }
 
         // 🔹 Filter by city
