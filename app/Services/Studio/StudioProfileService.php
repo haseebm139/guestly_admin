@@ -71,8 +71,8 @@ class StudioProfileService
             $q->where('name', 'like', "%{$filters['search']}%")
               ->orWhere('last_name', 'like', "%{$filters['search']}%")
               ->orWhere('email', 'like', "%{$filters['search']}%")
-              ->orWhereHas('tattooStyles', function ($styleQuery) use ($search) {
-                  $styleQuery->where('name', 'like', "%{$search}%");
+              ->orWhereHas('tattooStyles', function ($styleQuery) use ($filters) {
+                  $styleQuery->where('name', 'like', "%{$filters['search']}%");
               });
             });
         }
