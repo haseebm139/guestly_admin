@@ -35,6 +35,7 @@ class StudioUpdateProfileRequest extends FormRequest
             'website_url' => 'nullable|url',
             'phone' => 'nullable|string',
             'guest_spots' => 'nullable|integer',
+            'total_stations' => 'nullable|integer',
             'studio_type' => 'nullable|string',
             'require_portfolio' => 'nullable|boolean',
             'accept_bookings' => 'nullable|boolean',

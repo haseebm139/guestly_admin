@@ -20,6 +20,7 @@ class StudioController extends BaseController
 
     public function update(StudioUpdateProfileRequest $request)
     {
+        
         try {
             $studio = auth()->user();
             $data = $request->validated();

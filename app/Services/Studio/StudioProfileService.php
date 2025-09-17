@@ -18,7 +18,7 @@ class StudioProfileService
 
     public function updateProfile(int $userId, array $data)
     {
-
+       
         if (isset($data['studio_logo'])) {
             $data['studio_logo'] = $this->imageService->uploadImage($data['studio_logo'], 'logo', 'logos');
         }
@@ -38,7 +38,8 @@ class StudioProfileService
             $data['guest_policy'] = $this->imageService->uploadImage($data['guest_policy'], 'guest_policy', 'guest_policy');
         }
 
-        return $this->repo->updateProfile($userId, $data);
+        $this->repo->updateProfile($userId, $data);
+        return $this->repo->getById($userId);
     }
 
 
@@ -116,8 +117,8 @@ class StudioProfileService
             });
         });
 
-    $perPage = $filters['per_page'] ?? 15;
-    return $query->paginate($perPage);
-}
+        $perPage = $filters['per_page'] ?? 15;
+        return $query->paginate($perPage);
+    }
 
 }
