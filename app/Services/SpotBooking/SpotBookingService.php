@@ -23,7 +23,21 @@ class SpotBookingService
 
             $this->repo->savePortFolio($data['artist_id'], $galleryPaths);
         }
+        
+        $studio = $this->repo->find($data['studio_id']);
+        dd($studio->total_stations);
+        // Count approved bookings for this studio in the same date range
+        $activeBookings = SpotBooking::where('studio_id', $studio->id)
+            ->where('status', 'approved')
+            ->where(function($q) use ($data) {
+                $q->whereBetween('start_date', [$data['start_date'], $data['end_date']])
+                ->orWhereBetween('end_date', [$data['start_date'], $data['end_date']]);
+            })
+        ->count();
 
+        if ($activeBookings >= $studio->total_stations) {
+            throw new \Exception("No stations available for this studio in the given date range.");
+        }
         unset($data['portfolio_files']);
 
 
