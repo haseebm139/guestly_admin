@@ -53,10 +53,14 @@ class SpotBookingController extends BaseController
     public function store(StoreSpotBookingRequest  $request)
     {
 
-
-        $data = $request->validated();
-        $booking = $this->spotBookingService->create($data);
-        return $this->sendResponse($booking, 'Booking request sent.', 201);
+        try {
+            //code...
+            $data = $request->validated();
+            $booking = $this->spotBookingService->create($data);
+            return $this->sendResponse($booking, 'Booking request sent.', 201);
+        } catch (\Throwable $th) {
+            return $this->sendError($th->getMessage(), [], 422);
+        }
     }
 
     /* ────── RESCHEDULE ────── */
@@ -83,9 +87,17 @@ class SpotBookingController extends BaseController
     /* ────── APPROVE ────── */
     public function approve(int $id)
     {
-        return $this->spotBookingService->approve($id)
-            ? $this->sendResponse(null, 'Booking approved.')
-            : $this->sendError('Booking not found.', 404);
+        try {
+            //code...
+            $booking = $this->spotBookingService->approve($id);
+            if (!$booking) {
+                return $this->sendError('All stations are already booked for this date range.');
+            }
+            return $this->sendResponse($booking, 'Booking approved and station assigned.');
+        } catch (\Throwable $th) {
+            return $this->sendError($th->getMessage() ?? 'Something went wrong.');
+        }
+        
     }
 
     /* ────── REJECT ────── */

@@ -8,11 +8,12 @@ interface SpotBookingRepositoryInterface
 
     /* READ */
     public function find(int $id);
+    public function findStudio(int $id);
     public function allForCurrentUser(int $perPage = 10);   // artist or studio
 
     /* UPDATE */
     public function reschedule(int $id, array $data);
-    public function approve(int $id);
+    public function approve(int $id,int $station_number = null);
     public function reject(int $id);
 
     public function savePortFolio(int $userId, array $paths);

@@ -23,6 +23,12 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
     }
 
 
+    public function findStudio(int $id)
+    {
+        return User::where('user_type', 'studio')->find($id);
+    }
+
+
 
     public function allForCurrentUser(int $perPage = 10)
     {
@@ -58,8 +64,11 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
         ]);
     }
 
-    public function approve(int $id)
+    public function approve(int $id, int $station_number = null)
     {
+        if ($station_number) {
+            return SpotBooking::where('id', $id)->update(['station_number' => $station_number, 'status' => 'approved']);
+        }
         return SpotBooking::where('id', $id)->update(['status' => 'approved']);
     }
 
@@ -81,4 +90,6 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
             ]);
         }
     }
+
+
 }

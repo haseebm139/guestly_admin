@@ -2,7 +2,7 @@
 namespace App\Services\SpotBooking;
 
 use App\Repositories\API\SpotBookingRepositoryInterface;
-
+use App\Models\SpotBooking;
 
 class SpotBookingService
 {
@@ -24,8 +24,8 @@ class SpotBookingService
             $this->repo->savePortFolio($data['artist_id'], $galleryPaths);
         }
         
-        $studio = $this->repo->find($data['studio_id']);
-        dd($studio->total_stations);
+        $studio = $this->repo->findStudio($data['studio_id']);
+         
         // Count approved bookings for this studio in the same date range
         $activeBookings = SpotBooking::where('studio_id', $studio->id)
             ->where('status', 'approved')
@@ -50,7 +50,38 @@ class SpotBookingService
          return $this->repo->find($id);
     }
     public function reschedule(int $id, array $d)  { return $this->repo->reschedule($id, $d); }
-    public function approve(int $id)               { return $this->repo->approve($id); }
+    public function approve(int $id){ 
+
+        $booking = SpotBooking::find($id);
+        
+        if (!$booking) {
+            throw new \Exception("Invalid booking id.");
+            
+        }
+        $studio = $this->repo->findStudio($booking->studio_id);
+        $approvedBookings = SpotBooking::where('studio_id', $studio->id)
+        ->where('status', 'approved')
+        ->where(function($q) use ($booking) {
+            $q->whereBetween('start_date', [$booking->start_date, $booking->end_date])
+              ->orWhereBetween('end_date', [$booking->start_date, $booking->end_date]);
+        })
+        ->get();
+         
+        if ($approvedBookings->count() >= $studio->total_stations) {
+            throw new \Exception("No stations available for this studio in the given date range.");
+        }
+        $occupiedStations = $approvedBookings->pluck('station_number')->toArray();
+        $station_number = null;
+        // Assign first available station
+        for ($i = 1; $i <= $studio->total_stations; $i++) {
+            if (!in_array($i, $occupiedStations)) {
+                $station_number = $i;
+                break;
+            }
+        }
+         
+        return $this->repo->approve($id,$station_number); 
+    }
     public function reject(int $id)                { return $this->repo->reject($id); }
 
 
