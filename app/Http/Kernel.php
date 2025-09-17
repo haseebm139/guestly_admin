@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'artist' => \App\Http\Middleware\ArtistMiddleware::class,
         'user' => \App\Http\Middleware\UserMiddleware::class,
         'ws.dashboard' => \App\Http\Middleware\WebSocketDashboardAccess::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
 
     ];
 }

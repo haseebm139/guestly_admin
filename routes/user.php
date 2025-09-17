@@ -32,19 +32,19 @@ Route::get('verify_otp', [WebsiteController::class, 'verifyOtp'])->name('verify_
 
 Route::middleware('auth')->middleware('role:artist')->group(function () {
     // routes here
-    Route::get('/dashboard/explore', [ArtistController::class, 'explore'])->name('dashboard.explore');
-    Route::get('/dashboard/studio_detail', [ArtistController::class, 'studioDetail'])->name('dashboard.studio_detail');
-    Route::get('/dashboard/artist_chat', [ArtistController::class, 'chat'])->name('dashboard.artist_chat');
-    Route::get('/dashboard/artist_profile', [ArtistController::class, 'profile'])->name('dashboard.artist_profile');
-    Route::get('/dashboard/artist_security', [ArtistController::class, 'security'])->name('dashboard.artist_security');
-    Route::get('/dashboard/artist_bio', [ArtistController::class, 'bio'])->name('dashboard.artist_bio');
-    Route::get('/dashboard/artist_subscription', [ArtistController::class, 'subscription'])->name('dashboard.artist_subscription');
-    Route::get('/dashboard/artist_rating', [ArtistController::class, 'rating'])->name('dashboard.artist_rating');
-    Route::get('/dashboard/artist_payment', [ArtistController::class, 'payment'])->name('dashboard.artist_payment');
-    Route::get('/dashboard/artist_booking', [ArtistController::class, 'booking'])->name('dashboard.artist_booking');
-    Route::get('/dashboard/artist_guest_spot', [ArtistController::class, 'guestSpot'])->name('dashboard.artist_guest_spot');
-    Route::get('/dashboard/artist_request', [ArtistController::class, 'request'])->name('dashboard.artist_request');
-    Route::get('/dashboard/artist_tattoo', [ArtistController::class, 'tattoo'])->name('dashboard.artist_tattoo');
+    Route::get('/dashboard/explore', [WebArtistController::class, 'explore'])->name('dashboard.explore');
+    Route::get('/dashboard/studio_detail', [WebArtistController::class, 'studioDetail'])->name('dashboard.studio_detail');
+    Route::get('/dashboard/artist_chat', [WebArtistController::class, 'chat'])->name('dashboard.artist_chat');
+    Route::get('/dashboard/artist_profile', [WebArtistController::class, 'profile'])->name('dashboard.artist_profile');
+    Route::get('/dashboard/artist_security', [WebArtistController::class, 'security'])->name('dashboard.artist_security');
+    Route::get('/dashboard/artist_bio', [WebArtistController::class, 'bio'])->name('dashboard.artist_bio');
+    Route::get('/dashboard/artist_subscription', [WebArtistController::class, 'subscription'])->name('dashboard.artist_subscription');
+    Route::get('/dashboard/artist_rating', [WebArtistController::class, 'rating'])->name('dashboard.artist_rating');
+    Route::get('/dashboard/artist_payment', [WebArtistController::class, 'payment'])->name('dashboard.artist_payment');
+    Route::get('/dashboard/artist_booking', [WebArtistController::class, 'booking'])->name('dashboard.artist_booking');
+    Route::get('/dashboard/artist_guest_spot', [WebArtistController::class, 'guestSpot'])->name('dashboard.artist_guest_spot');
+    Route::get('/dashboard/artist_request', [WebArtistController::class, 'request'])->name('dashboard.artist_request');
+    Route::get('/dashboard/artist_tattoo', [WebArtistController::class, 'tattoo'])->name('dashboard.artist_tattoo');
 });
 //            == > End Artist
 
@@ -52,17 +52,17 @@ Route::middleware('auth')->middleware('role:artist')->group(function () {
 
 // -- Dashboard Studio
 Route::middleware('auth')->middleware('role:studio')->group(function () {
-    Route::get('/dashboard/studio_home', [StudioController::class, 'home'])->name('dashboard.studio_home');
-    Route::get('/dashboard/studio_chat', [StudioController::class, 'chat'])->name('dashboard.studio_chat');
-    Route::get('/dashboard/studio_search_artist', [StudioController::class, 'searchArtist'])->name('dashboard.studio_search_artist');
-    Route::get('/dashboard/studio_request', [StudioController::class, 'studioRequest'])->name('dashboard.studio_request');
-    Route::get('/dashboard/studio_profile', [StudioController::class, 'profile'])->name('dashboard.studio_profile');
-    Route::get('/dashboard/studio_subscription', [StudioController::class, 'studioSubscription'])->name('dashboard.studio_subscription');
-    Route::get('/dashboard/studio_availability', [StudioController::class, 'studioAvailability'])->name('dashboard.studio_availability');
-    Route::get('/dashboard/studio_promotion', [StudioController::class, 'studioPromotion'])->name('dashboard.studio_promotion');
-    Route::get('/dashboard/studio_rating', [StudioController::class, 'rating'])->name('dashboard.studio_rating');
-    Route::get('/dashboard/studio_payment', [StudioController::class, 'payment'])->name('dashboard.studio_payment');
-    Route::get('/dashboard/studio_security', [StudioController::class, 'security'])->name('dashboard.studio_security');
+    Route::get('/dashboard/studio_home', [WebStudioController::class, 'home'])->name('dashboard.studio_home');
+    Route::get('/dashboard/studio_chat', [WebStudioController::class, 'chat'])->name('dashboard.studio_chat');
+    Route::get('/dashboard/studio_search_artist', [WebStudioController::class, 'searchArtist'])->name('dashboard.studio_search_artist');
+    Route::get('/dashboard/studio_request', [WebStudioController::class, 'studioRequest'])->name('dashboard.studio_request');
+    Route::get('/dashboard/studio_profile', [WebStudioController::class, 'profile'])->name('dashboard.studio_profile');
+    Route::get('/dashboard/studio_subscription', [WebStudioController::class, 'studioSubscription'])->name('dashboard.studio_subscription');
+    Route::get('/dashboard/studio_availability', [WebStudioController::class, 'studioAvailability'])->name('dashboard.studio_availability');
+    Route::get('/dashboard/studio_promotion', [WebStudioController::class, 'studioPromotion'])->name('dashboard.studio_promotion');
+    Route::get('/dashboard/studio_rating', [WebStudioController::class, 'rating'])->name('dashboard.studio_rating');
+    Route::get('/dashboard/studio_payment', [WebStudioController::class, 'payment'])->name('dashboard.studio_payment');
+    Route::get('/dashboard/studio_security', [WebStudioController::class, 'security'])->name('dashboard.studio_security');
 });
 //            == > End Studio
 
