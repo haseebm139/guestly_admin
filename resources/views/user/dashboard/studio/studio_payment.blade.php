@@ -1,6 +1,6 @@
-@extends('layouts.master')
+@extends('user.layouts.master')
 
-{{--@push('styles')--}}
+{{-- @push('styles') --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,16 +12,26 @@
         --label-color: #868e96;
         --border-color: #ced4da;
     }
-    .payments-page-wrapper { background-color: var(--light-green-bg); padding: 40px 20px; width: 100%; display: flex; justify-content: center; font-family: 'Inter', sans-serif; }
+
+    .payments-page-wrapper {
+        background-color: var(--light-green-bg);
+        padding: 40px 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+    }
 
     .payments-card-container {
         background-color: #fff;
         border-radius: 24px;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
         width: 100%;
-        max-width: 500px; /* Iski width thori kam hai */
+        max-width: 500px;
+        /* Iski width thori kam hai */
         padding: 32px;
-        margin: 0 auto; /* Horizontally center karne ke liye */
+        margin: 0 auto;
+        /* Horizontally center karne ke liye */
         box-sizing: border-box;
     }
 
@@ -45,28 +55,56 @@
         cursor: pointer;
         transition: all 0.2s ease-in-out;
     }
+
     .payment-method-box.selected {
         background-color: var(--selected-bg);
         border-color: var(--dark-green);
     }
-    .card-logo-payment { width: 35px; height: 20px; }
-    .card-details { flex-grow: 1; }
-    .card-details .name { font-weight: 600; font-size: 16px; }
-    .card-details .number { color: var(--label-color); font-size: 14px; }
+
+    .card-logo-payment {
+        width: 35px;
+        height: 20px;
+    }
+
+    .card-details {
+        flex-grow: 1;
+    }
+
+    .card-details .name {
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .card-details .number {
+        color: var(--label-color);
+        font-size: 14px;
+    }
+
     .checkmark-icon {
         width: 24px;
         height: 24px;
         fill: var(--dark-green);
-        display: none; /* Shuru mein hidden */
-    }
-    .payment-method-box.selected .checkmark-icon {
-        display: block; /* Selected hone par dikhao */
+        display: none;
+        /* Shuru mein hidden */
     }
 
-    hr { border: 0; border-top: 1px solid var(--border-color); margin: 32px 0; }
+    .payment-method-box.selected .checkmark-icon {
+        display: block;
+        /* Selected hone par dikhao */
+    }
+
+    hr {
+        border: 0;
+        border-top: 1px solid var(--border-color);
+        margin: 32px 0;
+    }
 
     /* Add Card Form */
-    .form-section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+    .form-section-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
 
     .input-field {
         border: 1px solid #5e8082;
@@ -74,13 +112,40 @@
         padding: 8px 16px;
         margin-bottom: 16px;
     }
-    .input-field .label { display: block; font-size: 12px; color: #5e8082; margin-bottom: 2px; }
-    .input-field input { width: 100%; border: none; padding: 0; font-size: 15px; font-weight: 500; }
-    .input-field input:focus { outline: none; }
-    .input-field input::placeholder { color: #ccc; }
 
-    .form-row { display: flex; gap: 16px; }
-    .form-row .input-field { flex: 1; } /* Taake dono fields barabar space lein */
+    .input-field .label {
+        display: block;
+        font-size: 12px;
+        color: #5e8082;
+        margin-bottom: 2px;
+    }
+
+    .input-field input {
+        width: 100%;
+        border: none;
+        padding: 0;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .input-field input:focus {
+        outline: none;
+    }
+
+    .input-field input::placeholder {
+        color: #ccc;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 16px;
+    }
+
+    .form-row .input-field {
+        flex: 1;
+    }
+
+    /* Taake dono fields barabar space lein */
 
     .add-card-btn {
         width: 100%;
@@ -95,7 +160,7 @@
         margin-top: 16px;
     }
 </style>
-{{--@endpush--}}
+{{-- @endpush --}}
 
 @section('content')
     <div class="payments-page-wrapper">
@@ -107,23 +172,27 @@
             {{-- Saved Cards List --}}
             <div class="saved-cards-list">
                 <div class="payment-method-box selected">
-                    <img src="{{ asset ('extra/visa_icon.svg') }}" alt="Visa Logo" class="card-logo-payment">
+                    <img src="{{ asset('assets/web/extra/visa_icon.svg') }}" alt="Visa Logo" class="card-logo-payment">
                     <div class="card-details">
                         <span class="name" style="color:#014122;">Visa Card</span>
                         <br>
                         <span class="number">**** **** **** 7867</span>
                     </div>
-                    <svg class="checkmark-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
+                    <svg class="checkmark-icon" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                    </svg>
                 </div>
 
                 <div class="payment-method-box">
-                    <img src="{{ asset ('extra/mastercard_icon.svg') }}" alt="Mastercard Logo" class="card-logo-payment">
+                    <img src="{{ asset('assets/web/extra/mastercard_icon.svg') }}" alt="Mastercard Logo" class="card-logo-payment">
                     <div class="card-details">
                         <span class="name" style="color:#014122;">Mastercard Card</span>
                         <br>
                         <span class="number">**** **** **** 7867</span>
                     </div>
-                    <svg class="checkmark-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
+                    <svg class="checkmark-icon" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                    </svg>
                 </div>
             </div>
 
@@ -131,7 +200,7 @@
 
             {{-- Add Card Form --}}
             <form>
-                {{--            @csrf--}}
+                {{--            @csrf --}}
                 <h3 class="form-section-title">Add Credit/Debit Cards</h3>
 
                 <div class="input-field">

@@ -1,6 +1,6 @@
-@extends('layouts.master')
+@extends('user.layouts.master')
 
-{{--@push('styles')--}}
+{{-- @push('styles') --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -41,26 +41,33 @@
 
     /* --- [MODIFIED] CALENDAR & ARTIST CARD --- */
     .calendar-artist-wrapper {
-        background-color: var(--highlight-card-bg); /* Light green background */
+        background-color: var(--highlight-card-bg);
+        /* Light green background */
         border: 1px solid #5E8082;
         border-radius: 20px;
-        padding: 0; /* Remove padding to make sections flush */
-        display: flex; /* Use flexbox for layout */
+        padding: 0;
+        /* Remove padding to make sections flush */
+        display: flex;
+        /* Use flexbox for layout */
     }
 
     .calendar-section {
-        flex-basis: 60%; /* Calendar takes 60% width */
+        flex-basis: 60%;
+        /* Calendar takes 60% width */
         padding: 24px;
-        border-right: 1px solid #5E8082; /* Vertical separator */
+        border-right: 1px solid #5E8082;
+        /* Vertical separator */
         border-radius: inherit;
     }
 
     .artist-info-section {
-        flex-basis: 40%; /* Artist info takes 40% width */
+        flex-basis: 40%;
+        /* Artist info takes 40% width */
         padding: 24px;
         display: flex;
         flex-direction: column;
-        justify-content: center; /* Vertically center the content */
+        justify-content: center;
+        /* Vertically center the content */
     }
 
     .calendar-header {
@@ -106,14 +113,18 @@
         justify-content: center;
         align-items: center;
         color: var(--date-text);
-        cursor: pointer; /* Added cursor pointer for clickable dates */
+        cursor: pointer;
+        /* Added cursor pointer for clickable dates */
     }
 
-    .day-cell.active, .day-cell.start-date, .day-cell.end-date {
+    .day-cell.active,
+    .day-cell.start-date,
+    .day-cell.end-date {
         background-color: var(--selected-date-bg);
         color: #FFFFFF;
         font-weight: 600;
-        border-radius: 50%; /* Make it circular */
+        border-radius: 50%;
+        /* Make it circular */
     }
 
     .day-cell.in-range {
@@ -133,11 +144,13 @@
     }
 
     .date-row-bg .day-cell {
-        background-color: transparent; /* Cells inside pill are transparent */
+        background-color: transparent;
+        /* Cells inside pill are transparent */
     }
 
     .day-cell.other-month {
-        color: #99a7a5; /* Dimmed color for other month dates */
+        color: #99a7a5;
+        /* Dimmed color for other month dates */
         cursor: default;
     }
 
@@ -178,28 +191,127 @@
         text-align: center;
     }
 
-    .requests-summary-card .icon { margin-bottom: 12px; }
-    .requests-summary-card .title { font-size: 16px; font-weight: 500; color: var(--text-dark); margin: 0; }
-    .requests-summary-card .count { font-size: 52px; font-weight: 700; color: var(--text-dark); margin: 8px 0; }
-    .requests-summary-card .view-all-link { font-size: 15px; font-weight: 600; color: var(--text-dark); text-decoration: underline; text-underline-offset: 4px; }
-    .requests-section { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; }
-    .requests-section-header { font-size: 20px; font-weight: 600; color: var(--dark-green); margin: 0 0 20px 0; }
-    .requests-table { width: 100%; border-collapse: collapse; }
-    .requests-table th, .requests-table td { padding: 16px 8px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-    .requests-table thead th { font-size: 13px; color: var(--text-description); font-weight: 500; }
-    .requests-table tr:last-child td { border-bottom: none; }
-    .artist-cell { display: flex; align-items: center; gap: 12px; }
-    .artist-cell img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
-    .artist-cell span { font-weight: 500; color: var(--text-dark); font-size: 15px; }
-    .requests-table td { font-size: 15px; color: var(--text-description); }
-    .actions-cell a { text-decoration: none; color: var(--text-description); font-weight: 500; display: inline-flex; align-items: center; gap: 6px; margin-right: 20px; }
-    .actions-cell a:hover { color: var(--dark-green); }
-    .actions-cell a.view-details-link { color: #A0A9A7; text-decoration: underline; text-underline-offset: 3px; }
-    .custom-checkbox input { display: none; }
-    .custom-checkbox .checkmark { width: 20px; height: 20px; border: 1.5px solid #CDD5D3; border-radius: 6px; display: inline-block; cursor: pointer; }
+    .requests-summary-card .icon {
+        margin-bottom: 12px;
+    }
 
+    .requests-summary-card .title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .requests-summary-card .count {
+        font-size: 52px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 8px 0;
+    }
+
+    .requests-summary-card .view-all-link {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-dark);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .requests-section {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 24px;
+    }
+
+    .requests-section-header {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--dark-green);
+        margin: 0 0 20px 0;
+    }
+
+    .requests-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .requests-table th,
+    .requests-table td {
+        padding: 16px 8px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+    }
+
+    .requests-table thead th {
+        font-size: 13px;
+        color: var(--text-description);
+        font-weight: 500;
+    }
+
+    .requests-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .artist-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .artist-cell img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .artist-cell span {
+        font-weight: 500;
+        color: var(--text-dark);
+        font-size: 15px;
+    }
+
+    .requests-table td {
+        font-size: 15px;
+        color: var(--text-description);
+    }
+
+    .actions-cell a {
+        text-decoration: none;
+        color: var(--text-description);
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 20px;
+    }
+
+    .actions-cell a:hover {
+        color: var(--dark-green);
+    }
+
+    .actions-cell a.view-details-link {
+        color: #A0A9A7;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .custom-checkbox input {
+        display: none;
+    }
+
+    .custom-checkbox .checkmark {
+        width: 20px;
+        height: 20px;
+        border: 1.5px solid #CDD5D3;
+        border-radius: 6px;
+        display: inline-block;
+        cursor: pointer;
+    }
 </style>
-{{--@endpush--}}
+{{-- @endpush --}}
 
 @section('content')
     <div class="dashboard-container">
@@ -216,8 +328,12 @@
                     </div>
                     <div class="calendar-grid">
                         <!-- Day Names -->
-                        <div class="day-name">M</div><div class="day-name">T</div><div class="day-name">W</div>
-                        <div class="day-name">T</div><div class="day-name">F</div><div class="day-name">S</div>
+                        <div class="day-name">M</div>
+                        <div class="day-name">T</div>
+                        <div class="day-name">W</div>
+                        <div class="day-name">T</div>
+                        <div class="day-name">F</div>
+                        <div class="day-name">S</div>
                         <div class="day-name">S</div>
                     </div>
                     <!-- Calendar Body - Dates will be generated by jQuery here -->
@@ -236,7 +352,12 @@
             <!-- Guest Spot Requests Summary Card (Unchanged) -->
             <div class="requests-summary-card">
                 <div class="icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="#375B53" xmlns="http://www.w3.org/2000/svg"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"></path></svg>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="#375B53"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z">
+                        </path>
+                    </svg>
                 </div>
                 <p class="title">Guest Spot Requests</p>
                 <h1 class="count">865</h1>
@@ -249,37 +370,45 @@
             <h3 class="requests-section-header">Recent Requests</h3>
             <table class="requests-table">
                 <thead>
-                <tr>
-                    <th style="width: 5%;"><label class="custom-checkbox"><input type="checkbox"><span class="checkmark"></span></label></th>
-                    <th>Artist Name</th>
-                    <th style="width: 40%;">Description</th>
-                    <th>Requested Dates</th>
-                    <th>Actions</th>
-                </tr>
+                    <tr>
+                        <th style="width: 5%;"><label class="custom-checkbox"><input type="checkbox"><span
+                                    class="checkmark"></span></label></th>
+                        <th>Artist Name</th>
+                        <th style="width: 40%;">Description</th>
+                        <th>Requested Dates</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @for ($i = 0; $i < 5; $i++)
-                    <tr>
-                        <td><label class="custom-checkbox"><input type="checkbox"><span class="checkmark"></span></label></td>
-                        <td>
-                            <div class="artist-cell">
-                                <img src="https://i.pravatar.cc/150?img={{ $i + 10 }}" alt="Artist Avatar">
-                                <span>Chris Johnson</span>
-                            </div>
-                        </td>
-                        <td>Excited to work in your space! I specialize in fine line and black & gray realism. Let me know if you have specific hours or rules.</td>
-                        <td>March 2023 - May 2023</td>
-                        <td>
-                            <div class="actions-cell">
-                                <a href="#">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
-                                    <span>Message Client</span>
-                                </a>
-                                <a href="#" class="view-details-link">View Details</a>
-                            </div>
-                        </td>
-                    </tr>
-                @endfor
+                    @for ($i = 0; $i < 5; $i++)
+                        <tr>
+                            <td><label class="custom-checkbox"><input type="checkbox"><span
+                                        class="checkmark"></span></label></td>
+                            <td>
+                                <div class="artist-cell">
+                                    <img src="https://i.pravatar.cc/150?img={{ $i + 10 }}" alt="Artist Avatar">
+                                    <span>Chris Johnson</span>
+                                </div>
+                            </td>
+                            <td>Excited to work in your space! I specialize in fine line and black & gray realism. Let me
+                                know if you have specific hours or rules.</td>
+                            <td>March 2023 - May 2023</td>
+                            <td>
+                                <div class="actions-cell">
+                                    <a href="#">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M22 4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z">
+                                            </path>
+                                        </svg>
+                                        <span>Message Client</span>
+                                    </a>
+                                    <a href="#" class="view-details-link">View Details</a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endfor
                 </tbody>
             </table>
         </div>
@@ -302,7 +431,9 @@
             let currentDate = new Date(); // वर्तमान तिथि से शुरू करें
             let startDate = null;
             let endDate = null;
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August",
+                "September", "October", "November", "December"
+            ];
 
             const toISODateString = (date) => {
                 if (!date) return null;

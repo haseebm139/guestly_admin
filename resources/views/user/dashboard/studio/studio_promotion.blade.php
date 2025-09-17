@@ -14,7 +14,7 @@
 {{--        /* This font needs to be in your public/fonts folder */--}}
 {{--        @font-face {--}}
 {{--            font-family: 'Arial Rounded MT Bold';--}}
-{{--            src: url('{{ asset('fonts/ArialRoundedMTBold.ttf') }}') format('truetype');--}}
+{{--            src: url('{{ asset('assets/web/fonts/ArialRoundedMTBold.ttf') }}') format('truetype');--}}
 {{--            font-weight: normal;--}}
 {{--            font-style: normal;--}}
 {{--        }--}}
@@ -369,7 +369,7 @@
 {{--                        <div class="adp-payment-method-details">--}}
 {{--                            <div class="adp-card-info">--}}
 {{--                                --}}{{-- Use your actual asset path here --}}
-{{--                                <img class="adp-visa-logo" src="{{ asset('extra/visa_logo.png') }}" alt="Visa Card Logo">--}}
+{{--                                <img class="adp-visa-logo" src="{{ asset('assets/web/extra/visa_logo.png') }}" alt="Visa Card Logo">--}}
 {{--                                <div>--}}
 {{--                                    <div class="adp-card-name">Visa Card</div>--}}
 {{--                                    <div class="adp-card-fund">Fund Available $12,256</div>--}}
@@ -390,7 +390,7 @@
 {{--    <div class="adp-modal-overlay" id="success-modal">--}}
 {{--        <div class="adp-modal-content adp-success-modal-content">--}}
 {{--            --}}{{-- Use your actual asset path here --}}
-{{--            <img src="{{ asset('extra/thumbs_up.png') }}" alt="Thumbs Up" class="adp-success-icon">--}}
+{{--            <img src="{{ asset('assets/web/extra/thumbs_up.png') }}" alt="Thumbs Up" class="adp-success-icon">--}}
 {{--            <h2>Studio Boosted Successfully!</h2>--}}
 {{--            <p>We'll notify you once it's approved and starts reaching your selected audience...</p>--}}
 {{--            <button class="adp-continue-btn" id="continue-btn">Continue</button>--}}
@@ -442,7 +442,7 @@
 {{--    </script>--}}
 {{--@endsection--}}
 
-@extends('layouts.master')
+@extends('user.layouts.master')
 
 {{--@section('styles')--}}
     {{-- Main page font --}}
@@ -457,7 +457,7 @@
         /* This font needs to be in your public/fonts folder */
         @font-face {
             font-family: 'Arial Rounded MT Bold';
-            src: url('{{ asset('fonts/ArialRoundedMTBold.ttf') }}') format('truetype');
+            src: url('{{ asset('assets/web/fonts/ArialRoundedMTBold.ttf') }}') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -835,7 +835,7 @@
                         <div class="adp-payment-method-header">Payment Method</div>
                         <div class="adp-payment-method-details">
                             <div class="adp-card-info">
-                                <img class="adp-visa-logo" src="{{ asset('extra/visa_logo.png') }}" alt="Visa Card Logo">
+                                <img class="adp-visa-logo" src="{{ asset('assets/web/extra/visa_logo.png') }}" alt="Visa Card Logo">
                                 <div>
                                     <div class="adp-card-name">Visa Card</div>
                                     <div class="adp-card-fund">Fund Available $12,256</div>
@@ -855,7 +855,7 @@
     <!-- Modal 2: Success Message -->
     <div class="adp-modal-overlay" id="success-modal">
         <div class="adp-modal-content adp-success-modal-content">
-            <img src="{{ asset('thumbs_up.png') }}" alt="Thumbs Up" class="adp-success-icon">
+            <img src="{{ asset('assets/web/thumbs_up.png') }}" alt="Thumbs Up" class="adp-success-icon">
             <h2>Studio Boosted Successfully!</h2>
             <p>We'll notify you once it's approved and starts reaching your selected audience...</p>
             <button class="adp-continue-btn" id="continue-btn">Continue</button>

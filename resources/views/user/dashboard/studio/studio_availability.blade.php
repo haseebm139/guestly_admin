@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('user.layouts.master')
 
 <head>
     <title>Studio Availability</title>
@@ -12,14 +12,17 @@
         :root {
             /* Color Palette refined to match the images */
             --primary-green: #004D40;
-            --secondary-green-bg: #F0F7F5; /* Lighter background for cards */
-            --tag-bg: #E0EBE6; /* Slightly darker for tags */
+            --secondary-green-bg: #F0F7F5;
+            /* Lighter background for cards */
+            --tag-bg: #E0EBE6;
+            /* Slightly darker for tags */
             --white-bg: #FFFFFF;
             --light-page-bg: #F8F9FA;
             --text-dark: #343A40;
             --text-light: #6C757D;
             --border-color: #DEE2E6;
-            --blocked-date-bg: #FAD2D2; /* Muted pink/red for BLOCKED dates */
+            --blocked-date-bg: #FAD2D2;
+            /* Muted pink/red for BLOCKED dates */
             --blocked-date-text: #B95C5C;
             --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
         }
@@ -34,7 +37,8 @@
         .page-wrapper {
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top */
+            align-items: flex-start;
+            /* Align to top */
             min-height: 100vh;
             padding: 40px 20px;
             box-sizing: border-box;
@@ -69,7 +73,8 @@
         .availability-options {
             display: flex;
             gap: 20px;
-            margin-bottom: 40px; /* Increased margin */
+            margin-bottom: 40px;
+            /* Increased margin */
         }
 
         .option-card {
@@ -104,18 +109,21 @@
         }
 
         .section-title {
-            display: block; /* Make it a block for better spacing */
+            display: block;
+            /* Make it a block for better spacing */
             font-size: 16px;
             font-weight: 600;
             color: var(--text-dark);
-            margin-bottom: 16px; /* Increased spacing */
+            margin-bottom: 16px;
+            /* Increased spacing */
         }
 
         /* Dropdown Styling */
         .day-selector .dropdown {
             width: 100%;
             padding: 12px 16px;
-            border-radius: 12px; /* Matched border radius */
+            border-radius: 12px;
+            /* Matched border radius */
             border: 1px solid var(--border-color);
             font-size: 14px;
             color: var(--text-dark);
@@ -138,13 +146,16 @@
         .day-tag {
             background-color: var(--tag-bg);
             color: var(--primary-green);
-            padding: 8px 12px 8px 16px; /* Adjusted padding */
-            border-radius: 50px; /* Pill shape */
+            padding: 8px 12px 8px 16px;
+            /* Adjusted padding */
+            border-radius: 50px;
+            /* Pill shape */
             font-size: 14px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 10px; /* Adjusted gap */
+            gap: 10px;
+            /* Adjusted gap */
         }
 
         .day-tag .remove-day {
@@ -152,18 +163,23 @@
             background: var(--primary-green);
             color: white;
             border-radius: 50%;
-            width: 20px; /* Increased size */
-            height: 20px; /* Increased size */
+            width: 20px;
+            /* Increased size */
+            height: 20px;
+            /* Increased size */
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 14px; /* Adjusted for visibility */
+            font-size: 14px;
+            /* Adjusted for visibility */
             line-height: 1;
             font-weight: bold;
             transition: background-color 0.2s ease;
         }
+
         .day-tag .remove-day:hover {
-            background-color: #c73e3e; /* A red on hover for delete */
+            background-color: #c73e3e;
+            /* A red on hover for delete */
         }
 
 
@@ -176,7 +192,8 @@
             background-color: #014122;
             color: white;
             border: none;
-            padding: 16px 40px; /* Increased padding */
+            padding: 16px 40px;
+            /* Increased padding */
             border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
@@ -184,6 +201,7 @@
             width: 100%;
             transition: background-color 0.2s ease;
         }
+
         .save-btn:hover {
             background-color: #00382d;
         }
@@ -199,7 +217,8 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
-            display: none; /* Initially hidden */
+            display: none;
+            /* Initially hidden */
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -208,6 +227,7 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
+
         .sa-modal-overlay.active {
             display: flex;
             opacity: 1;
@@ -224,6 +244,7 @@
             transform: scale(0.95);
             transition: transform 0.3s ease;
         }
+
         .sa-modal-overlay.active .sa-modal-content {
             transform: scale(1);
         }
@@ -258,6 +279,7 @@
             line-height: 1;
             transition: transform 0.2s ease;
         }
+
         .sa-close-modal:hover {
             transform: rotate(90deg);
         }
@@ -274,7 +296,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px; /* Increased spacing */
+            margin-bottom: 20px;
+            /* Increased spacing */
             padding: 0 8px;
         }
 
@@ -293,10 +316,12 @@
             padding: 4px;
         }
 
-        .calendar-grid-header, .calendar-grid-body {
+        .calendar-grid-header,
+        .calendar-grid-body {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px; /* Spacing between cells */
+            gap: 8px;
+            /* Spacing between cells */
         }
 
         .day-name {
@@ -348,7 +373,8 @@
         .sa-modal-form-inputs {
             display: flex;
             flex-direction: column;
-            gap: 16px; /* Increased gap */
+            gap: 16px;
+            /* Increased gap */
         }
 
         .date-inputs-row {
@@ -381,6 +407,7 @@
             color: var(--text-dark);
             box-sizing: border-box;
         }
+
         .input-wrapper input:focus {
             outline: none;
         }
@@ -399,6 +426,7 @@
             margin-top: 24px;
             transition: background-color 0.2s ease;
         }
+
         .sa-modal-action-btn:hover {
             background-color: #00382d;
         }
@@ -408,8 +436,10 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: 180px; /* Set a max-height */
-            overflow-y: auto;  /* Enable vertical scrollbar when content overflows */
+            max-height: 180px;
+            /* Set a max-height */
+            overflow-y: auto;
+            /* Enable vertical scrollbar when content overflows */
         }
 
         .blocked-item {
@@ -453,11 +483,11 @@
 
             <div class="availability-options">
                 <div id="openBlockModal" class="option-card">
-                    <img src="{{ asset ('extra/block_dates.svg') }}" alt="Block Dates Icon">
+                    <img src="{{ asset('assets/web/extra/block_dates.svg') }}" alt="Block Dates Icon">
                     <div class="title">Block Dates</div>
                 </div>
                 <div id="openUnblockModal" class="option-card">
-                    <img src="{{ asset ('extra/unblock_dates.svg') }}" alt="Unblock Dates Icon">
+                    <img src="{{ asset('assets/web/extra/unblock_dates.svg') }}" alt="Unblock Dates Icon">
                     <div class="title">Unblock Dates</div>
                 </div>
             </div>
@@ -518,7 +548,13 @@
                     <button class="calendar-nav" id="block-next-month-btn">&gt;</button>
                 </div>
                 <div class="calendar-grid-header">
-                    <div class="day-name">M</div><div class="day-name">T</div><div class="day-name">W</div><div class="day-name">T</div><div class="day-name">F</div><div class="day-name">S</div><div class="day-name">S</div>
+                    <div class="day-name">M</div>
+                    <div class="day-name">T</div>
+                    <div class="day-name">W</div>
+                    <div class="day-name">T</div>
+                    <div class="day-name">F</div>
+                    <div class="day-name">S</div>
+                    <div class="day-name">S</div>
                 </div>
                 <div class="calendar-grid-body" id="block-calendar-grid-body">
                 </div>
@@ -567,7 +603,13 @@
                     <button class="calendar-nav" id="unblock-next-month-btn">&gt;</button>
                 </div>
                 <div class="calendar-grid-header">
-                    <div class="day-name">M</div><div class="day-name">T</div><div class="day-name">W</div><div class="day-name">T</div><div class="day-name">F</div><div class="day-name">S</div><div class="day-name">S</div>
+                    <div class="day-name">M</div>
+                    <div class="day-name">T</div>
+                    <div class="day-name">W</div>
+                    <div class="day-name">T</div>
+                    <div class="day-name">F</div>
+                    <div class="day-name">S</div>
+                    <div class="day-name">S</div>
                 </div>
                 <div class="calendar-grid-body" id="unblock-calendar-grid-body">
                 </div>
@@ -610,14 +652,33 @@
             const openUnblockBtn = $('#openUnblockModal');
             const closeButtons = $('.sa-close-modal');
 
-            function openModal(modal) { modal.addClass('active'); }
-            function closeModal(modal) { modal.removeClass('active'); }
+            function openModal(modal) {
+                modal.addClass('active');
+            }
 
-            openBlockBtn.on('click', function() { openModal(blockModal); });
-            openUnblockBtn.on('click', function() { openModal(unblockModal); });
-            closeButtons.on('click', function() { closeModal($(this).closest('.sa-modal-overlay')); });
-            $('.sa-modal-overlay').on('click', function(event) { if ($(event.target).is('.sa-modal-overlay')) { closeModal($(this)); } });
-            $(document).on('keydown', function(event) { if (event.key === "Escape") { closeModal($('.sa-modal-overlay.active')); } });
+            function closeModal(modal) {
+                modal.removeClass('active');
+            }
+
+            openBlockBtn.on('click', function() {
+                openModal(blockModal);
+            });
+            openUnblockBtn.on('click', function() {
+                openModal(unblockModal);
+            });
+            closeButtons.on('click', function() {
+                closeModal($(this).closest('.sa-modal-overlay'));
+            });
+            $('.sa-modal-overlay').on('click', function(event) {
+                if ($(event.target).is('.sa-modal-overlay')) {
+                    closeModal($(this));
+                }
+            });
+            $(document).on('keydown', function(event) {
+                if (event.key === "Escape") {
+                    closeModal($('.sa-modal-overlay.active'));
+                }
+            });
 
             // --- REUSABLE FUNCTION FOR DAY SELECTION ---
             function initializeDaySelector(selectId, containerId) {
@@ -626,10 +687,15 @@
 
                 $select.on('change', function() {
                     const selectedDay = $(this).val();
-                    if (!selectedDay || $(this).find('option:selected').is(':disabled')) { return; }
-                    if ($container.find(`.day-tag[data-day="${selectedDay}"]`).length > 0) { return; }
+                    if (!selectedDay || $(this).find('option:selected').is(':disabled')) {
+                        return;
+                    }
+                    if ($container.find(`.day-tag[data-day="${selectedDay}"]`).length > 0) {
+                        return;
+                    }
 
-                    const newTag = `<div class="day-tag" data-day="${selectedDay}">${selectedDay}<span class="remove-day">&times;</span></div>`;
+                    const newTag =
+                        `<div class="day-tag" data-day="${selectedDay}">${selectedDay}<span class="remove-day">&times;</span></div>`;
                     $container.append(newTag);
 
                     $(this).find(`option[value="${selectedDay}"]`).prop('disabled', true);
@@ -652,9 +718,15 @@
             // --- DYNAMIC CALENDAR LOGIC ---
             function initializeCalendar(config) {
                 const {
-                    monthYearId, gridBodyId, prevBtnId, nextBtnId,
-                    isSelectable, blockedDates = [],
-                    yearDisplayId, monthDisplayId, dateDisplayId
+                    monthYearId,
+                    gridBodyId,
+                    prevBtnId,
+                    nextBtnId,
+                    isSelectable,
+                    blockedDates = [],
+                    yearDisplayId,
+                    monthDisplayId,
+                    dateDisplayId
                 } = config;
 
                 const $monthYearDisplay = $(`#${monthYearId}`);
@@ -667,7 +739,9 @@
 
                 let currentDate = new Date();
                 let selectedDate = null;
-                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August",
+                    "September", "October", "November", "December"
+                ];
 
                 const formatDateToString = (date) => {
                     if (!date) return null;
@@ -704,7 +778,8 @@
                     const prevLastDay = new Date(year, month, 0).getDate();
 
                     for (let i = startDayIndex; i > 0; i--) {
-                        $calendarGridBody.append(`<div class="day-cell other-month">${prevLastDay - i + 1}</div>`);
+                        $calendarGridBody.append(
+                            `<div class="day-cell other-month">${prevLastDay - i + 1}</div>`);
                     }
 
                     for (let day = 1; day <= daysInMonth; day++) {
@@ -715,9 +790,10 @@
                             .text(('0' + day).slice(-2))
                             .data('date', cellDateStr);
 
-                        if(isSelectable) $cell.addClass('selectable');
+                        if (isSelectable) $cell.addClass('selectable');
                         if (blockedDates.includes(cellDateStr)) $cell.addClass('blocked-date');
-                        if (selectedDate && cellDateStr === formatDateToString(selectedDate)) $cell.addClass('selection-active');
+                        if (selectedDate && cellDateStr === formatDateToString(selectedDate)) $cell.addClass(
+                            'selection-active');
 
                         $calendarGridBody.append($cell);
                     }
@@ -725,7 +801,8 @@
                     const totalCells = startDayIndex + daysInMonth;
                     const nextDays = (7 - (totalCells % 7)) % 7;
                     for (let i = 1; i <= nextDays; i++) {
-                        $calendarGridBody.append(`<div class="day-cell other-month">${('0' + i).slice(-2)}</div>`);
+                        $calendarGridBody.append(
+                            `<div class="day-cell other-month">${('0' + i).slice(-2)}</div>`);
                     }
                 };
 

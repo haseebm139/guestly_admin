@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('user.layouts.master')
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,10 +12,33 @@
         --label-color: #868e96;
         --border-color: #ced4da;
     }
-    .sub-page-wrapper { background-color: var(--light-green-bg); padding: 40px 20px; width: 100%; display: flex; justify-content: center; font-family: 'Inter', sans-serif; }
-    .sub-card-container { background-color: #fff; border-radius: 24px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); width: 100%; max-width: 650px; padding: 32px; box-sizing: border-box; }
 
-    .card-title-heading { text-align: center; font-size: 20px; font-weight: 600; color: #014122; margin-bottom: 32px; }
+    .sub-page-wrapper {
+        background-color: var(--light-green-bg);
+        padding: 40px 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .sub-card-container {
+        background-color: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 650px;
+        padding: 32px;
+        box-sizing: border-box;
+    }
+
+    .card-title-heading {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        color: #014122;
+        margin-bottom: 32px;
+    }
 
     /* Current Plan Info Box */
     .current-plan-info {
@@ -24,8 +47,19 @@
         padding: 24px;
         text-align: center;
     }
-    .current-plan-info .plan-name { font-size: 24px; font-weight: 600; color: #014122; }
-    .current-plan-info .plan-details { color: var(--label-color); margin-top: 8px; margin-bottom: 24px; }
+
+    .current-plan-info .plan-name {
+        font-size: 24px;
+        font-weight: 600;
+        color: #014122;
+    }
+
+    .current-plan-info .plan-details {
+        color: var(--label-color);
+        margin-top: 8px;
+        margin-bottom: 24px;
+    }
+
     .change-plan-btn {
         background-color: #014122;
         color: white;
@@ -35,7 +69,15 @@
         font-weight: 600;
         cursor: pointer;
     }
-    .cancel-link { display: block; margin-top: 16px; color: var(--label-color); font-size: 14px; text-decoration: underline; cursor: pointer; }
+
+    .cancel-link {
+        display: block;
+        margin-top: 16px;
+        color: var(--label-color);
+        font-size: 14px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
     /* Available Plans Section (initially hidden) */
     .available-plans-section {
@@ -43,11 +85,13 @@
         border-top: 1px solid var(--border-color);
         padding-top: 20px;
     }
+
     .pricing-grid {
         display: flex;
         gap: 24px;
         justify-content: center;
     }
+
     .pricing-card {
         background-color: #E6F4F0;
         border: 2px solid #5e8082;
@@ -59,19 +103,32 @@
         display: flex;
         flex-direction: column;
     }
+
     .pricing-card.pro-tier {
         border-color: #014122;
         box-shadow: inset 0 0 15px rgba(11, 61, 39, 0.3), 0 0 15px rgba(11, 61, 39, 0.2);
     }
+
     .pricing-card-header {
         text-align: center;
         padding-bottom: 5px;
         border-bottom: 1px solid #b5bebe;
         margin-bottom: 10px;
     }
-    .pricing-card-header h3 { font-size: 20px; color: #014122; margin: 0; }
 
-    .features-list { list-style: none; padding: 0; margin: 0 0; flex-grow: 1; }
+    .pricing-card-header h3 {
+        font-size: 20px;
+        color: #014122;
+        margin: 0;
+    }
+
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0;
+        flex-grow: 1;
+    }
+
     .features-list li {
         display: flex;
         align-items: flex-start;
@@ -80,7 +137,14 @@
         font-size: 14px;
         color: var(--text-color);
     }
-    .features-list svg { width: 18px; height: 18px; fill: #5E8082; flex-shrink: 0; margin-top: 2px; }
+
+    .features-list svg {
+        width: 18px;
+        height: 18px;
+        fill: #5E8082;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
 
     .plan-button {
         width: 100%;
@@ -91,10 +155,22 @@
         font-weight: 600;
         cursor: pointer;
     }
-    .plan-button.free { background-color: #014122; color: #fff; }
-    .plan-button.pro { background-color: var(--pro-btn-bg); color: #fff; }
-    .plan-button:disabled { background-color: #e9ecef; color: #6c757d; cursor: not-allowed; }
 
+    .plan-button.free {
+        background-color: #014122;
+        color: #fff;
+    }
+
+    .plan-button.pro {
+        background-color: var(--pro-btn-bg);
+        color: #fff;
+    }
+
+    .plan-button:disabled {
+        background-color: #e9ecef;
+        color: #6c757d;
+        cursor: not-allowed;
+    }
 </style>
 
 @section('content')
@@ -124,15 +200,27 @@
 
                     <!-- Free Tier Card -->
                     <div class="pricing-card">
-                        <div class="pricing-card-header"><h3>Free Tier</h3></div>
+                        <div class="pricing-card-header">
+                            <h3>Free Tier</h3>
+                        </div>
                         <ul class="features-list">
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> 1 active studio request at a time.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Basic guest artist profile.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Messaging with studios (limited).</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Studio calendar viewing (read-only).</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Studio seat availability view.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> 1 active studio request at a time.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Basic guest artist profile.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Messaging with studios (limited).</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Studio calendar viewing (read-only).</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Studio seat availability view.</li>
                         </ul>
-                        @if($currentUserPlan == 'free')
+                        @if ($currentUserPlan == 'free')
                             <button class="plan-button free" disabled>Current Plan</button>
                         @else
                             <button class="plan-button free">Downgrade to Free</button>
@@ -141,17 +229,33 @@
 
                     <!-- Pro Tier Card -->
                     <div class="pricing-card pro-tier">
-                        <div class="pricing-card-header"><h3>Pro Tier</h3></div>
+                        <div class="pricing-card-header">
+                            <h3>Pro Tier</h3>
+                        </div>
                         <ul class="features-list">
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Unlimited studio requests.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Full booking management tools.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Advanced guest artist profile.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Priority messaging and real-time chat.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Direct calendar integration.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> Preferred studio tagging.</li>
-                            <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> And Much More</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Unlimited studio requests.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Full booking management tools.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Advanced guest artist profile.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Priority messaging and real-time chat.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Direct calendar integration.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> Preferred studio tagging.</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                                </svg> And Much More</li>
                         </ul>
-                        @if($currentUserPlan == 'pro')
+                        @if ($currentUserPlan == 'pro')
                             <button class="plan-button pro" disabled>Current Plan</button>
                         @else
                             <button class="plan-button pro">$19/month</button>

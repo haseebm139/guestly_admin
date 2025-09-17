@@ -25,6 +25,13 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+         $locale = request()->cookie('locale', config('app.locale'));
+
+        // ensure only allowed locales
+        if (! in_array($locale, ['en', 'ko'])) {
+            $locale = config('app.locale');
+        }
+
+        app()->setLocale($locale);
     }
 }

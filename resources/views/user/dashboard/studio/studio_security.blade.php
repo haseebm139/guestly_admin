@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('user.layouts.master')
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,9 +11,24 @@
         --label-color: #868e96;
         --border-color: #ced4da;
     }
-    .settings-page-wrapper { background-color: var(--light-green-bg); padding: 40px 20px; width: 100%; display: flex; justify-content: center; font-family: 'Inter', sans-serif; }
+
+    .settings-page-wrapper {
+        background-color: var(--light-green-bg);
+        padding: 40px 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+    }
+
     .settings-card-container {
-        background-color: #fff; border-radius: 24px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); width: 100%; max-width: 600px; padding: 24px; box-sizing: border-box;
+        background-color: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 600px;
+        padding: 24px;
+        box-sizing: border-box;
     }
 
     .card-title-heading {
@@ -41,22 +56,65 @@
         margin-bottom: 16px;
     }
 
-    .info-content { flex-grow: 1; }
-    .info-content .label { display: block; font-size: 12px; color: #5E8082; margin-bottom: 2px; }
+    .info-content {
+        flex-grow: 1;
+    }
 
-    .info-content .value { font-size: 14px; font-weight: 500; color: #333333; }
+    .info-content .label {
+        display: block;
+        font-size: 12px;
+        color: #5E8082;
+        margin-bottom: 2px;
+    }
 
-    .social-info { display: flex; align-items: center; gap: 12px; }
-    .social-info img { width: 32px; height: 32px; }
+    .info-content .value {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333333;
+    }
 
-    .action-link { background: none; border: none; color: #014122; font-weight: 600; font-size: 15px; cursor: pointer; padding: 0 0 0 10px; text-decoration: underline; }
+    .social-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-    .save-changes-container { text-align: center; margin-top: 32px; }
-    .save-changes-btn { background-color: #014122; color: #fff; border: none; padding: 14px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; }
+    .social-info img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .action-link {
+        background: none;
+        border: none;
+        color: #014122;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        padding: 0 0 0 10px;
+        text-decoration: underline;
+    }
+
+    .save-changes-container {
+        text-align: center;
+        margin-top: 32px;
+    }
+
+    .save-changes-btn {
+        background-color: #014122;
+        color: #fff;
+        border: none;
+        padding: 14px 40px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
 
     /* --- MODAL STYLES --- */
     .modal-overlay {
-        z-index: 9999; /* higher than sidebar z-index */
+        z-index: 9999;
+        /* higher than sidebar z-index */
         position: fixed;
         top: 0;
         left: 0;
@@ -69,6 +127,7 @@
         justify-content: center;
         align-items: center;
     }
+
     .modal-content-box {
         background: #fffdfd;
         padding: 24px;
@@ -77,18 +136,21 @@
         max-width: 450px;
         position: relative;
     }
+
     .modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 24px;
     }
+
     .modal-header h3 {
         margin: 0;
         font-size: 18px;
         font-weight: 600;
         color: var(--dark-green);
     }
+
     .close-modal {
         background: none;
         border: none;
@@ -99,8 +161,10 @@
     }
 
     .modal-body .info-box {
-        padding: 8px 16px; /* Adjust padding for inputs */
+        padding: 8px 16px;
+        /* Adjust padding for inputs */
     }
+
     .modal-body .info-content input {
         width: 100%;
         border: none;
@@ -109,13 +173,16 @@
         font-size: 15px;
         font-weight: 500;
     }
+
     .modal-body .info-content input:focus {
         outline: none;
     }
+
     .modal-footer {
         text-align: right;
         margin-top: 24px;
     }
+
     .modal-footer button {
         background-color: var(--dark-green);
         color: white;
@@ -125,7 +192,6 @@
         font-weight: 600;
         cursor: pointer;
     }
-
 </style>
 
 @section('content')
@@ -192,7 +258,7 @@
                 <button class="close-modal">&times;</button>
             </div>
             <form>
-                {{--                @csrf--}}
+                {{--                @csrf --}}
                 <div class="modal-body">
                     <div class="info-box">
                         <div class="info-content">

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('user.layouts.master')
 
 {{--@push('styles')--}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
