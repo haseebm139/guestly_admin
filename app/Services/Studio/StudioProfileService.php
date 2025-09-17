@@ -63,71 +63,61 @@ class StudioProfileService
         return $this->repo->getRequestsByStatus($studioId, $status, $perPage);
     }
 
+     
+
     public function getArtist($filters)
     {
-        $query = User::query()->where('user_type', 'artist')->with('tattooStyles');
-        if (!empty($filters['search'])) {
-        $query->where(function($q) use ($filters) {
-            $q->where('name', 'like', "%{$filters['search']}%")
-              ->orWhere('last_name', 'like', "%{$filters['search']}%")
-              ->orWhere('email', 'like', "%{$filters['search']}%")
-              ->orWhereHas('tattooStyles', function ($styleQuery) use ($filters) {
-                  $styleQuery->where('name', 'like', "%{$filters['search']}%");
-              });
+
+         
+        $query = User::query()
+            ->where('user_type', 'artist')
+            ->with('tattooStyles');
+
+     
+        $query->when(!empty($filters['search']), function ($q) use ($filters) {
+            $searchTerm = $filters['search'];
+            $q->where(function ($q2) use ($searchTerm) {
+                $q2->where('name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('email', 'like', '%' . $searchTerm . '%')
+                ->orWhereHas('tattooStyles', function ($styleQuery) use ($searchTerm) {
+                    $styleQuery->where('name', 'like', '%' . $searchTerm . '%');
+                });
             });
-        }
-        if (!empty($filters['name'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('name', 'like', "%{$filters['name']}%")
-                ->orWhere('last_name', 'like', "%{$filters['name']}%");
+        });
+
+        // Handle specific filters. Use `when` for better readability.
+        $query->when(!empty($filters['name']), function ($q) use ($filters) {
+            $q->where(function ($q2) use ($filters) {
+                $q2->where('name', $filters['name'])
+                ->orWhere('last_name', $filters['name']);
             });
-        }
+        });
 
-        if (!empty($filters['email'])) {
-            $query->where('email', 'like', "{$filters['email']}") ;
-        }
+        $query->when(!empty($filters['email']), function ($q) use ($filters) {
+            $q->where('email', $filters['email']);
+        });
 
-        // 🔹 Filter by city
-        if (!empty($filters['city'])) {
-            $query->where('city', 'like', "{$filters['city']}");
-        }
+        $query->when(!empty($filters['city']), function ($q) use ($filters) {
+            $q->where('city', $filters['city']);
+        });
 
-        // 🔹 Filter by country
-        if (!empty($filters['country'])) {
-            $query->where('country', 'like', "{$filters['country']}");
-        }
+        $query->when(!empty($filters['country']), function ($q) use ($filters) {
+            $q->where('country', $filters['country']);
+        });
 
-        // 🔹 Filter by language
-        if (!empty($filters['language'])) {
-            $query->where('language', 'like', "%{$filters['language']}%");
-        }
+         
 
-        // 🔹 Filter by Tattoo Style (exact match if dropdown filter)
-        if (!empty($filters['tattoo_style'])) {
-            $query->whereHas('tattooStyles', function ($styleQuery) use ($filters) {
+        // Handle exact match for tattoo style
+        $query->when(!empty($filters['tattoo_style']), function ($q) use ($filters) {
+             
+            $q->whereHas('tattooStyles', function ($styleQuery) use ($filters) {
                 $styleQuery->where('name', $filters['tattoo_style']);
             });
-        }
+        });
 
-        // // 🔹 Radius Search (if lat + lng + radius are given)
-        // if (!empty($filters['latitude']) && !empty($filters['longitude']) && !empty($filters['radius'])) {
-        //     $lat = $filters['latitude'];
-        //     $lng = $filters['longitude'];
-        //     $radius = $filters['radius']; // in kilometers
-
-        //     $query->selectRaw("users.*, (
-        //             6371 * acos(
-        //                 cos(radians(?)) * cos(radians(latitude)) *
-        //                 cos(radians(longitude) - radians(?)) +
-        //                 sin(radians(?)) * sin(radians(latitude))
-        //             )
-        //         ) AS distance", [$lat, $lng, $lat])
-        //         ->having('distance', '<=', $radius)
-        //         ->orderBy('distance');
-        // }
-        // 🔹 Pagination
-        $perPage = $filters['per_page'] ?? 15;
-        return $query->paginate($perPage);
-    }
+    $perPage = $filters['per_page'] ?? 15;
+    return $query->paginate($perPage);
+}
 
 }
