@@ -54,7 +54,7 @@ Route::prefix('v1')->group(function () {
             Route::post('verification/confirm', [UserController::class, 'confirmVerification']);
             Route::get('verification/status', [UserController::class, 'getVerificationStatus']);
         });
-
+        Route::post('upload/chat-image', [UserController::class, 'uploadChatImage']);
         Route::controller(SubscriptionController::class)->group(function () {
             Route::get('plans', 'index');
             Route::post('plans/{planId}/subscribe', 'buyPlan');
