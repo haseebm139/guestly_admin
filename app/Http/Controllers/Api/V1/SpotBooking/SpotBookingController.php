@@ -14,6 +14,9 @@ use App\Rules\StudioExists;
 use App\Http\Requests\StoreSpotBookingRequest ;
 use App\Http\Requests\RescheduleSpotBookingRequest ;
 
+use App\Models\SpotBooking;
+use App\Models\User;
+use DB;
 class SpotBookingController extends BaseController
 {
 
@@ -109,6 +112,67 @@ class SpotBookingController extends BaseController
     }
 
 
+     
+    public function monthlyCalendar(Request $request, $studioId)
+    {
 
+        $validator = Validator::make($request->all(), [
+            'month' => 'nullable|integer|min:1|max:12',
+            'year'  => 'nullable|integer|min:2000|max:2100',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(),$errorMessages = [], 422);
+            
+        }
+            $month = $request->input('month') ?: now()->month;
+            $year  = $request->input('year') ?: now()->year;
+
+            $studio = User::find($studioId);
+
+            if (!$studio) {
+                return $this->sendError('Studio not found.');
+            }
+
+            // fetch approved bookings for this studio
+            $bookings = SpotBooking::where('studio_id', $studioId)
+                ->where('status', 'approved')
+                ->where(function ($q) use ($month, $year) {
+                    $q->whereMonth('start_date', $month)
+                    ->whereYear('start_date', $year)
+                    ->orWhereMonth('end_date', $month)
+                    ->whereYear('end_date', $year);
+            })
+            ->get();
+
+            $calendar = [];
+            $daysInMonth = now()->setYear($year)->setMonth($month)->daysInMonth;
+
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
+                $calendar[$date] = [
+                    'booked'      => 0,
+                    'total'       => $studio->total_stations,
+                    'booking_ids' => [],
+                ];
+            }
+
+            // expand booking ranges into daily slots
+            foreach ($bookings as $booking) {
+                $start = \Carbon\Carbon::parse($booking->start_date);
+                $end   = \Carbon\Carbon::parse($booking->end_date);
+
+                for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+                    $dayKey = $date->format('Y-m-d');
+
+                    if (isset($calendar[$dayKey])) {
+                        $calendar[$dayKey]['booked']++;
+                        $calendar[$dayKey]['booking_ids'][] = $booking->id;
+                    }
+                }
+            }
+
+            return $this->sendResponse($calendar, 'Monthly calendar data.');
+    }
 
 }

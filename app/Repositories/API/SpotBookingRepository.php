@@ -90,6 +90,6 @@ class SpotBookingRepository implements SpotBookingRepositoryInterface
             ]);
         }
     }
-
+    
 
 }

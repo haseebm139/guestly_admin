@@ -64,7 +64,7 @@ Route::prefix('v1')->group(function () {
             Route::get('cards/change_status', 'changeStatus');
         });
         Route::controller(SpotBookingController::class)->prefix('bookings')->group(function () {
-
+            Route::get('/monthly-bookings-calandar/{studio_id}', 'monthlyCalendar');
             // Artist books a new spot
             Route::post('/', 'store');
 
