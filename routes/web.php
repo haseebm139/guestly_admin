@@ -35,7 +35,9 @@ use Illuminate\Support\Facades\Mail;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('/thankyou', function () {
+    return view('user.pages.client.thank_you');
+});
 Route::get('/test-email', function () {
     Mail::raw('This is a test email from Laravel using privateemail.com SMTP.', function ($message) {
         $message->to('recipient@example.com')
@@ -46,6 +48,9 @@ Route::get('/test-email', function () {
 });
     Route::get('booking/{artist_id}/{artist_name}/{shared_code}', [ClientController::class, 'index'])->name('client.index');
     Route::post('/booking/{shared_code}/submit', [ClientController::class, 'submitForm'])->name('client.booking.submit');
+    Route::get('/booking/done', [ClientController::class, 'thankyouPage'])->name('client.done');
+    Route::get('/client/{shared_code}/profile/{token}', [ClientController::class, 'profile'])->name('client.profile');
+    
     Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
         Route::get('/maintenance/clear-caches', function () {

@@ -455,6 +455,30 @@ if (!function_exists('sendVerificationMail')) {
     }
 }
 
+
+if (!function_exists('sendBookingMail')) {
+    function sendBookingMail($name, $lastName, $email, $profileLink)     
+    {
+
+         
+        $fullName = trim(($name ?? '') . ' ' . ($lastName ?? ''));
+        if (empty($fullName)) {
+            $fullName = 'Guest'; // fallback if no name available
+        }
+        // Send Email
+            Illuminate\Support\Facades\Mail::send('emails.client_profile_link', 
+            [
+                'full_name'    => $fullName,
+                'profile_link' => $profileLink,
+            ],
+            function ($message) use ($email, $fullName) {
+                $message->to($email, $fullName)
+                        ->subject('Your Guestly Profile Link');
+            });
+        // Send Email
+    }
+}
+
 if (!function_exists('stringUpperCase')) {
     function stringUpperCase($value)
     {
