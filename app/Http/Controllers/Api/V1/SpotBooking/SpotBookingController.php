@@ -17,6 +17,7 @@ use App\Http\Requests\RescheduleSpotBookingRequest ;
 use App\Models\SpotBooking;
 use App\Models\User;
 use DB;
+use Carbon\Carbon;
 class SpotBookingController extends BaseController
 {
 
@@ -149,28 +150,35 @@ class SpotBookingController extends BaseController
             $daysInMonth = now()->setYear($year)->setMonth($month)->daysInMonth;
 
             for ($day = 1; $day <= $daysInMonth; $day++) {
-                $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
-                $calendar[$date] = [
-                    'booked'      => 0,
-                    'total'       => $studio->total_stations,
-                    'booking_ids' => [],
-                ];
-            }
+        $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
+        $calendar[$date] = [
+            'booked'      => 0,
+            'total'       => $studio->total_stations,
+            'booking_ids' => [],
+            'status'      => 'free', // default
+        ];
+    }
 
-            // expand booking ranges into daily slots
-            foreach ($bookings as $booking) {
-                $start = \Carbon\Carbon::parse($booking->start_date);
-                $end   = \Carbon\Carbon::parse($booking->end_date);
+    foreach ($bookings as $booking) {
+        $start = Carbon::parse($booking->start_date);
+        $end   = Carbon::parse($booking->end_date);
 
-                for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-                    $dayKey = $date->format('Y-m-d');
+        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            $dayKey = $date->format('Y-m-d');
 
-                    if (isset($calendar[$dayKey])) {
-                        $calendar[$dayKey]['booked']++;
-                        $calendar[$dayKey]['booking_ids'][] = $booking->id;
-                    }
+            if (isset($calendar[$dayKey])) {
+                $calendar[$dayKey]['booked']++;
+                $calendar[$dayKey]['booking_ids'][] = $booking->id;
+
+                // update status dynamically
+                if ($calendar[$dayKey]['booked'] >= $calendar[$dayKey]['total']) {
+                    $calendar[$dayKey]['status'] = 'fully';
+                } elseif ($calendar[$dayKey]['booked'] > 0) {
+                    $calendar[$dayKey]['status'] = 'partial';
                 }
             }
+        }
+    }
 
             return $this->sendResponse($calendar, 'Monthly calendar data.');
     }
