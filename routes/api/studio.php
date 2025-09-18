@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Studio\StudioController;
 use App\Http\Controllers\Api\V1\Studio\BoostAdController;
+use App\Http\Controllers\Api\V1\Studio\StudioBlockStationController;
 
 
 
@@ -35,6 +36,13 @@ Route::middleware(['auth:sanctum', 'studio'])->group(function () {
         Route::post('/boost-ads', 'store');
         Route::post('/boost-ad/{id}/stop', 'stop');
         Route::post('/boost-ad/{id}/boost-again', 'boostAgain');
+    });
+
+    Route::controller(StudioBlockStationController::class)->group(function () {
+        Route::get('/block-stations','index');
+        Route::post('/block-stations','store');
+        Route::post('/unblock-stations/{id}','unblock');
+        Route::delete('/block-stations/{id}','destroy');
     });
 
 
