@@ -20,6 +20,7 @@ class StudioController extends BaseController
 
     public function update(StudioUpdateProfileRequest $request)
     {
+        
         try {
             $studio = auth()->user();
             $data = $request->validated();
@@ -121,6 +122,8 @@ class StudioController extends BaseController
         $filters = $request->only([
             'search',
             'name',
+            'tattoo_style',
+            'email',
             'city',
             'country',
             'language',

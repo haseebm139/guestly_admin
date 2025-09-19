@@ -5,10 +5,14 @@
 /public/verification
 /public/ckeditor 
 /public/amenities_icon
-/public/assets
+/public/assets/css
+/public/assets/js
+/public/assets/media
+/public/assets/plugins
 /public/studios
 /public/artists
 /public/documents/
+/public/chat_images/
  
 /public/storage/
 /public/mix-manifest.json

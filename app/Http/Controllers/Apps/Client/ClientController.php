@@ -9,19 +9,21 @@ use App\Models\User;
 use App\Models\CustomForm;
 use App\Models\ClientBookingForm;
 use App\Models\ClientBookingFormResponse;
-
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 use Hash;
 use Validator;
 class ClientController extends Controller
 {
-    public function index($artist_id,$artist_name,$shared_code)
+    public function index($artist_id,$artist_name,$shared_code,$booking_id = null)
     {
-
+         
         $artist = User::where('user_type', 'artist')->where('name', $artist_name)->where('id', $artist_id)->first();
         if(empty($artist)){
             dd('artist not found');
         }
-        // dd($artist);
+        
         $data = ClientBookingForm::
         where('shared_code', $shared_code)
         ->where('artist_id', $artist_id)
@@ -33,10 +35,7 @@ class ClientController extends Controller
             dd('client booking form not found');
         }
 
-        // echo "<pre>";
-        // print_r(json_encode($form));
-        // exit;
-        //  dd($clientForm->fields);
+        
         return view('user.pages.client.custom_form',compact('data'));
     }
 
@@ -52,6 +51,7 @@ class ClientController extends Controller
         // Update booking status
         $booking->status = 'pending';
         $booking->save();
+        $user = null;
         foreach ($request->except(['_token', 'shared_code', 'studio_name', 'booking_date', 'booking_time']) as $key => $value) {
             // Split the field name and field ID
             [$fieldName, $fieldId] = explode('|', $key);
@@ -78,8 +78,9 @@ class ClientController extends Controller
                 ],
                 ['value' => $value]
             );
-            $user = null;
+            
             if ($userEmail) {
+                 
                 $user = User::where('email', $userEmail)->first();
 
                 if (!$user) {
@@ -90,9 +91,11 @@ class ClientController extends Controller
                         'email'    => $userEmail??'',
                         'user_type' => 'user',
                         'role_id' => 'user',
-                        'password' => $password
+                        'password' => $password,
+                        'profile_link' => Str::uuid()
                     ]);
                 }
+                
 
                 // ✅ Assign role "user" if not already assigned
                 if (!$user->hasRole('user')) {
@@ -102,11 +105,34 @@ class ClientController extends Controller
                     'client_id' => $user->id
                 ]);
             }
+            
         }
+        $profileUrl = route('client.profile', ['token' => $user->profile_link, 'shared_code' => $request->shared_code]);
+        sendBookingMail($user->name,$user->last_name, $user->email,$profileUrl );
+         
+        return redirect()->route('client.done'); 
+    }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Form submitted successfully.'
-        ]);
+    public function thankyouPage(Request $request)
+    {
+        return view('user.pages.client.thank_you');
+         
+    }
+
+    public function profile($shared_code, $token)
+    {
+        $user = User::where('profile_link', $token)->first();
+        if (empty($user)) {
+            dd('user not found');
+        }
+        
+        $booking = ClientBookingForm::where('client_id', $user->id)->where('shared_code', $shared_code)->first();
+        if (empty($booking)) {
+            dd('user not found');
+        }
+        // Fetch bookings if needed
+        dd($booking);
+        $bookings = $user->bookings ?? [];
+        return view('user.pages.client.profile', compact('user', 'bookings'));
     }
 }

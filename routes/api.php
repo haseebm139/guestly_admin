@@ -54,7 +54,7 @@ Route::prefix('v1')->group(function () {
             Route::post('verification/confirm', [UserController::class, 'confirmVerification']);
             Route::get('verification/status', [UserController::class, 'getVerificationStatus']);
         });
-
+        Route::post('upload/chat-image', [UserController::class, 'uploadChatImage']);
         Route::controller(SubscriptionController::class)->group(function () {
             Route::get('plans', 'index');
             Route::post('plans/{planId}/subscribe', 'buyPlan');
@@ -64,7 +64,7 @@ Route::prefix('v1')->group(function () {
             Route::get('cards/change_status', 'changeStatus');
         });
         Route::controller(SpotBookingController::class)->prefix('bookings')->group(function () {
-
+            Route::get('/monthly-bookings-calandar/{studio_id}', 'monthlyCalendar');
             // Artist books a new spot
             Route::post('/', 'store');
 
