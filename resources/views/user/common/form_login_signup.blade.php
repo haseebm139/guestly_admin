@@ -418,7 +418,8 @@
 
                         {{-- Hidden input for role --}}
                         <input type="hidden" name="role" value="{{ request('role', 'artist') }}">
-
+                        <input type="hidden" name="latitude" class="latitude">
+                        <input type="hidden" name="longitude" class="longitude">
                         <div class="form-group">
                             <label>{{ __('email') }}</label>
                             <input type="email" name="email" placeholder="{{ __('enter_email') }}" required>
@@ -458,8 +459,8 @@
                     <form id="signupForm" method="POST"
                         action="{{ route('signup', ['role' => request('role', 'artist')]) }}">
                         @csrf
-                        <input type="hidden" name="latitude" id="latitude">
-                        <input type="hidden" name="longitude" id="longitude">
+                        <input type="hidden" name="latitude" class="latitude">
+                        <input type="hidden" name="longitude" class="longitude">
 
                         <div class="form-row">
                             <div class="form-group">
@@ -484,23 +485,83 @@
                             <i class="fa-solid fa-eye toggle-password" id="toggle-signup-password"></i>
                         </div>
 
+{{--                        <div class="input-group-connected">--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>{{ __('country_region') }}</label>--}}
+{{--                                <select name="country_region">--}}
+{{--                                    <option value="" disabled selected style="color: gray;">--}}
+{{--                                        {{ __('enter_country_region') }}</option>--}}
+{{--                                    <option>United States (+1)</option>--}}
+{{--                                    <option>United Kingdom (+44)</option>--}}
+{{--                                    <option>Canada (+1)</option>--}}
+{{--                                </select>--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>{{ __('phone_number') }}</label>--}}
+{{--                                <input type="text" name="phone_number"--}}
+{{--                                    placeholder="{{ __('enter_phone_number') }}">--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
                         <div class="input-group-connected">
                             <div class="form-group">
                                 <label>{{ __('country_region') }}</label>
-                                <select name="country_region">
+                                <select id="country_region" name="country_region">
                                     <option value="" disabled selected style="color: gray;">
-                                        {{ __('enter_country_region') }}</option>
-                                    <option>United States (+1)</option>
-                                    <option>United Kingdom (+44)</option>
-                                    <option>Canada (+1)</option>
+                                        {{ __('enter_country_region') }}
+                                    </option>
+                                    <option value="us" data-code="+1">United States (+1)</option>
+                                    <option value="ca" data-code="+1">Canada (+1)</option>
+                                    <option value="gb" data-code="+44">United Kingdom (+44)</option>
+                                    <option value="pk" data-code="+92">Pakistan (+92)</option>
+                                    <option value="in" data-code="+91">India (+91)</option>
+                                    <option value="bd" data-code="+880">Bangladesh (+880)</option>
+                                    <option value="ae" data-code="+971">United Arab Emirates (+971)</option>
+                                    <option value="sa" data-code="+966">Saudi Arabia (+966)</option>
+                                    <option value="qa" data-code="+974">Qatar (+974)</option>
+                                    <option value="om" data-code="+968">Oman (+968)</option>
+                                    <option value="kw" data-code="+965">Kuwait (+965)</option>
+                                    <option value="bh" data-code="+973">Bahrain (+973)</option>
+                                    <option value="af" data-code="+93">Afghanistan (+93)</option>
+                                    <option value="au" data-code="+61">Australia (+61)</option>
+                                    <option value="nz" data-code="+64">New Zealand (+64)</option>
+                                    <option value="sg" data-code="+65">Singapore (+65)</option>
+                                    <option value="my" data-code="+60">Malaysia (+60)</option>
+                                    <option value="id" data-code="+62">Indonesia (+62)</option>
+                                    <option value="ph" data-code="+63">Philippines (+63)</option>
+                                    <option value="cn" data-code="+86">China (+86)</option>
+                                    <option value="jp" data-code="+81">Japan (+81)</option>
+                                    <option value="kr" data-code="+82">South Korea (+82)</option>
+                                    <option value="de" data-code="+49">Germany (+49)</option>
+                                    <option value="fr" data-code="+33">France (+33)</option>
+                                    <option value="it" data-code="+39">Italy (+39)</option>
+                                    <option value="es" data-code="+34">Spain (+34)</option>
+                                    <option value="tr" data-code="+90">Turkey (+90)</option>
+                                    <option value="za" data-code="+27">South Africa (+27)</option>
+                                    <option value="ng" data-code="+234">Nigeria (+234)</option>
+                                    <option value="ke" data-code="+254">Kenya (+254)</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>{{ __('phone_number') }}</label>
-                                <input type="text" name="phone_number"
-                                    placeholder="{{ __('enter_phone_number') }}">
+                                <input type="text" id="phone_number" name="phone_number"
+                                       placeholder="{{ __('enter_phone_number') }}">
                             </div>
                         </div>
+
+                        <script>
+                            const countrySelect = document.getElementById('country_region');
+                            const phoneInput = document.getElementById('phone_number');
+
+                            countrySelect.addEventListener('change', function () {
+                                const selected = this.options[this.selectedIndex];
+                                const code = selected.getAttribute('data-code');
+                                if (code) {
+                                    phoneInput.value = code + " "; // code auto-insert
+                                    phoneInput.focus();
+                                }
+                            });
+                        </script>
+
                         <!-- This is the new container for the combined error message -->
                         <div id="phone-group-error-container"></div>
 
@@ -590,14 +651,37 @@
             //     }
             // });
         </script>
+{{--        <script>--}}
+{{--            document.addEventListener('DOMContentLoaded', () => {--}}
+{{--                if (navigator.geolocation) {--}}
+{{--                    navigator.geolocation.getCurrentPosition(--}}
+{{--                        function(position) {--}}
+{{--                            // Latitude aur Longitude set karein hidden fields mein--}}
+{{--                            document.getElementById('latitude').value = position.coords.latitude;--}}
+{{--                            document.getElementById('longitude').value = position.coords.longitude;--}}
+{{--                        },--}}
+{{--                        function(error) {--}}
+{{--                            console.error('Error getting location:', error);--}}
+{{--                        }--}}
+{{--                    );--}}
+{{--                } else {--}}
+{{--                    console.warn('Geolocation is not supported by this browser.');--}}
+{{--                }--}}
+{{--            });--}}
+{{--        </script>--}}
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         function(position) {
-                            // Latitude aur Longitude set karein hidden fields mein
-                            document.getElementById('latitude').value = position.coords.latitude;
-                            document.getElementById('longitude').value = position.coords.longitude;
+                            // Sab latitude fields fill karo
+                            document.querySelectorAll('.latitude').forEach(el => {
+                                el.value = position.coords.latitude;
+                            });
+                            // Sab longitude fields fill karo
+                            document.querySelectorAll('.longitude').forEach(el => {
+                                el.value = position.coords.longitude;
+                            });
                         },
                         function(error) {
                             console.error('Error getting location:', error);
@@ -608,6 +692,7 @@
                 }
             });
         </script>
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
@@ -723,6 +808,19 @@
                         }
                     }
                 });
+            });
+        </script>
+        <script>
+            const countrySelect = document.getElementById('country_region');
+            const phoneInput = document.getElementById('phone_number');
+
+            countrySelect.addEventListener('change', function () {
+                const selected = this.options[this.selectedIndex];
+                const code = selected.getAttribute('data-code');
+                if (code) {
+                    phoneInput.value = code + " "; // code auto-insert
+                    phoneInput.focus();
+                }
             });
         </script>
     </body>

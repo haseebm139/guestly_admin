@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     public function signup(Request $request)
-    { 
+    {
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -34,6 +34,7 @@ class AuthController extends Controller
             'country' => $request->country_region,
             'phone' => $request->phone_number,
             'role_id' => $roleId,
+            'user_type' => $roleId,
         ]);
 
         Auth::login($user);
@@ -47,24 +48,21 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // Form se email aur password validate karein
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'role' => 'required|string', // hidden input ya URL se role
+            'role' => 'required|string',
         ]);
 
-        $requestedRole = strtolower($request->input('role')); // form se role
+        $requestedRole = strtolower($request->input('role'));
         $validRoles = ['artist', 'studio'];
 
-        // Role valid hai ya nahi check karein
         if (!in_array($requestedRole, $validRoles)) {
             return back()->withErrors([
                 'email' => 'Please select a valid role: Artist or Studio.',
             ])->onlyInput('email');
         }
 
-        // User ko login karne ki koshish
         if (Auth::attempt([
             'email' => $credentials['email'],
             'password' => $credentials['password'],
@@ -72,14 +70,20 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-            $userRole = strtolower($user->role_id); // enum: 'artist' ya 'studio'
+            $userRole = strtolower($user->role_id);
 
-            // Role match kare ya nahi check karein
             if ($userRole !== $requestedRole) {
                 Auth::logout();
                 return back()->withErrors([
                     'email' => "You cannot log in as $requestedRole with these credentials.",
                 ])->onlyInput('email');
+            }
+
+            // ✅ Save Latitude & Longitude on login
+            if ($request->filled('latitude') && $request->filled('longitude')) {
+                $user->latitude = $request->latitude;
+                $user->longitude = $request->longitude;
+                $user->save();
             }
 
             // Redirect user according to role
@@ -90,11 +94,12 @@ class AuthController extends Controller
             }
         }
 
-        // Agar login fail ho jaye
+        // if login fail
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
+
 
     public function logout(Request $request)
     {
