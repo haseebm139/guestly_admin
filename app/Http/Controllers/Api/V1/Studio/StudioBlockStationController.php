@@ -9,14 +9,41 @@ use App\Http\Controllers\Api\BaseController as BaseController;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-
+use Carbon\Carbon;
 use App\Models\BlockStation;
 class StudioBlockStationController extends BaseController
 {
     public function index(Request $request)
     {
+        $validator = Validator::make($request->all(), [             
+            'status'     => 'nullable|string|in:active,inactive',
+            'month'  => 'nullable|integer|min:1|max:12',
+            'year'   => 'nullable|integer|min:2000|max:9999',
+             
+        ]);
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first());
+        }
         $studioId = auth()->user()->id; // assuming studio is logged in
-        $data = BlockStation::where('studio_id', $studioId)->get();
+        $status = $request->status ?? 'active';
+        
+        $month = $request->month ?? now()->month;
+        $year  = $request->year  ?? now()->year;
+
+        $startOfMonth = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+        $endOfMonth   = Carbon::createFromDate($year, $month, 1)->endOfMonth();
+        $data = BlockStation::where('studio_id', $studioId)
+        ->where('status', $status)
+        ->where(function ($q) use ($startOfMonth, $endOfMonth) {
+            $q->whereBetween('start_date', [$startOfMonth, $endOfMonth])
+              ->orWhereBetween('end_date', [$startOfMonth, $endOfMonth])
+              ->orWhere(function ($q2) use ($startOfMonth, $endOfMonth) {
+                  // covers blocks that start before month and end after month
+                  $q2->where('start_date', '<=', $startOfMonth)
+                     ->where('end_date', '>=', $endOfMonth);
+              });
+        })
+        ->get(); 
         return $this->sendResponse($data, 'Block stations fetched successfully.');
          
     }

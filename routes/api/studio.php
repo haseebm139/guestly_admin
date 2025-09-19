@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Studio\StudioController;
 use App\Http\Controllers\Api\V1\Studio\BoostAdController;
 use App\Http\Controllers\Api\V1\Studio\StudioBlockStationController;
-
-
+use App\Http\Controllers\Api\V1\Studio\StudioAvailableDaysController;
+ 
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +43,14 @@ Route::middleware(['auth:sanctum', 'studio'])->group(function () {
         Route::post('/block-stations','store');
         Route::post('/unblock-stations/{id}','unblock');
         Route::delete('/block-stations/{id}','destroy');
+    });
+
+    Route::controller(StudioAvailableDaysController::class)->group(function () {
+        Route::get('/weekly-availability','getWeeklyAvailability');
+        Route::post('/weekly-availability','storeWeeklyAvailability'); 
+        Route::get('/block-date','getBlockedDate'); 
+        Route::post('/block-date','storeBlockedDate'); 
+        Route::delete('/unblock-date/{id}','unblockDate'); 
     });
 
 

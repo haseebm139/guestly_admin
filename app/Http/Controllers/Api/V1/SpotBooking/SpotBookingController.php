@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api\V1\SpotBooking;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreSpotBookingRequest;
-use App\Models\SpotBooking;
-use App\Models\User;
 use App\Models\BlockStation;
+use App\Models\SpotBooking;
+use App\Models\StudioWeeklyAvailability;
+use App\Models\StudioUnavailableDate;
 
+
+use App\Models\User;
 use App\Services\SpotBooking\SpotBookingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -107,18 +110,17 @@ class SpotBookingController extends BaseController
             : $this->sendError('Booking not found.', 404);
     }
 
-    public function monthlyCalendar1(Request $request, $studioId)
+    public function monthlyCalendar(Request $request, $studioId)
     {
-
         $validator = Validator::make($request->all(), [
             'month' => 'nullable|integer|min:1|max:12',
             'year' => 'nullable|integer|min:2000|max:2100',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first(), $errorMessages = [], 422);
-
+            return $this->sendError($validator->errors()->first(), [], 422);
         }
+
         $month = $request->input('month') ?: now()->month;
         $year = $request->input('year') ?: now()->year;
 
@@ -128,7 +130,17 @@ class SpotBookingController extends BaseController
             return $this->sendError('Studio not found.');
         }
 
-        // fetch approved bookings for this studio
+        $totalStations = $studio->total_stations;
+        // --- Get weekly availability ---
+        $weeklyAvailability = StudioWeeklyAvailability::where('studio_id', $studioId)
+            ->pluck('is_available', 'day_of_week')
+            ->toArray(); // ['monday' => 1, 'tuesday' => 0, ...]
+        // --- Studio unavailable dates ---
+        $unavailableDates = StudioUnavailableDate::where('studio_id', $studioId)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->pluck('reason', 'date'); // ['2025-09-06' => 'Maintenance']
+        // --- 1. Get bookings ---
         $bookings = SpotBooking::where('studio_id', $studioId)
             ->where('status', 'approved')
             ->where(function ($q) use ($month, $year) {
@@ -140,193 +152,163 @@ class SpotBookingController extends BaseController
             ->with('artist:id,name,last_name,avatar')
             ->get();
 
+        // --- 2. Get blocked stations ---
+        $blockedStations = BlockStation::where('studio_id', $studioId)
+            ->where(function ($q) use ($month, $year) {
+                $q->whereMonth('start_date', $month)
+                    ->whereYear('start_date', $year)
+                    ->orWhereMonth('end_date', $month)
+                    ->whereYear('end_date', $year);
+            })
+            ->get();
+
+        // --- 3. Initialize calendar ---
         $calendar = [];
         $daysInMonth = now()->setYear($year)->setMonth($month)->daysInMonth;
 
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
+            $dayName = strtolower(Carbon::parse($date)->format('l'));
+
+            $isAvailable = $weeklyAvailability[$dayName] ?? true;
+            $reason = $isAvailable ? 'Working day' : 'Holiday';
+
+            if (isset($unavailableDates[$date])) {
+                $studioAvailable = false;
+                $reason = $unavailableDates[$date];
+            }
+            // Pre-fill all stations as free
+            $stations = [];
+            for ($s = 1; $s <= $totalStations; $s++) {
+                $stations[$s] = [
+                    'status' => 'free',
+                    'station_number' => $s,
+                    'booking_id' => null,
+                    'artist' => null,
+                    'start_date' => null,
+                    'end_date' => null,
+                    'reason' => null,
+                ];
+            }
+
             $calendar[$date] = [
                 'booked' => 0,
-                'total' => $studio->total_stations,
-                'booking_ids' => [],
-                'stations' => [],
-                'artists' => [],
-                'status' => 'free', // default
+                'total' => $totalStations,
+                'stations' => $stations,
+                'status' => $isAvailable ? 'free' : 'blocked',
+                'stations_available' => $isAvailable ? $totalStations : 0,
+                'stations_unavailable' => $isAvailable ? 0 : $totalStations,
+                'studio_availability' => $isAvailable,
+                'reason' => $reason,
             ];
+
         }
-        
+
+        // --- 4. Apply bookings ---
         foreach ($bookings as $booking) {
             $start = Carbon::parse($booking->start_date);
             $end = Carbon::parse($booking->end_date);
 
             for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                 $dayKey = $date->format('Y-m-d');
-                     
+
                 if (isset($calendar[$dayKey])) {
+                    $stationNum = $booking->station_number;
+
+                    // If the station is currently marked blocked (rare), prefer booking info.
+                    $calendar[$dayKey]['stations'][$stationNum] = [
+                        'status' => 'booked',
+                        'station_number' => $stationNum,
+                        'booking_id' => $booking->id,
+                        'artist' => $booking->artist,
+                        'start_date' => $booking->start_date,
+                        'end_date' => $booking->end_date,
+                        'reason' => null,
+                    ];
+
+                    // increment booked count (booked OR blocked should be counted once)
                     $calendar[$dayKey]['booked']++;
-                    $calendar[$dayKey]['booking_ids'][] = $booking->id;
-                    $calendar[$dayKey]['stations'][] = $booking->station_number;
-                    $calendar[$dayKey]['artists'][] = $booking->artist;
- 
-                    // update status dynamically
-                    if ($calendar[$dayKey]['booked'] >= $calendar[$dayKey]['total']) {
-                        $calendar[$dayKey]['status'] = 'fully';
-                    } elseif ($calendar[$dayKey]['booked'] > 0) {
-                        $calendar[$dayKey]['status'] = 'partial';
-                    }
                 }
             }
         }
 
-        return $this->sendResponse($calendar, 'Monthly calendar data.');
-    }
-    public function monthlyCalendar(Request $request, $studioId)
-{
-    $validator = Validator::make($request->all(), [
-        'month' => 'nullable|integer|min:1|max:12',
-        'year'  => 'nullable|integer|min:2000|max:2100',
-    ]);
+        // --- 5. Apply blocked stations ---
+        // IMPORTANT: treat blocked station as occupied (count toward booked) BUT do not double-count if already booked.
+        foreach ($blockedStations as $block) {
+            $start = Carbon::parse($block->start_date);
+            $end = Carbon::parse($block->end_date);
 
-    if ($validator->fails()) {
-        return $this->sendError($validator->errors()->first(), [], 422);
-    }
+            for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+                $dayKey = $date->format('Y-m-d');
 
-    $month = $request->input('month') ?: now()->month;
-    $year  = $request->input('year') ?: now()->year;
+                if (! isset($calendar[$dayKey])) {
+                    continue;
+                }
 
-    $studio = User::find($studioId);
-
-    if (! $studio) {
-        return $this->sendError('Studio not found.');
-    }
-
-    $totalStations = $studio->total_stations;
-
-    // --- 1. Get bookings ---
-    $bookings = SpotBooking::where('studio_id', $studioId)
-        ->where('status', 'approved')
-        ->where(function ($q) use ($month, $year) {
-            $q->whereMonth('start_date', $month)
-              ->whereYear('start_date', $year)
-              ->orWhereMonth('end_date', $month)
-              ->whereYear('end_date', $year);
-        })
-        ->with('artist:id,name,last_name,avatar')
-        ->get();
-
-    // --- 2. Get blocked stations ---
-    $blockedStations = BlockStation::where('studio_id', $studioId)
-        ->where(function ($q) use ($month, $year) {
-            $q->whereMonth('start_date', $month)
-              ->whereYear('start_date', $year)
-              ->orWhereMonth('end_date', $month)
-              ->whereYear('end_date', $year);
-        })
-        ->get();
-
-    // --- 3. Initialize calendar ---
-    $calendar = [];
-    $daysInMonth = now()->setYear($year)->setMonth($month)->daysInMonth;
-
-    for ($day = 1; $day <= $daysInMonth; $day++) {
-        $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
-
-        // Pre-fill all stations as free
-        $stations = [];
-        for ($s = 1; $s <= $totalStations; $s++) {
-            $stations[$s] = [
-                'status'         => 'free',
-                'station_number' => $s,
-                'booking_id'     => null,
-                'artist'         => null,
-                'start_date'     => null,
-                'end_date'       => null,
-                'reason'         => null,
-            ];
-        }
-
-        $calendar[$date] = [
-            'booked'   => 0,
-            'total'    => $totalStations,
-            'stations' => $stations,
-            'status'   => 'free',
-        ];
-    }
-
-    // --- 4. Apply bookings ---
-    foreach ($bookings as $booking) {
-        $start = Carbon::parse($booking->start_date);
-        $end   = Carbon::parse($booking->end_date);
-
-        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-            $dayKey = $date->format('Y-m-d');
-
-            if (isset($calendar[$dayKey])) {
-                $stationNum = $booking->station_number;
-
-                $calendar[$dayKey]['stations'][$stationNum] = [
-                    'status'         => 'booked',
-                    'station_number' => $stationNum,
-                    'booking_id'     => $booking->id,
-                    'artist'         => $booking->artist,
-                    'start_date'     => $booking->start_date,
-                    'end_date'       => $booking->end_date,
-                    'reason'         => null,
-                ];
-
-                // increment booked count
-                $calendar[$dayKey]['booked']++;
-            }
-        }
-    }
-
-    // --- 5. Apply blocked stations ---
-    foreach ($blockedStations as $block) {
-        $start = Carbon::parse($block->start_date);
-        $end   = Carbon::parse($block->end_date);
-
-        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-            $dayKey = $date->format('Y-m-d');
-
-            if (isset($calendar[$dayKey])) {
                 $stationNum = $block->station_number;
 
-                $calendar[$dayKey]['stations'][$stationNum] = [
-                    'status'         => 'blocked',
-                    'station_number' => $stationNum,
-                    'booking_id'     => null,
-                    'artist'         => null,
-                    'start_date'     => $block->start_date,
-                    'end_date'       => $block->end_date,
-                    'reason'         => $block->reason,
-                ];
+                // current status of that station for this day
+                $currentStatus = $calendar[$dayKey]['stations'][$stationNum]['status'] ?? 'free';
+
+                if ($currentStatus === 'free') {
+                    // mark blocked and increment booked counter (count as occupied)
+                    $calendar[$dayKey]['stations'][$stationNum] = [
+                        'status' => 'blocked',
+                        'station_number' => $stationNum,
+                        'booking_id' => null,
+                        'artist' => null,
+                        'start_date' => $block->start_date,
+                        'end_date' => $block->end_date,
+                        'reason' => $block->reason,
+                    ];
+
+                    $calendar[$dayKey]['booked']++;
+                } elseif ($currentStatus === 'booked') {
+                    // Station already booked, keep booking info but add blocked info
+                    $calendar[$dayKey]['stations'][$stationNum]['blocked_reason'] = $block->reason;
+                    $calendar[$dayKey]['stations'][$stationNum]['status'] = 'blocked';
+                    $calendar[$dayKey]['booked']++;
+                    // Treat blocked station as booked for count purposes (already booked, so no increment)
+                } else {
+                    // If it's already 'booked' (a real booking exists), keep booking info and do NOT increment again.
+                    // If you want to record that a booked station also had a block, you could attach a flag or reason here.
+                }
             }
         }
-    }
 
-    // --- 6. Update daily status (free / partial / fully / blocked) ---
-    foreach ($calendar as $date => &$dayData) {
-        $statuses = collect($dayData['stations'])->pluck('status');
+        // --- 6. Update daily status (free / partial / fully / blocked) ---
+        foreach ($calendar as $date => &$dayData) {
+            // count how many stations are not free (booked or blocked)
+            $statuses = collect($dayData['stations'])->pluck('status');
+            $unavailableCount = $statuses->filter(fn ($s) => $s !== 'free')->count();
+            $availableCount = $dayData['total'] - $unavailableCount;
 
-        if ($statuses->every(fn($s) => $s === 'free')) {
-            $dayData['status'] = 'free';
-        } elseif ($statuses->every(fn($s) => $s === 'booked')) {
-            $dayData['status'] = 'fully';
-        } elseif ($statuses->every(fn($s) => $s === 'blocked')) {
-            $dayData['status'] = 'blocked';
-        } else {
-            $dayData['status'] = 'partial';
+            // set counts for frontend (optional but handy)
+            $dayData['stations_available'] = $availableCount;
+            $dayData['stations_unavailable'] = $unavailableCount;
+
+            // determine day-level status
+            if ($availableCount === $dayData['total']) {
+                $dayData['status'] = 'free';
+            } elseif ($unavailableCount === $dayData['total'] && $statuses->every(fn ($s) => $s === 'blocked')) {
+                // if every station is blocked (no actual bookings)
+                $dayData['status'] = 'blocked';
+            } elseif ($unavailableCount === $dayData['total']) {
+                // all stations occupied (booked or blocked) => fully occupied
+                $dayData['status'] = 'fully';
+            } else {
+                $dayData['status'] = 'partial';
+            }
         }
+
+        return $this->sendResponse($calendar, 'Monthly calendar with per-station details.');
     }
 
-    return $this->sendResponse($calendar, 'Monthly calendar with per-station details.');
-}
-
-    public function monthlyCalendar2(Request $request, $studioId)
+    public function monthlyCalendar3(Request $request, $studioId)
     {
         $validator = Validator::make($request->all(), [
             'month' => 'nullable|integer|min:1|max:12',
-            'year'  => 'nullable|integer|min:2000|max:2100',
+            'year' => 'nullable|integer|min:2000|max:2100',
         ]);
 
         if ($validator->fails()) {
@@ -334,7 +316,7 @@ class SpotBookingController extends BaseController
         }
 
         $month = $request->input('month') ?: now()->month;
-        $year  = $request->input('year') ?: now()->year;
+        $year = $request->input('year') ?: now()->year;
 
         $studio = User::find($studioId);
 
@@ -349,9 +331,9 @@ class SpotBookingController extends BaseController
             ->where('status', 'approved')
             ->where(function ($q) use ($month, $year) {
                 $q->whereMonth('start_date', $month)
-                ->whereYear('start_date', $year)
-                ->orWhereMonth('end_date', $month)
-                ->whereYear('end_date', $year);
+                    ->whereYear('start_date', $year)
+                    ->orWhereMonth('end_date', $month)
+                    ->whereYear('end_date', $year);
             })
             ->with('artist:id,name,last_name,avatar')
             ->get();
@@ -360,9 +342,9 @@ class SpotBookingController extends BaseController
         $blockedStations = BlockStation::where('studio_id', $studioId)
             ->where(function ($q) use ($month, $year) {
                 $q->whereMonth('start_date', $month)
-                ->whereYear('start_date', $year)
-                ->orWhereMonth('end_date', $month)
-                ->whereYear('end_date', $year);
+                    ->whereYear('start_date', $year)
+                    ->orWhereMonth('end_date', $month)
+                    ->whereYear('end_date', $year);
             })
             ->get();
 
@@ -378,36 +360,46 @@ class SpotBookingController extends BaseController
             for ($s = 1; $s <= $totalStations; $s++) {
                 $stations[$s] = [
                     'status' => 'free',
+                    'station_number' => $s,
+                    'booking_id' => null,
                     'artist' => null,
+                    'start_date' => null,
+                    'end_date' => null,
                     'reason' => null,
                 ];
             }
 
             $calendar[$date] = [
-                'total'    => $totalStations,
+                'booked' => 0,
+                'total' => $totalStations,
                 'stations' => $stations,
-                'status'   => 'free',
+                'status' => 'free',
             ];
         }
 
         // --- 4. Apply bookings ---
         foreach ($bookings as $booking) {
             $start = Carbon::parse($booking->start_date);
-            $end   = Carbon::parse($booking->end_date);
+            $end = Carbon::parse($booking->end_date);
 
             for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                 $dayKey = $date->format('Y-m-d');
 
                 if (isset($calendar[$dayKey])) {
                     $stationNum = $booking->station_number;
+
                     $calendar[$dayKey]['stations'][$stationNum] = [
-                        'status'     => 'booked',
+                        'status' => 'booked',
+                        'station_number' => $stationNum,
                         'booking_id' => $booking->id,
-                        'artist'     => $booking->artist,
+                        'artist' => $booking->artist,
                         'start_date' => $booking->start_date,
-                        'end_date'   => $booking->end_date,
-                        'reason'     => null,
+                        'end_date' => $booking->end_date,
+                        'reason' => null,
                     ];
+
+                    // increment booked count
+                    $calendar[$dayKey]['booked']++;
                 }
             }
         }
@@ -415,20 +407,22 @@ class SpotBookingController extends BaseController
         // --- 5. Apply blocked stations ---
         foreach ($blockedStations as $block) {
             $start = Carbon::parse($block->start_date);
-            $end   = Carbon::parse($block->end_date);
+            $end = Carbon::parse($block->end_date);
 
             for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                 $dayKey = $date->format('Y-m-d');
 
                 if (isset($calendar[$dayKey])) {
                     $stationNum = $block->station_number;
+
                     $calendar[$dayKey]['stations'][$stationNum] = [
-                        'status'     => 'blocked',
+                        'status' => 'blocked',
+                        'station_number' => $stationNum,
                         'booking_id' => null,
-                        'artist'     => null,
+                        'artist' => null,
                         'start_date' => $block->start_date,
-                        'end_date'   => $block->end_date,
-                        'reason'     => $block->reason,
+                        'end_date' => $block->end_date,
+                        'reason' => $block->reason,
                     ];
                 }
             }
@@ -436,13 +430,13 @@ class SpotBookingController extends BaseController
 
         // --- 6. Update daily status (free / partial / fully / blocked) ---
         foreach ($calendar as $date => &$dayData) {
-            $statuses = collect($dayData['stations'])->pluck('status')->unique();
+            $statuses = collect($dayData['stations'])->pluck('status');
 
-            if ($statuses->count() === 1 && $statuses->first() === 'free') {
+            if ($statuses->every(fn ($s) => $s === 'free')) {
                 $dayData['status'] = 'free';
-            } elseif ($statuses->count() === 1 && $statuses->first() === 'booked') {
+            } elseif ($statuses->every(fn ($s) => $s === 'booked')) {
                 $dayData['status'] = 'fully';
-            } elseif ($statuses->count() === 1 && $statuses->first() === 'blocked') {
+            } elseif ($statuses->every(fn ($s) => $s === 'blocked')) {
                 $dayData['status'] = 'blocked';
             } else {
                 $dayData['status'] = 'partial';
@@ -451,7 +445,4 @@ class SpotBookingController extends BaseController
 
         return $this->sendResponse($calendar, 'Monthly calendar with per-station details.');
     }
-
-
 }
-
