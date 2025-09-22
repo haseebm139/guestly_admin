@@ -54,6 +54,7 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
     });
 
     Route::prefix('clients')->controller(ClientController::class)->group(function () {
+        Route::get('/calendar', 'artistCalendar');
         Route::get('requests', 'clientsRequests');
         Route::get('update-status/{id}/{status}', 'updateStatusClientRequest');
         Route::post('set_estimate/{id}', 'setEstimate');

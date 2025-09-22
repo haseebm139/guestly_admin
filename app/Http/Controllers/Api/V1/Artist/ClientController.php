@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Artist;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\BaseController;
 use App\Models\ClientBookingForm;
-use App\Http\Controllers\Api\BaseController as BaseController;
+use Illuminate\Http\Request;
 use Validator;
+
 class ClientController extends BaseController
 {
     public function clientsRequests(Request $request)
@@ -16,6 +16,7 @@ class ClientController extends BaseController
         if ($status) {
             // ✅ If status is provided → return filtered
             $data = $this->getClientRequest($status);
+
             return $this->sendResponse($data, "Clients requests with status: $status");
         }
 
@@ -24,43 +25,42 @@ class ClientController extends BaseController
             'studio',
             'client',
             'booking',
-            'responses.field'
+            'responses.field',
         ])
-        ->whereIn('status', ['pending', 'approve', 'decline'])
-        ->get()
-        ->map(function ($booking) {
-            // filter responses per booking
-            $booking->customForm->fields->each(function ($field) use ($booking) {
-                $field->setRelation(
-                    'responses',
-                    $field->responsesForBooking($booking->id)->get()
-                );
-            });
-            return $booking;
-        })
-        ->groupBy('status');
+            ->whereIn('status', ['pending', 'approve', 'decline'])
+            ->get()
+            ->map(function ($booking) {
+                // filter responses per booking
+                $booking->customForm->fields->each(function ($field) use ($booking) {
+                    $field->setRelation(
+                        'responses',
+                        $field->responsesForBooking($booking->id)->get()
+                    );
+                });
+
+                return $booking;
+            })
+            ->groupBy('status');
 
         return $this->sendResponse($all, 'All Clients requests grouped by status');
     }
 
-    public function getClientRequest($status){
+    public function getClientRequest($status)
+    {
         return ClientBookingForm::with([
             'studio',
             'client',
             'booking',
-            'responses.field' // load fields
+            'responses.field', // load fields
         ])
-        ->where('status', $status)
-        ->latest()
-        ->get();
-
+            ->where('status', $status)
+            ->latest()
+            ->get();
 
     }
 
-
-
-
-    public function updateStatusClientRequest($id, $status) {
+    public function updateStatusClientRequest($id, $status)
+    {
         // $status1 = '';
         // if ($status == 'decline') {
         //     $status = 'cancelled';
@@ -71,23 +71,24 @@ class ClientController extends BaseController
         // }
 
         $data = ClientBookingForm::where('id', $id)->first();
-        if (!$data) {
+        if (! $data) {
             return $this->sendError('Client Booking Form not found');
         }
         $data->update(['status' => $status]);
+
         return $this->sendResponse($data, 'Clients Request '.$status);
     }
 
-
-    public function setEstimate(Request $request, $id) {
+    public function setEstimate(Request $request, $id)
+    {
 
         $validator = Validator::make($request->all(), [
-            'duration'       => 'nullable|integer|min:0',
-            'hourly_rate'    => 'nullable|numeric|min:0',
-            'deposit'        => 'nullable|numeric|min:0',
+            'duration' => 'nullable|integer|min:0',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'deposit' => 'nullable|numeric|min:0',
             'estimate_start' => 'nullable|numeric|min:0',
-            'estimate_end'   => 'nullable|numeric|min:0|gte:estimate_start',
-            'notes'          => 'nullable|string|max:1000',
+            'estimate_end' => 'nullable|numeric|min:0|gte:estimate_start',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         if ($validator->fails()) {
@@ -97,9 +98,62 @@ class ClientController extends BaseController
         $validated = $validator->validated();
         $data = ClientBookingForm::findOrFail($id);
         $data->update($validated);
+
         return $this->sendResponse($data, 'Set estimate successfully');
     }
+
+    public function artistCalendar(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'month' => 'nullable|integer|min:1|max:12',
+            'year' => 'nullable|integer|min:2000|max:2100',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), [], 422);
+        }
+        $artistId = auth()->id();
+        $month = $request->input('month') ?: now()->month;
+        $year = $request->input('year') ?: now()->year;
+
+        // artist bookings
+        $bookings = ClientBookingForm::with(['client:id,name,last_name,avatar', 'studio:id,name'])
+            ->where('artist_id', $artistId)
+            // ->whereIn('status', ['pending', 'approve']) // decline not blocking
+            ->whereMonth('booking_date', $month)
+            ->whereYear('booking_date', $year)
+            ->get();
+
+        // initialize month
+        $calendar = [];
+        $daysInMonth = now()->setYear($year)->setMonth($month)->daysInMonth;
+
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
+
+            $calendar[$date] = [
+                'status' => 'free',   // free | booked | partial
+                'bookings' => [],
+            ];
+        }
+
+        // apply bookings
+        foreach ($bookings as $booking) {
+            $date = $booking->booking_date;
+            if (! isset($calendar[$date])) {
+                continue;
+            }
+
+            $calendar[$date]['status'] = 'booked';
+            $calendar[$date]['bookings'][] = [
+                'id' => $booking->id,
+                'client' => $booking->client,
+                'studio' => $booking->studio,
+                'booking_time' => $booking->booking_time,
+                'status' => $booking->status,
+            ];
+        }
+
+        return $this->sendResponse($calendar, 'Artist calendar with client bookings');
+    }
 }
-
-
-
