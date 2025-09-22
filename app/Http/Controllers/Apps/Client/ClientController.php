@@ -121,18 +121,29 @@ class ClientController extends Controller
 
     public function profile($shared_code, $token)
     {
-        $user = User::where('profile_link', $token)->first();
+        // $user = User::where('profile_link', $token)->first();
+        $user = User::first();
         if (empty($user)) {
             dd('user not found');
         }
         
-        $booking = ClientBookingForm::where('client_id', $user->id)->where('shared_code', $shared_code)->first();
+        // $booking = ClientBookingForm::where('client_id', $user->id)->where('shared_code', $shared_code)->first();
+        $booking = ClientBookingForm::with([
+            'artist',
+            'studio',
+            'booking',
+            'client',
+            'responses.field'
+        ])->whereIn('status', ['approve'])->first();
         if (empty($booking)) {
             dd('user not found');
         }
         // Fetch bookings if needed
-        dd($booking);
-        $bookings = $user->bookings ?? [];
-        return view('user.pages.client.profile', compact('user', 'bookings'));
+        // dd($booking);
+        // $bookings = $user->bookings ?? [];
+        $bookings = $booking ?? [];
+        $messages = [];
+        // dd($booking);
+        return view('user.pages.client.profile', compact('user', 'bookings','booking','messages'));
     }
 }

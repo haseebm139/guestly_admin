@@ -518,7 +518,7 @@ if (!function_exists('calculate_duration_days')) {
 }
 
 if (!function_exists('renderField')) {
-    function renderField($field, $value = null)
+    function renderField($field, $value = null,  )
     {
         $html = '';
         $field_name = \Illuminate\Support\Str::snake($field->label);
