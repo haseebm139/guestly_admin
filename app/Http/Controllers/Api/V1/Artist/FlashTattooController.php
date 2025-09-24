@@ -40,7 +40,7 @@ class FlashTattooController extends BaseController
             $query->where('price', '<=', $request->max_price);
         }
 
-        $tattoos = $query->paginate($request->get('per_page', 10));
+        $tattoos = $query->paginate($request->get('per_page', 10))->load('options');
 
         return $this->sendResponse($tattoos, 'Tattoos fetched successfully.');
         try {
@@ -95,21 +95,54 @@ class FlashTattooController extends BaseController
         $tattoo = FlashTattoo::find($id);
         if (!$tattoo) {
             return $this->sendError('Tattoo not found.', 404);
-        }
+        } 
         $data = $request->validate([
-            'title'       => 'sometimes|string|max:255',
-            'size'        => 'sometimes|string',
-            'repeatable'  => 'boolean',
-            'price'       => 'sometimes|numeric',
-            'image'       => 'sometimes|file|mimes:jpeg,png,jpg,gif,svg|max:5120',
-            'description' => 'sometimes|string',
+            'title'       => 'required|string|max:255', 
+            'repeatable'  => 'boolean', 
+            'image'       => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'description' => 'nullable|string',
+            'options'     => 'required|array',
+            'options.*.id'       => 'nullable|integer|exists:flash_tattoo_options,id',
+            'options.*.size'     => 'required|string',
+            'options.*.duration' => 'nullable|integer',
+            'options.*.price'    => 'required|numeric',
         ]);
         try {
             if ($request->hasFile('image')) {
                 $data['image'] = $this->imageService->uploadImage($data['image'], 'flashTattoo', 'flashTattoos');
             }
-            $tattoo->update($data);
-            return $this->sendResponse($tattoo, 'Flash Tattoo updated successfully');
+            $tattoo->update([
+                'title'       => $data['title'],
+                'repeatable'  => $data['repeatable'] ?? false,
+                'image'       => $data['image'] ?? $tattoo->image,
+                'description' => $data['description'] ?? null,
+                'price'       => $data['options'][0]['price'] ?? $tattoo->price,
+                'size'        => $data['options'][0]['size'] ?? $tattoo->size,
+            ]);
+            $existingOptionIds = $tattoo->options()->pluck('id')->toArray();
+            $sentOptionIds = collect($data['options'])->pluck('id')->filter()->toArray();
+
+            // 1. Delete removed options
+            $toDelete = array_diff($existingOptionIds, $sentOptionIds);
+            if (!empty($toDelete)) {
+                $tattoo->options()->whereIn('id', $toDelete)->delete();
+            }
+
+            foreach ($data['options'] as $option) {
+                if (!empty($option['id'])) {
+                    // Update existing option
+                    $tattoo->options()->where('id', $option['id'])->update([
+                        'size'     => $option['size'],
+                        'duration' => $option['duration'],
+                        'price'    => $option['price'],
+                    ]);
+                } else {
+                    // Create new option
+                    $tattoo->options()->create($option);
+                }
+            }
+
+            return $this->sendResponse($tattoo->load('options'), 'Flash Tattoo updated successfully');
         } catch (\Throwable $th) {
             return $this->sendError('Something went wrong.', 500);
         }
