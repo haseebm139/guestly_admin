@@ -11,6 +11,7 @@ class FlashTattooController extends BaseController
 {
     private $imageService;
 
+
     public function __construct(ArtistImageService $imageService)
     {
         $this->imageService = $imageService;
@@ -51,22 +52,39 @@ class FlashTattooController extends BaseController
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title'       => 'required|string|max:255',
-            'size'        => 'nullable|string',
-            'repeatable'  => 'boolean',
-            'price'       => 'required|numeric',
+            'title'       => 'required|string|max:255', 
+            'repeatable'  => 'boolean', 
             'image'       => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:5120',
             'description' => 'nullable|string',
+            'options'     => 'required|array',
+            'options.*.size'     => 'required|string',
+            'options.*.duration' => 'nullable|integer',
+            'options.*.price'    => 'required|numeric',
         ]);
+         
+        if ($request->hasFile('image')) {
+            $data['image'] = $this->imageService->uploadImage($data['image'], 'flashTattoo', 'flashTattoos');
+             
+        }
+        
+        $data['artist_id'] = auth()->id();
+        $tattoo = FlashTattoo::create([
+            'title'       => $data['title'],
+            'repeatable'  => $data['repeatable'],
+            'image'       => $data['image'],
+            'description' => $data['description'],
+            'artist_id'   => $data['artist_id'],
+            'price'       => $data['options'][0]['price']??0,
+            'size'        => $data['options'][0]['size']??'',
 
+        ]);
+        
+        foreach ($data['options'] as $option) {
+             
+            $tattoo->options()->create($option);
+        }
+        return $this->sendResponse($tattoo->load('options'), 'Tattoo created successfully.');
         try {
-            if ($request->hasFile('image')) {
-                $data['image'] = $this->imageService->uploadImage($data['image'], 'flashTattoo', 'flashTattoos');
-
-            }
-            $data['artist_id'] = auth()->id();
-            $tattoo = FlashTattoo::create($data);
-            return $this->sendResponse($tattoo, 'Tattoo created successfully.');
         } catch (\Throwable $th) {
             return $this->sendError('Something went wrong.', 500);
         }

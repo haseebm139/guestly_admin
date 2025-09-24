@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('flash_tattoos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('artist_id'); // tattoo belongs to an artist (user_id)
-            $table->string('title');
-            $table->string('size')->nullable(); // Small (2x2), Medium (4x4), etc
+            $table->string('title')->nullable();
+            // $table->string('size')->nullable(); // Small (2x2), Medium (4x4), etc
             $table->boolean('repeatable')->default(true);
-            $table->decimal('price', 10, 2);
+            // $table->decimal('price', 10, 2);
             $table->string('image')->nullable(); // tattoo image path
             $table->longText('description')->nullable();
             $table->timestamps();

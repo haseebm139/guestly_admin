@@ -17,5 +17,10 @@ class FlashTattoo extends Model
         return $this->belongsTo(User::class, 'artist_id');
     }
 
+    public function options()
+    {
+        return $this->hasMany(FlashTattooOption::class);
+    }
+
 
 }
