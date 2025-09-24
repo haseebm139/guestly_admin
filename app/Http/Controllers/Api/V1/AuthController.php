@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\Api\BaseController as BaseController;
-use Illuminate\Http\Request;
-use App\Http\Requests\API\Auth\RegisterRequest;
+use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\API\Auth\LoginRequest;
+use App\Http\Requests\API\Auth\RegisterRequest;
 use App\Http\Requests\API\Auth\SocialAuthRequest;
 use App\Http\Requests\API\Auth\VerifyEmailRequest;
-use Hash;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use App\Services\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Str;
 
 class AuthController extends BaseController
@@ -28,29 +26,28 @@ class AuthController extends BaseController
     public function register(RegisterRequest $request)
     {
 
-
         $user = $this->authService->register($request->validated());
         $data['token'] = $user['token'];
-        $data['name'] =Str::upper($user['user']['name']);
-        $data['user'] =$user['user'];
-        return $this->sendResponse($data,"User Register Successfully");
+        $data['name'] = Str::upper($user['user']['name']);
+        $data['user'] = $user['user'];
 
-
+        return $this->sendResponse($data, 'User Register Successfully');
 
     }
 
-    public function updatePassword(Request $request){
-         $validator = Validator::make($request->all(), [
-            'email'    => 'required|email|exists:users,email',
+    public function updatePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
             'password' => 'required|min:6|confirmed',
-            'code'     => 'required',
+            'code' => 'required',
 
         ]);
 
         if ($validator->fails()) {
             return $this->sendError($validator->errors()->first());
         }
-        if (!$this->authService->resetPassword($request->email, $request->code, $request->password)) {
+        if (! $this->authService->resetPassword($request->email, $request->code, $request->password)) {
             return $this->sendError('Invalid or expired code');
         }
 
@@ -65,6 +62,7 @@ class AuthController extends BaseController
             if (isset($user['status']) && $user['status'] === 'error') {
                 return $this->sendError('This email is already registered as a '.$user['data']);
             }
+
             return $this->sendResponse($user, 'Login Successfully');
         } catch (\Throwable $e) {
             return $this->sendError($e->getMessage() ?: 'Login failed.');
@@ -74,7 +72,6 @@ class AuthController extends BaseController
     public function autoLoginOrRegister(LoginRequest $request)
     {
 
-
         $result = $this->authService->autoLoginOrRegister($request->only('name', 'email', 'password', 'latitude', 'longitude', 'user_type'));
         $data = $result['data'];
 
@@ -82,18 +79,21 @@ class AuthController extends BaseController
             return $this->sendResponse($data, 'Login successful');
         } elseif ($result['status'] === 'register') {
             return $this->sendResponse($data, 'User registered and logged in successfully');
-        }elseif($result['status'] === 'errorUserType'){
+        } elseif ($result['status'] === 'errorUserType') {
             return $this->sendError('This email is already registered as a '.$data);
-        }  else{
+        } else {
 
             return $this->sendError('Invalid credentials. Please check your email or password.');
         }
+
         return $this->sendError('Authentication failed.');
     }
+
     public function googleLogin(SocialAuthRequest $request)
     {
         $data = $request->validated();
         $data['provider'] = 'google';
+
         return $this->authService->handleSocialLogin($data);
     }
 
@@ -101,6 +101,7 @@ class AuthController extends BaseController
     {
         $data = $request->validated();
         $data['provider'] = 'facebook';
+
         return $this->authService->handleSocialLogin($data);
     }
 
@@ -108,8 +109,10 @@ class AuthController extends BaseController
     {
         $data = $request->validated();
         $data['provider'] = 'apple';
+
         return $this->authService->handleSocialLogin($data);
     }
+
     public function sendCodeToEmail(VerifyEmailRequest $request)
     {
         return $this->authService->sendOtpToEmail($request->all());
@@ -118,6 +121,25 @@ class AuthController extends BaseController
     public function profile()
     {
         $user = auth()->user();
+
         return $this->sendResponse($user, 'Profile fetched successfully');
+    }
+
+    public function deleteAccount(Request $request)
+    {
+          $user = $request->user();
+
+        if (! $user) {
+            return $this->sendError('User not found.');
+        }
+        
+        $user->delete(); // soft delete (sets deleted_at timestamp)
+
+        if (method_exists($user, 'tokens')) {
+            $user->tokens()->delete(); 
+        }
+
+        return $this->sendResponse([], 'Account has been deleted successfully.');
+
     }
 }

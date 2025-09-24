@@ -613,4 +613,71 @@ if (!function_exists('renderField')) {
     }
 }
 
+if (!function_exists('renderTableField')) {
+    function renderTableField($field, $value = null)
+    {
+        $html = '';
+        $field_name = \Illuminate\Support\Str::snake($field->label);
+        $name = $field_name . '|' . $field->id;
+
+        switch ($field->type) {
+            case 'email':
+            case 'text':
+            case 'date':
+            case 'datetime':
+                $formattedValue = $value;
+
+                if ($field->type === 'date' && $value) {
+                    $formattedValue = \Carbon\Carbon::parse($value)->format('Y-m-d');
+                } elseif ($field->type === 'datetime' && $value) {
+                    $formattedValue = \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
+                }
+
+                $html .= '<li class="detail-item">
+                            <span class="detail-label">' . e($field->label) . '</span>
+                            <span class="detail-value">' . e($formattedValue) . '</span>
+                          </li>';
+                break;
+
+            case 'textarea':
+                $html .= '<li class="detail-item">
+                            <span class="detail-label">' . e($field->label) . '</span>
+                            <p class="detail-value">' . nl2br(e($value ?? '')) . '</p>
+                          </li>';
+                break;
+
+            case 'dropdown':
+                $html .= '<li class="detail-item">
+                            <span class="detail-label">' . e($field->label) . '</span>
+                            <span class="detail-value">' . e($value ?? '-') . '</span>
+                          </li>';
+                break;
+
+            case 'multi_select':
+                // Normalize value: could be JSON, array, or comma string
+                if (is_string($value)) {
+                    $decoded = json_decode($value, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        $value = $decoded;
+                    } else {
+                        $value = array_filter(array_map('trim', explode(',', $value)));
+                    }
+                } elseif (!is_array($value)) {
+                    $value = $value ? [$value] : [];
+                }
+
+                $html .= '<li class="detail-item">
+                            <span class="detail-label">' . e($field->label) . '</span>
+                            <ul class="detail-value">';
+                foreach ($value as $v) {
+                    $html .= '<li>' . e($v) . '</li>';
+                }
+                $html .= '</ul></li>';
+                break;
+        }
+
+        return $html;
+    }
+}
+
 

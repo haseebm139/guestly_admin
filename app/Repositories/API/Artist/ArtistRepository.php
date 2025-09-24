@@ -1,11 +1,10 @@
 <?php
+
 namespace App\Repositories\API\Artist;
 
-use App\Models\User;
 use App\Models\SpotBooking;
-
+use App\Models\User;
 use Illuminate\Support\Arr;
-
 
 class ArtistRepository implements ArtistRepositoryInterface
 {
@@ -15,8 +14,6 @@ class ArtistRepository implements ArtistRepositoryInterface
             ->where('user_type', 'artist')
             ->firstOrFail();
 
-
-
         if (isset($data['tattoo_style']) && is_array($data['tattoo_style'])) {
             $user->tattooStyles()->sync($data['tattoo_style']);
         }
@@ -25,17 +22,21 @@ class ArtistRepository implements ArtistRepositoryInterface
         $user->update(Arr::except($data, ['tattoo_style']));
 
         // ✅ Return with relations
-        return $user->load(['supplies', 'stationAmenities','studioImages','designSpecialties','tattooStyles']);
+        return $user->load(['supplies', 'stationAmenities', 'studioImages', 'designSpecialties', 'tattooStyles']);
     }
-
-
 
     public function getById(int $userId)
     {
         $user = User::where('id', $userId)
+        ->withCount([
+                'favoritedBy as is_favorite' => function ($query) use ($artistId) {
+                    $query->where('artist_id', $artistId);
+                },
+            ])
             ->where('user_type', 'artist')
             ->firstOrFail();
-        return $user->load(['supplies', 'stationAmenities','studioImages','designSpecialties','tattooStyles','activeSubscription.plan']);
+
+        return $user->load(['supplies', 'stationAmenities', 'studioImages', 'designSpecialties', 'tattooStyles', 'activeSubscription.plan']);
     }
 
     public function saveGalleryImages(int $userId, array $paths): void
@@ -52,6 +53,11 @@ class ArtistRepository implements ArtistRepositoryInterface
     public function getAllStudios(int $perPage = 10)
     {
         return User::where('user_type', 'studio')
+            ->withCount([
+                'favoritedBy as is_favorite' => function ($query) use ($artistId) {
+                    $query->where('artist_id', $artistId);
+                },
+            ])
             ->with([
                 'supplies:id,name',
                 'stationAmenities:id,name',
@@ -61,22 +67,25 @@ class ArtistRepository implements ArtistRepositoryInterface
             ->paginate($perPage);
     }
 
-
-
     public function bookedStudios(int $perPage = 10)
     {
         $artistId = auth()->id();
         // $studio_id = SpotBooking::where('artist_id', $artistId)->pluck('studio_id');
         $studioIds = SpotBooking::where('artist_id', $artistId)
-                ->where('status', 'approved')  // only approved bookings
-                ->whereDate('end_date', '>=', now()) // ongoing/future bookings
-                ->pluck('studio_id')
-                ->unique()
-                ->toArray();
-
+            ->where('status', 'approved')  // only approved bookings
+            ->whereDate('end_date', '>=', now()) // ongoing/future bookings
+            ->pluck('studio_id')
+            ->unique()
+            ->toArray();
 
         $studio_id = array_values($studioIds);
+
         return User::where('user_type', 'studio')->whereIn('id', $studio_id)
+            ->withCount([
+                'favoritedBy as is_favorite' => function ($query) use ($artistId) {
+                    $query->where('artist_id', $artistId);
+                },
+            ])
             ->with([
                 'supplies:id,name',
                 'stationAmenities:id,name',
@@ -90,30 +99,30 @@ class ArtistRepository implements ArtistRepositoryInterface
         $artistId = auth()->id();
         $longitude = auth()->user()->longitude;
         $latitude = auth()->user()->latitude;
+        
         return User::where('user_type', 'studio')
-            ->with(['supplies:id,name',
-                    'stationAmenities:id,name',
-                    'studioImages:id,user_id,image_path',
-                    'designSpecialties:id,name',
-                    'tattooStyles:id,name'])
-            ->withCount([
+        ->where('id', $id) // ✅ filter by studio ID
+        ->withCount([
             'favoritedBy as is_favorite' => function ($q) use ($artistId) {
                 $q->where('artist_id', $artistId);
-            }
-            ])
-            ->select('*')
-                ->selectRaw("
-                    (6371 * acos(
-                        cos(radians(?)) *
-                        cos(radians(latitude)) *
-                        cos(radians(longitude) - radians(?)) +
-                        sin(radians(?)) *
-                        sin(radians(latitude))
-                    )) AS distance
-                ", [$latitude, $longitude, $latitude])
-            ->first();
+            },
+        ])
+        ->with([
+            'supplies:id,name',
+            'stationAmenities:id,name',
+            'studioImages:id,user_id,image_path',
+            'designSpecialties:id,name',
+            'tattooStyles:id,name'
+        ]) 
+        ->selectRaw('
+            (6371 * acos(
+                cos(radians(?)) *
+                cos(radians(latitude)) *
+                cos(radians(longitude) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(latitude))
+            )) AS distance
+        ', [$latitude, $longitude, $latitude])
+        ->first();
     }
-
-
-
 }

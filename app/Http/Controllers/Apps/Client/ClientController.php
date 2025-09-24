@@ -126,15 +126,14 @@ class ClientController extends Controller
         if (empty($user)) {
             dd('user not found');
         }
-        
-        // $booking = ClientBookingForm::where('client_id', $user->id)->where('shared_code', $shared_code)->first();
-        $booking = ClientBookingForm::with([
-            'artist',
+        $booking =ClientBookingForm::with([
             'studio',
-            'booking',
+            'artist',
             'client',
-            'responses.field'
+            'booking',
+            'responses.field', // load fields
         ])->whereIn('status', ['approve'])->first();
+        //  dd($booking);
         if (empty($booking)) {
             dd('user not found');
         }

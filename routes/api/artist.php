@@ -29,6 +29,7 @@ Route::middleware(['auth:sanctum', 'artist'])->group(function () {
 
         Route::get('studio/{id}','studio');
         Route::post('/studios/favorite','toggle');
+        Route::get('/studios/favorite','favStudios');
 
         Route::get('/upcoming-guest-spots','upcomingGuestSpots');
         Route::get('/past-guest-spots','pastGuestSpots');

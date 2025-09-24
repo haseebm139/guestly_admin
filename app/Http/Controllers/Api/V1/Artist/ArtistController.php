@@ -20,7 +20,7 @@ class ArtistController extends BaseController
     {
         $this->service = $service;
     }
-
+     
     public function update(ArtistUpdateProfileRequest $request)
     {
         try {
@@ -141,7 +141,25 @@ class ArtistController extends BaseController
         return $this->sendError('Something went wrong');
     }
 
+    public function favStudios(Request $request)
+    {
+        $artistId = $request->user()->id;
 
+        $favorites = UserFavorite::where('artist_id', $artistId)
+            ->with([
+                'studio' => function ($q) {
+                    $q->with(['supplies:id,name',
+                                'stationAmenities:id,name',
+                                'studioImages:id,user_id,image_path',
+                                'designSpecialties:id,name',
+                                'tattooStyles:id,name'
+                            ]);
+                }
+            ])
+            ->get();
+        return $this->sendResponse($favorites,'Favorites fetched successfully.');
+         
+    }
     public function upcomingGuestSpots(Request $request)
     {
         $artistId = auth()->id(); // current logged in artist

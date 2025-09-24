@@ -40,8 +40,8 @@ Route::prefix('v1')->group(function () {
     Route::post('apple_login', [AuthController::class, 'appleLogin']);
     Route::post('send-code-to-email', [AuthController::class, 'sendCodeToEmail']);
     Route::post('/update-password',[AuthController::class, 'updatePassword']);
-    Route::post('/auto-login-register',[AuthController::class, 'autoLoginOrRegister']);
-    
+    Route::post('/auto-login-register',[AuthController::class, 'autoLoginOrRegister']); 
+    Route::middleware('auth:sanctum')->delete('/del-account', [AuthController::class, 'deleteAccount']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('user/profile', [AuthController::class, 'profile']);
         Route::post('/send-bulk-notification', [NotificationController::class, 'sendToMany']);
