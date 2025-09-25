@@ -28,11 +28,6 @@ class ArtistRepository implements ArtistRepositoryInterface
     public function getById(int $userId)
     {
         $user = User::where('id', $userId)
-        ->withCount([
-                'favoritedBy as is_favorite' => function ($query) use ($artistId) {
-                    $query->where('artist_id', $artistId);
-                },
-            ])
             ->where('user_type', 'artist')
             ->firstOrFail();
 
