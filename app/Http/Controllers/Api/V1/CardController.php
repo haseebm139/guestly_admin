@@ -31,11 +31,10 @@ class CardController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'payment_type' =>'required|in:paypal,visa,master,stripe',
+             
             'is_selected' => 'boolean',
-            'card_number' => 'required',
-            'expiry_date' => 'required|date_format:m/y',
-            'cvc' => 'required|digits:3',
+            // Stripe token created on mobile via Stripe SDK
+            'stripe_token' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -44,11 +43,61 @@ class CardController extends BaseController
 
         try {
             $data['user_id'] = Auth::id();
-            $data['is_selected'] = $request->is_selected;
-            $data['payment_type'] = $request->payment_type;
-            $data['card_number'] = $request->card_number;
-            $data['expiry_date'] = $request->expiry_date;
-            $data['cvc'] = $request->cvc;
+            $data['is_selected'] = (bool) $request->is_selected;
+            $data['payment_type'] = 'stripe';
+
+            // Attach external account to artist connected account
+            \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+            $user = Auth::user();
+            if (!$user->stripe_account_id) {
+                if (config('services.stripe.connect_stub')) {
+                    $user->stripe_account_id = 'acct_stub_'.md5($user->id.'|'.now());
+                    $user->save();
+                } else {
+                    // Auto-create a Stripe Express connected account for the artist
+                    try {
+                        $account = \Stripe\Account::create([
+                            'type' => 'express',
+                            'email' => $user->email,
+                            'country' => 'US',
+                            'business_type' => 'individual',
+                            'capabilities' => [
+                                'transfers' => ['requested' => true],
+                            ],
+                        ]);
+                        $user->stripe_account_id = $account->id;
+                        $user->save();
+                    } catch (\Throwable $e) {
+                        return $this->sendError('Failed to create Stripe account: '.$e->getMessage(), 422);
+                    }
+                }
+            }
+
+            if (config('services.stripe.connect_stub')) {
+                // Stub external account without calling Stripe
+                $data['stripe_external_account_id'] = 'card_stub_'.substr(md5($request->stripe_token), 0, 10);
+                $data['brand'] = 'Visa';
+                $data['last4'] = '4242';
+                $data['exp_month'] = 12;
+                $data['exp_year'] = (int) now()->addYears(3)->format('Y');
+            } else {
+                // Create external account (debit card) on connected account using token from mobile SDK
+                $external = \Stripe\Account::createExternalAccount(
+                    $user->stripe_account_id,
+                    [
+                        'external_account' => $request->stripe_token,
+                        'default_for_currency' => true,
+                    ]
+                );
+
+                // Persist only display/safe fields
+                $data['stripe_external_account_id'] = $external->id;
+                $data['brand'] = $external->brand ?? null;
+                $data['last4'] = $external->last4 ?? null;
+                $data['exp_month'] = $external->exp_month ?? null;
+                $data['exp_year'] = $external->exp_year ?? null;
+            }
 
             $card = $this->repo->store($data);
 
@@ -80,29 +129,49 @@ class CardController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'payment_type' =>'sometimes|in:paypal,visa,master,stripe',
-            'is_selected' => 'boolean',
-            'card_number' => 'sometimes',
-            'expiry_date' => 'sometimes|date_format:m/y',
-            'cvc' => 'sometimes|digits:3',
-
+            'is_selected' => 'boolean', 
         ]);
 
         if ($validator->fails()) {
             return $this->sendError($validator->errors()->first(), 422);
         }
 
-        try {
-            $validated = $validator->validated();
-            $validated['user_id'] = Auth::id();
+        $validated = $validator->validated();
+        $validated['user_id'] = Auth::id();
 
+        $card = $this->repo->find($id, Auth::id());
+        if (!$card) {
+            return $this->sendError('Card not found.', 404);
+        }
 
-            $card = $this->repo->update($id, $validated, Auth::id());
-
-            if (!$card) {
-                return $this->sendError('Card not found.', 404);
+        // If make_default requested, set default_for_currency on Stripe and unselect others in DB
+        if (!empty($validated['is_selected'])) {
+            $user = Auth::user();
+            if (!$user->stripe_account_id) {
+                return $this->sendError('Stripe account not connected for this user.', 422);
             }
-            return $this->sendResponse($card, 'Card updated successfully.', 200);
+
+            if (!config('services.stripe.connect_stub')) {
+                \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+                // Update external account to default
+                \Stripe\Account::updateExternalAccount(
+                    $user->stripe_account_id,
+                    $card->stripe_external_account_id,
+                    ['default_for_currency' => true]
+                );
+            }
+
+            // Reflect default locally
+            $validated['is_selected'] = true;
+        }
+
+        $card = $this->repo->update($id, $validated, Auth::id());
+
+        if (!$card) {
+            return $this->sendError('Card not found.', 404);
+        }
+        return $this->sendResponse($card, 'Card updated successfully.', 200);
+        try {
         } catch (\Throwable $th) {
             return $this->sendError('Something went wrong.');
         }
@@ -111,6 +180,21 @@ class CardController extends BaseController
     public function destroy($id)
     {
         try {
+            $card = $this->repo->find($id, Auth::id());
+            if (!$card) {
+                return $this->sendError('Card not found.', 404);
+            }
+
+            // Remove external account from Stripe connected account
+            $user = Auth::user();
+            if ($user->stripe_account_id && $card->stripe_external_account_id && !config('services.stripe.connect_stub')) {
+                \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+                \Stripe\Account::deleteExternalAccount(
+                    $user->stripe_account_id,
+                    $card->stripe_external_account_id
+                );
+            }
+
             $card = $this->repo->delete($id, Auth::id());
 
             if (!$card) {

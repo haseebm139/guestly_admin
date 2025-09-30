@@ -3,6 +3,8 @@
 use App\Http\Controllers\Apps\Admin\DesignSpecialityController;
 use App\Http\Controllers\Apps\Admin\FeatureManagementController;
 use App\Http\Controllers\Apps\Admin\PlanManagementController;
+use App\Http\Controllers\Apps\Admin\PaymentController;
+use App\Http\Controllers\Apps\Admin\StripeConnectController;
 use App\Http\Controllers\Apps\Admin\StationAmenityController;
 use App\Http\Controllers\Apps\Admin\SupplyController;
 use App\Http\Controllers\Apps\Admin\TattooStyleController;
@@ -112,6 +114,22 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         Route::resource('design-specialities', DesignSpecialityController::class);
 
     });
+
+    // Payments
+    Route::name('payments.')->group(function () {
+        Route::get('/payments/deposits', [PaymentController::class, 'deposits'])
+            ->name('deposits.index');
+        Route::post('/payments/deposits/{payment}/transfer', [PaymentController::class, 'transferDeposit'])
+            ->name('deposits.transfer');
+    });
+
+    // Stripe Connect onboarding (artists)
+    Route::get('/artists/{user}/stripe/connect', [StripeConnectController::class, 'start'])
+        ->name('artists.stripe.connect');
+    Route::get('/stripe/connect/refresh', [StripeConnectController::class, 'refresh'])
+        ->name('stripe.connect.refresh');
+    Route::get('/stripe/connect/return', [StripeConnectController::class, 'returned'])
+        ->name('stripe.connect.return');
 
      
 

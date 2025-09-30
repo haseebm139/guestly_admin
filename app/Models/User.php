@@ -34,6 +34,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        // hide sensitive stripe account id from serialization by default
+        'stripe_account_id',
     ];
     protected $dates = ['deleted_at'];
     /**

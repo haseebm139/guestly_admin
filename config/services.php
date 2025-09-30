@@ -48,5 +48,6 @@ return [
     'stripe' => [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
+        'connect_stub' => env('STRIPE_CONNECT_STUB', false),
     ],
 ];

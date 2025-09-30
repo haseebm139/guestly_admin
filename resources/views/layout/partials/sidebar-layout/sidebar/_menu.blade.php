@@ -212,11 +212,25 @@
                 <!--end:Menu sub-->
             </div>
 
-
-
-
-
-
+            <div data-kt-menu-trigger="click"
+                class="menu-item menu-accordion {{ request()->routeIs('payments.*') ? 'here show' : '' }}">
+                <span class="menu-link">
+                    <span class="menu-icon">{!! getIcon('wallet', 'fs-2') !!}</span>
+                    <span class="menu-title">Payments</span>
+                    <span class="menu-arrow"></span>
+                </span>
+                <div class="menu-sub menu-sub-accordion">
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('payments.deposits.*') ? 'active' : '' }}"
+                            href="{{ route('payments.deposits.index') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Deposits</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
         </div>
         <!--end::Menu-->
