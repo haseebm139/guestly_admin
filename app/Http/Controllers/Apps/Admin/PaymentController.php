@@ -17,13 +17,65 @@ class PaymentController extends Controller
             ->where('type', 'deposit')
             ->orderByDesc('id');
 
+        // Quick filters
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
         }
 
-        $deposits = $query->paginate(20);
+        if ($request->filled('currency')) {
+            $query->where('currency', strtolower($request->string('currency')));
+        }
+
+        if ($request->filled('transferred')) {
+            $transferred = $request->string('transferred') === 'yes';
+            $query->when($transferred, fn($q) => $q->whereNotNull('transferred_at'))
+                  ->when(! $transferred, fn($q) => $q->whereNull('transferred_at'));
+        }
+
+        if ($request->filled('artist_id')) {
+            $artistId = (int) $request->artist_id;
+            $query->whereHas('booking.artist', fn($q) => $q->where('id', $artistId));
+        }
+
+        if ($request->filled('client_id')) {
+            $clientId = (int) $request->client_id;
+            $query->whereHas('booking.client', fn($q) => $q->where('id', $clientId));
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date('date_from'));
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date('date_to'));
+        }
+
+        // Full-text like search across booking id, client/artist name/email
+        if ($request->filled('q')) {
+            $term = trim((string) $request->q);
+            $query->where(function ($q) use ($term) {
+                $q->where('client_booking_form_id', (int) filter_var($term, FILTER_SANITIZE_NUMBER_INT))
+                  ->orWhere('stripe_payment_intent_id', 'like', "%$term%")
+                  ->orWhere('stripe_charge_id', 'like', "%$term%")
+                  ->orWhereHas('booking.client', function ($qq) use ($term) {
+                      $qq->where('name', 'like', "%$term%")
+                         ->orWhere('email', 'like', "%$term%");
+                  })
+                  ->orWhereHas('booking.artist', function ($qq) use ($term) {
+                      $qq->where('name', 'like', "%$term%")
+                         ->orWhere('email', 'like', "%$term%");
+                  });
+            });
+        }
+
+        $deposits = $query->paginate(20)->appends($request->query());
 
         return view('pages.apps.admin.payments.deposits.index', compact('deposits'));
+    }
+
+    public function showDeposit(Payment $payment): View
+    {
+        $payment->load(['booking.artist', 'booking.client']);
+        return view('pages.apps.admin.payments.deposits._details', compact('payment'));
     }
 
     public function transferDeposit(Request $request, Payment $payment): RedirectResponse

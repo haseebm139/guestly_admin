@@ -119,6 +119,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::name('payments.')->group(function () {
         Route::get('/payments/deposits', [PaymentController::class, 'deposits'])
             ->name('deposits.index');
+        Route::get('/payments/deposits/{payment}', [PaymentController::class, 'showDeposit'])
+            ->name('deposits.show');
         Route::post('/payments/deposits/{payment}/transfer', [PaymentController::class, 'transferDeposit'])
             ->name('deposits.transfer');
     });
