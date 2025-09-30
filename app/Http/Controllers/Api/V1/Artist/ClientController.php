@@ -52,14 +52,18 @@ class ClientController extends BaseController
             'client',
             'booking',
             'responses.field', // load fields
-        ])
-            ->where('status', $status)
+            ])
+                ->when($status === 'approve', function ($query) {
+                $query->whereIn('status', ['approve', 'approved_pending_payment']);
+            }, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
             ->latest()
             ->get();
 
     }
 
-    public function updateStatusClientRequest($id, $status)
+    public function updateStatusClientRequest(Request $request,$id, $status)
     {
         // $status1 = '';
         // if ($status == 'decline') {
@@ -69,13 +73,28 @@ class ClientController extends BaseController
         // }else{
         //     return $this->sendError('Invalid status');
         // }
-
+        $cancelReason = $request->cancel_reason;
+        $price = $request->price;
+          
         $data = ClientBookingForm::where('id', $id)->first();
         if (! $data) {
             return $this->sendError('Client Booking Form not found');
         }
-        $data->update(['status' => $status]);
 
+        $updateData = ['status' => $status];
+        // If cancelled, require cancel_reason
+        if ($status === 'decline' || $status === 'cancelled') {
+            if (empty($cancelReason)) {
+                return $this->sendError('Cancel reason is required when rejecting/cancelling');
+            }
+            $updateData['cancel_reason'] = $cancelReason;
+        }
+        if ($status === 'approve') {
+         
+            $updateData['status'] = 'approved_pending_payment';
+        }
+         
+        $data->update($updateData);
         return $this->sendResponse($data, 'Clients Request '.$status);
     }
 
