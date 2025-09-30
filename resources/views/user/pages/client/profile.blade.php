@@ -509,7 +509,7 @@
 
                 <div class="tab-pane fade" id="messages-tab-pane" role="tabpanel" aria-labelledby="messages-tab"
                     tabindex="0" data-client-id="{{ $booking->client_id }}"
-                    data-artist-id="{{ $booking->artist_id }}"
+                    data-artist-id="{{ $booking->artist_id }}" data-current-user-id="{{ auth()->id() }}"
                     @if (isset($chatId)) data-chat-id="{{ $chatId }}" @endif
                     data-user-name="{{ auth()->user()->name ?? 'Guest' }}">
                     <div class="chat-area">
@@ -539,6 +539,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-database-compat.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const stripe = Stripe("{{ config('services.stripe.key') }}");
@@ -691,6 +695,112 @@
                     setMessage(err.message || "Payment failed");
                 } finally {
                     setLoading(false);
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tab = document.getElementById('messages-tab-pane');
+            if (!tab) return;
+
+            const chatArea = tab.querySelector('.chat-area');
+            const inputEl = tab.querySelector('.chat-input-group input[type="text"]');
+            const sendBtn = tab.querySelector('.chat-input-group .send-btn');
+
+            const clientId = String(tab.dataset.clientId || '').trim();
+            const artistId = String(tab.dataset.artistId || '').trim();
+            const currentUserId = String(tab.dataset.currentUserId || '').trim();
+            const userName = tab.dataset.userName || 'Guest';
+
+            const senderType = currentUserId === clientId ? 'client' : (currentUserId === artistId ? 'artist' :
+                'client');
+            const chatId = (tab.dataset.chatId && String(tab.dataset.chatId).trim().length) ?
+                String(tab.dataset.chatId) : [clientId, artistId].sort().join('_');
+
+            // Initialize Firebase
+            const firebaseConfig = { 
+                apiKey: "AIzaSyA3h0WXL2BMnpUj1lUtHpKDz2fJ0V_YCFU",
+                authDomain: "guestly-8aa9a.firebaseapp.com",
+                databaseURL: "https://guestly-8aa9a-default-rtdb.firebaseio.com",
+                projectId: "guestly-8aa9a",
+                storageBucket: "guestly-8aa9a.firebasestorage.app",
+                messagingSenderId: "548981851052",
+                appId: "1:548981851052:web:40d3500535c5dfc589b009",
+                measurementId: "G-Q6R8LWNEXZ"
+            };
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            try {
+                await firebase.auth().signInAnonymously();
+            } catch (e) {
+                console.error('Firebase auth failed:', e);
+            }
+
+            const db = firebase.database();
+            const chatRef = db.ref(`chats/${chatId}`);
+            const messagesRef = chatRef.child('messages');
+
+            // Seed participants (idempotent update)
+            chatRef.child('participants').update({
+                clientId,
+                artistId
+            }).catch(() => {});
+
+            function escapeHtml(s) {
+                const d = document.createElement('div');
+                d.innerText = s;
+                return d.innerHTML;
+            }
+
+            function scrollToBottom() {
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+
+            function clearDemo() {
+                if (chatArea) chatArea.innerHTML = '';
+            }
+
+            function renderMessage(m) {
+                const isClientMsg = String(m.senderType) === 'client';
+                const mine = (isClientMsg && m.senderId === clientId) || (!isClientMsg && m.senderId ===
+                    artistId && currentUserId === artistId);
+                const side = mine ? 'sent' : 'received';
+                const div = document.createElement('div');
+                div.className = `chat-bubble ${side}`;
+                const name = m.senderName ?
+                    `<div class="small fw-semibold mb-1">${escapeHtml(m.senderName)}</div>` : '';
+                div.innerHTML = `${name}${escapeHtml(m.text || '')}`;
+                chatArea.appendChild(div);
+                scrollToBottom();
+            }
+
+            clearDemo();
+
+            messagesRef.limitToLast(200).on('child_added', snap => {
+                const msg = snap.val();
+                if (msg) renderMessage(msg);
+            });
+
+            function sendMessage() {
+                const text = (inputEl.value || '').trim();
+                if (!text) return;
+                const payload = {
+                    text,
+                    senderId: senderType === 'client' ? clientId : artistId,
+                    senderType,
+                    senderName: userName,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                };
+                inputEl.value = '';
+                messagesRef.push(payload).catch(err => console.error('Send failed:', err));
+            }
+            sendBtn.addEventListener('click', sendMessage);
+            inputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
                 }
             });
         });
