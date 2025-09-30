@@ -509,28 +509,30 @@
 
                 <div class="tab-pane fade" id="messages-tab-pane" role="tabpanel" aria-labelledby="messages-tab"
                     tabindex="0" data-client-id="{{ $booking->client_id }}"
-                    data-artist-id="{{ $booking->artist_id }}" data-current-user-id="{{ auth()->id() }}"
-                    @if (isset($chatId)) data-chat-id="{{ $chatId }}" @endif
+                    data-artist-id="{{ $booking->artist_id }}"
                     data-user-name="{{ auth()->user()->name ?? 'Guest' }}">
-                    <div class="chat-area">
-                        <div class="chat-bubble received">Hey! I just sent in a booking request for Sept 14th at The
-                            Inwell Studio. Let me know if you're available.</div>
-                        <div class="chat-bubble sent">Hey Lucas, thanks for booking! I just saw your request - Sept
-                            14th works perfectly.</div>
-                        <div class="chat-bubble received">Sure thing - I'm thinking of a compass design...</div>
-                        <div class="chat-bubble sent">Nice! That's a solid concept.</div>
+
+                    <!-- Messages -->
+                    <div class="chat-area" id="chat-area" style="height:400px; overflow-y:auto;">
+                        <!-- messages will load here -->
                     </div>
+
+                    <!-- Input -->
                     <div class="chat-input-area mt-3">
-                        <div class="chat-input-group">
-                            <button class="btn attachment-btn" type="button" title="Attach file"><i
-                                    class="bi bi-paperclip"></i></button>
-                            <input type="text" class="form-control" placeholder="Type your message"
-                                aria-label="Type your message">
-                            <button class="btn send-btn" type="button" title="Send message"><i
-                                    class="bi bi-send-fill"></i></button>
+                        <div class="chat-input-group d-flex">
+                            <button class="btn attachment-btn" id="attach-btn" type="button" title="Attach file">
+                                <i class="bi bi-paperclip"></i>
+                            </button>
+                            <input type="text" id="chat-input" class="form-control mx-2"
+                                placeholder="Type your message" aria-label="Type your message">
+                            <button class="btn send-btn btn-primary" id="send-btn" type="button"
+                                title="Send message">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
+
 
             </div>
 
@@ -539,10 +541,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-database-compat.js"></script>
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const stripe = Stripe("{{ config('services.stripe.key') }}");
@@ -699,110 +703,341 @@
             });
         });
     </script>
+    {{-- apiKey: "AIzaSyA3h0WXL2BMnpUj1lUtHpKDz2fJ0V_YCFU",
+                authDomain: "guestly-8aa9a.firebaseapp.com",
+                databaseURL: "https://guestly-8aa9a-default-rtdb.firebaseio.com",
+                projectId: "guestly-8aa9a",
+                storageBucket: "guestly-8aa9a.appspot.com",
+                messagingSenderId: "548981851052",
+                appId: "1:548981851052:web:40d3500535c5dfc589b009",
+                measurementId: "G-Q6R8LWNEXZ" --}}
+
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const tab = document.getElementById('messages-tab-pane');
-            if (!tab) return;
-
-            const chatArea = tab.querySelector('.chat-area');
-            const inputEl = tab.querySelector('.chat-input-group input[type="text"]');
-            const sendBtn = tab.querySelector('.chat-input-group .send-btn');
-
-            const clientId = String(tab.dataset.clientId || '').trim();
-            const artistId = String(tab.dataset.artistId || '').trim();
-            const currentUserId = String(tab.dataset.currentUserId || '').trim();
-            const userName = tab.dataset.userName || 'Guest';
-
-            const senderType = currentUserId === clientId ? 'client' : (currentUserId === artistId ? 'artist' :
-                'client');
-            const chatId = (tab.dataset.chatId && String(tab.dataset.chatId).trim().length) ?
-                String(tab.dataset.chatId) : [clientId, artistId].sort().join('_');
-
-            // Initialize Firebase
-            const firebaseConfig = { 
+        document.addEventListener("DOMContentLoaded", async () => {
+            // 🔥 Firebase Config
+            const firebaseConfig = {
                 apiKey: "AIzaSyA3h0WXL2BMnpUj1lUtHpKDz2fJ0V_YCFU",
                 authDomain: "guestly-8aa9a.firebaseapp.com",
                 databaseURL: "https://guestly-8aa9a-default-rtdb.firebaseio.com",
                 projectId: "guestly-8aa9a",
-                storageBucket: "guestly-8aa9a.firebasestorage.app",
+                storageBucket: "guestly-8aa9a.appspot.com",
                 messagingSenderId: "548981851052",
                 appId: "1:548981851052:web:40d3500535c5dfc589b009",
                 measurementId: "G-Q6R8LWNEXZ"
             };
+
+            // Initialize Firebase
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
-            try {
-                await firebase.auth().signInAnonymously();
-            } catch (e) {
-                console.error('Firebase auth failed:', e);
-            }
-
             const db = firebase.database();
-            const chatRef = db.ref(`chats/${chatId}`);
-            const messagesRef = chatRef.child('messages');
+            const auth = firebase.auth();
 
-            // Seed participants (idempotent update)
-            chatRef.child('participants').update({
-                clientId,
-                artistId
-            }).catch(() => {});
+            // Get Firebase token from Laravel backend
+            let myUid;
+            let userName = "Guest";
 
-            function escapeHtml(s) {
-                const d = document.createElement('div');
-                d.innerText = s;
-                return d.innerHTML;
+            try {
+                 
+                const tokenResponse = await fetch('/firebase/token', {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                });
+
+                if (!tokenResponse.ok) {
+                    throw new Error(`HTTP error! status: ${tokenResponse.status}`);
+                }
+
+                const tokenData = await tokenResponse.json();
+                
+
+                if (!tokenData.success) {
+                    throw new Error(tokenData.error || 'Failed to get Firebase token');
+                }
+
+                // Sign in to Firebase with the custom token
+                 
+                const userCredential = await auth.signInWithCustomToken(tokenData.firebase_token);
+                myUid = tokenData.uid;
+                userName = tokenData.name || "Guest";
+
+                 
+
+            } catch (error) {
+                console.error('Firebase auth failed:', error);
+                // Fallback to completely random guest mode
+                myUid = "guest_" + Math.random().toString(36).slice(2) + '_' + Date.now();
+                userName = "Guest";
+                console.warn('Using fallback guest mode with UID:', myUid);
+
+                // Try to sign in anonymously as fallback
+                try {
+                    const anonUser = await auth.signInAnonymously();
+                     
+                } catch (anonError) {
+                    console.error('Anonymous sign-in also failed:', anonError);
+                }
             }
 
-            function scrollToBottom() {
+            // 🔑 Chat info from Blade
+            const chatTab = document.getElementById("messages-tab-pane");
+            if (!chatTab) {
+                console.error('Chat tab element not found');
+                return;
+            }
+
+            const clientId = chatTab.dataset.clientId;
+            const artistId = chatTab.dataset.artistId;
+
+            // Use the client's name from booking data
+            const clientName = "{{ $booking->client->name ?? 'Client' }}";
+
+            // RTDB paths
+            const roomBase = `client-rooms/${clientId}/${artistId}`;
+            const msgsBase = `client-room-messages/${clientId}/${artistId}`;
+
+            // DOM elements
+            const chatArea = document.getElementById("chat-area");
+            const inputEl = document.getElementById("chat-input");
+            const sendBtn = document.getElementById("send-btn");
+
+            // Initialize chat functionality
+            initializeChat();
+
+            async function initializeChat() {
+                try {
+                    await initializeRoom();
+                    loadExistingMessages();
+                    setupMessageListener();
+                     
+                } catch (error) {
+                    console.error('Error initializing chat:', error);
+                    showChatError('Failed to initialize chat. Please refresh the page.');
+                }
+            }
+
+            // 📩 Listen for new messages in realtime
+            function setupMessageListener() {
+                db.ref(msgsBase).orderByChild("timestamp").on("child_added", snap => {
+                    const msg = snap.val();
+                    renderMessage(msg);
+                });
+            }
+
+            // Render chat bubble
+            function renderMessage(msg) {
+                if (!chatArea) return;
+
+                const div = document.createElement("div");
+                const isMine = msg.senderId === myUid;
+                div.className = "chat-bubble " + (isMine ? "sent" : "received");
+
+                // Add sender name for received messages
+                if (!isMine && msg.senderName) {
+                    const nameDiv = document.createElement("div");
+                    nameDiv.className = "sender-name small text-muted mb-1";
+                    nameDiv.textContent = msg.senderName;
+                    div.appendChild(nameDiv);
+                }
+
+                if (msg.type === "text") {
+                    const textDiv = document.createElement("div");
+                    textDiv.textContent = msg.text || "";
+                    div.appendChild(textDiv);
+                } else if (msg.type === "file") {
+                    div.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.fileName || 'File'}`;
+                }
+
+                // Add timestamp
+                const timeDiv = document.createElement("div");
+                timeDiv.className = "message-time small mt-1 text-end";
+                timeDiv.textContent = formatTime(msg.timestamp);
+                div.appendChild(timeDiv);
+
+                chatArea.appendChild(div);
                 chatArea.scrollTop = chatArea.scrollHeight;
             }
 
-            function clearDemo() {
-                if (chatArea) chatArea.innerHTML = '';
+            function formatTime(timestamp) {
+                if (!timestamp) return '';
+                const date = new Date(timestamp);
+                return date.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
             }
 
-            function renderMessage(m) {
-                const isClientMsg = String(m.senderType) === 'client';
-                const mine = (isClientMsg && m.senderId === clientId) || (!isClientMsg && m.senderId ===
-                    artistId && currentUserId === artistId);
-                const side = mine ? 'sent' : 'received';
-                const div = document.createElement('div');
-                div.className = `chat-bubble ${side}`;
-                const name = m.senderName ?
-                    `<div class="small fw-semibold mb-1">${escapeHtml(m.senderName)}</div>` : '';
-                div.innerHTML = `${name}${escapeHtml(m.text || '')}`;
-                chatArea.appendChild(div);
-                scrollToBottom();
-            }
+            // Initialize room structure in Firebase
+            async function initializeRoom() {
+                try {
+                    const roomSnapshot = await db.ref(roomBase).once('value');
 
-            clearDemo();
+                    if (!roomSnapshot.exists()) {
+                        // Create room structure if it doesn't exist
+                        const roomData = {
+                            createdAt: firebase.database.ServerValue.TIMESTAMP,
+                            uids: {
+                                client: myUid
+                            },
+                            members: {
+                                [myUid]: {
+                                    name: clientName,
+                                    role: 'client',
+                                    joinedAt: firebase.database.ServerValue.TIMESTAMP,
+                                    isGuest: myUid.startsWith('guest_')
+                                }
+                            },
+                            meta: {
+                                clientId: clientId,
+                                artistId: artistId,
+                                clientName: clientName,
+                                lastActive: firebase.database.ServerValue.TIMESTAMP
+                            }
+                        };
 
-            messagesRef.limitToLast(200).on('child_added', snap => {
-                const msg = snap.val();
-                if (msg) renderMessage(msg);
-            });
+                        await db.ref(roomBase).set(roomData);
+                        
+                    } else {
+                        // Room exists, just add/update current user as member
+                        const updates = {};
+                        updates[`${roomBase}/uids/client`] = myUid;
+                        updates[`${roomBase}/members/${myUid}`] = {
+                            name: clientName,
+                            role: 'client',
+                            joinedAt: firebase.database.ServerValue.TIMESTAMP,
+                            isGuest: myUid.startsWith('guest_')
+                        };
+                        updates[`${roomBase}/meta/lastActive`] = firebase.database.ServerValue.TIMESTAMP;
 
-            function sendMessage() {
-                const text = (inputEl.value || '').trim();
-                if (!text) return;
-                const payload = {
-                    text,
-                    senderId: senderType === 'client' ? clientId : artistId,
-                    senderType,
-                    senderName: userName,
-                    createdAt: firebase.database.ServerValue.TIMESTAMP
-                };
-                inputEl.value = '';
-                messagesRef.push(payload).catch(err => console.error('Send failed:', err));
-            }
-            sendBtn.addEventListener('click', sendMessage);
-            inputEl.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
+                        await db.ref().update(updates);
+                         
+                    }
+
+                } catch (error) {
+                    console.error('Error initializing room:', error);
+                    throw error;
                 }
-            });
+            }
+
+            // 🚀 Send message
+            async function sendMessage() {
+                const text = inputEl.value.trim();
+                if (!text) return;
+
+                const payload = {
+                    senderId: myUid,
+                    senderName: clientName,
+                    text: text,
+                    type: "text",
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                inputEl.value = "";
+
+                try {
+                    // Save message
+                    const messageRef = await db.ref(msgsBase).push(payload);
+
+                    // Update room last message
+                    await db.ref().update({
+                        [`${roomBase}/lastMessage/text`]: text,
+                        [`${roomBase}/lastMessage/timestamp`]: firebase.database.ServerValue
+                            .TIMESTAMP,
+                        [`${roomBase}/lastMessage/senderId`]: myUid,
+                        [`${roomBase}/lastMessage/senderName`]: clientName,
+                        [`${roomBase}/meta/lastActive`]: firebase.database.ServerValue.TIMESTAMP
+                    });
+
+                    
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                    showChatError('Failed to send message. Please try again.');
+                    // Restore the message if sending failed
+                    inputEl.value = text;
+                }
+            }
+
+            // Load existing messages
+            async function loadExistingMessages() {
+                try {
+                    const snapshot = await db.ref(msgsBase).orderByChild("timestamp").once('value');
+                    const messages = [];
+
+                    snapshot.forEach(childSnapshot => {
+                        messages.push({
+                            ...childSnapshot.val(),
+                            id: childSnapshot.key
+                        });
+                    });
+
+                    // Sort by timestamp
+                    messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+                    // Clear and render all messages
+                    if (chatArea) {
+                        chatArea.innerHTML = '';
+                        if (messages.length === 0) {
+                            const emptyDiv = document.createElement("div");
+                            emptyDiv.className = "text-center text-muted small py-4";
+                            emptyDiv.textContent = "No messages yet. Start the conversation!";
+                            chatArea.appendChild(emptyDiv);
+                        } else {
+                            messages.forEach(msg => renderMessage(msg));
+                        }
+                    }
+
+                } catch (error) {
+                    console.error('Error loading messages:', error);
+                    showChatError('Failed to load messages.');
+                }
+            }
+
+            // Show error message in chat area
+            function showChatError(message) {
+                if (!chatArea) return;
+
+                const errorDiv = document.createElement("div");
+                errorDiv.className = "alert alert-warning small text-center";
+                errorDiv.textContent = message;
+                chatArea.appendChild(errorDiv);
+            }
+
+            // Event listeners
+            if (sendBtn) {
+                sendBtn.addEventListener("click", sendMessage);
+            }
+
+            if (inputEl) {
+                inputEl.addEventListener("keydown", e => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+
+                // Enable send button only when there's text
+                inputEl.addEventListener("input", () => {
+                    if (sendBtn) {
+                        sendBtn.disabled = !inputEl.value.trim();
+                    }
+                });
+            }
+
+            // Auto-scroll when tab is shown
+            const messagesTab = document.getElementById('messages-tab');
+            if (messagesTab) {
+                messagesTab.addEventListener('shown.bs.tab', function() {
+                    setTimeout(() => {
+                        if (chatArea) {
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                        }
+                    }, 100);
+                });
+            }
         });
     </script>
 </body>

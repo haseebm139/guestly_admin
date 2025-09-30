@@ -2,15 +2,16 @@
 
 use App\Http\Controllers\Apps\Admin\DesignSpecialityController;
 use App\Http\Controllers\Apps\Admin\FeatureManagementController;
-use App\Http\Controllers\Apps\Admin\PlanManagementController;
 use App\Http\Controllers\Apps\Admin\PaymentController;
-use App\Http\Controllers\Apps\Admin\StripeConnectController;
+use App\Http\Controllers\Apps\Admin\PlanManagementController;
 use App\Http\Controllers\Apps\Admin\StationAmenityController;
+use App\Http\Controllers\Apps\Admin\StripeConnectController;
 use App\Http\Controllers\Apps\Admin\SupplyController;
 use App\Http\Controllers\Apps\Admin\TattooStyleController;
 use App\Http\Controllers\Apps\ArtistManagementController;
 use App\Http\Controllers\Apps\ChatController;
 use App\Http\Controllers\Apps\Client\ClientController;
+use App\Http\Controllers\Apps\Client\FirebaseAuthController;
 use App\Http\Controllers\Apps\PermissionManagementController;
 use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\StudioManagementController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImageUpload;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +54,18 @@ Route::post('/client/booking/{id}/payment', [ClientController::class, 'payDeposi
 
 Route::post('/client/booking/{id}/payment-intent', [ClientController::class, 'createPaymentIntent'])
     ->name('client.booking.createPaymentIntent');
+Route::get('/firebase/token', [FirebaseAuthController::class, 'getFirebaseToken']);
+Route::get('/check-firebase-config', function () {
+    $path = config('services.firebase.credentials');
+    $exists = file_exists($path);
+
+    return response()->json([
+        'config_path' => $path,
+        'file_exists' => $exists,
+        'absolute_path' => realpath($path) ?: 'Not found',
+        'storage_path' => storage_path(),
+    ]);
+});
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {
@@ -132,8 +146,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         ->name('stripe.connect.refresh');
     Route::get('/stripe/connect/return', [StripeConnectController::class, 'returned'])
         ->name('stripe.connect.return');
-
-     
 
     Route::resource('image/upload', ImageUpload::class);
 

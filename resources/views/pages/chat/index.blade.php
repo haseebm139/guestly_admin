@@ -55,13 +55,6 @@
 
             } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-            import {
-                getStorage,
-                ref as storageRef,
-                uploadBytes,
-                getDownloadURL
-            } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
             const firebaseConfig = {
                 apiKey: "AIzaSyD534VPIDGenGI2H6N8Ozse0tLjn-V1SYM", // Replace with your Firebase API Key
                 authDomain: "guestly-d0d42.firebaseapp.com",
@@ -78,10 +71,7 @@
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
 
-            const storage = getStorage(app);
-
             let unsubscribe; // Stores the unsubscribe function for the Firestore listener
-            let currentChat = { senderId: null, receiverId: null };
 
             function scrollToBottom() {
                 const messagesContainer = document.querySelector('[data-kt-element="messages"]');
@@ -96,7 +86,6 @@
                     console.log('Previous Firebase listener unsubscribed.');
                 }
 
-                currentChat = { senderId: currentUserId, receiverId: selectedUserId };
                 const chatId = [currentUserId, selectedUserId].sort().join('_');
                 console.log('Calculated chat ID:', chatId);
 
@@ -142,7 +131,6 @@
                     const messagePayload = {
                         sender_id: senderId,
                         receiver_id: receiverId,
-                        type: 'text',
                         message_text: messageText,
                         timestamp: serverTimestamp()
                     };
@@ -175,43 +163,6 @@
             // Livewire listener to trigger scrolling the chat to the bottom
             Livewire.on('scrollToBottomJs', () => {
                 scrollToBottom();
-            });
-
-            // Image upload button and input handlers
-            document.addEventListener('click', (e) => {
-                if (e.target && e.target.matches('#chat-image-btn')) {
-                    const input = document.getElementById('chat-image-input');
-                    if (input) input.click();
-                }
-            });
-
-            document.addEventListener('change', async (e) => {
-                if (e.target && e.target.matches('#chat-image-input')) {
-                    const file = e.target.files && e.target.files[0];
-                    e.target.value = '';
-                    if (!file || !currentChat.senderId || !currentChat.receiverId) return;
-
-                    const chatId = [currentChat.senderId, currentChat.receiverId].sort().join('_');
-                    const path = `chats/${chatId}/images/${Date.now()}_${file.name}`;
-
-                    try {
-                        const fileRef = storageRef(storage, path);
-                        await uploadBytes(fileRef, file);
-                        const imageUrl = await getDownloadURL(fileRef);
-
-                        const messagePayload = {
-                            sender_id: currentChat.senderId,
-                            receiver_id: currentChat.receiverId,
-                            type: 'image',
-                            image_url: imageUrl,
-                            timestamp: serverTimestamp()
-                        };
-
-                        await addDoc(collection(db, 'chats', chatId, 'messages'), messagePayload);
-                    } catch (err) {
-                        console.error('Image upload/send failed:', err);
-                    }
-                }
             });
         </script>
     @endpush
