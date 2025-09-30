@@ -96,20 +96,10 @@ Breadcrumbs::for('creative-management.supplies.show', function (BreadcrumbTrail 
 // Home > Dashboard > User Management
 Breadcrumbs::for('user-management.index', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
-    $trail->push('User Management', route('user-management.users.index'));
+    $trail->push('User Management', route('user-management.artists.index'));
 });
 
-// Home > Dashboard > User Management > Users
-Breadcrumbs::for('user-management.users.index', function (BreadcrumbTrail $trail) {
-    $trail->parent('user-management.index');
-    $trail->push('Users', route('user-management.users.index'));
-});
-
-// Home > Dashboard > User Management > Users > [User]
-Breadcrumbs::for('user-management.users.show', function (BreadcrumbTrail $trail, User $user) {
-    $trail->parent('user-management.users.index');
-    $trail->push(ucwords($user->name), route('user-management.users.show', $user));
-});
+ 
 
   
   

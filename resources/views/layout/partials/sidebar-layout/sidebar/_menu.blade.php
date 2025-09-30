@@ -33,7 +33,7 @@
                 class="menu-item menu-accordion {{ request()->routeIs('user-management.*') ? 'here show' : '' }}">
                 <!--begin:Menu link-->
                 <span class="menu-link">
-                    <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
+                    <span class="menu-icon">{!! getIcon('people', 'fs-2') !!}</span>
                     <span class="menu-title">User Management</span>
                     <span class="menu-arrow"></span>
                 </span>
@@ -106,7 +106,7 @@
                 class="menu-item menu-accordion {{ request()->routeIs('plan-management.*') ? 'here show' : '' }}">
                 <!--begin:Menu link-->
                 <span class="menu-link">
-                    <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
+                    <span class="menu-icon">{!! getIcon('category', 'fs-2') !!}</span>
                     <span class="menu-title">Plan Management</span>
                     <span class="menu-arrow"></span>
                 </span>
@@ -148,7 +148,7 @@
                 class="menu-item menu-accordion {{ request()->routeIs('creative-management.*') ? 'here show' : '' }}">
                 <!--begin:Menu link-->
                 <span class="menu-link">
-                    <span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
+                    <span class="menu-icon">{!! getIcon('brush', 'fs-2') !!}</span>
                     <span class="menu-title">Creative Management</span>
                     <span class="menu-arrow"></span>
                 </span>
