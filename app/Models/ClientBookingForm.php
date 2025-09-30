@@ -45,6 +45,10 @@ class ClientBookingForm extends Model
     {
         return $this->belongsTo(User::class, 'client_id');
     }
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'client_booking_form_id');
+    }
     public function customForm()
     {
         return $this->belongsTo(CustomForm::class, 'custom_form_id');

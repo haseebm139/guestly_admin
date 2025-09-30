@@ -38,11 +38,15 @@ return [
     ],
 
     'facebook' => [
-        'client_id'     => env('FACEBOOK_CLIENT_ID'),
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-        'redirect'      => '/auth/redirect/facebook',
+        'redirect' => '/auth/redirect/facebook',
     ],
     'fcm' => [
         'key' => env('FCM_SERVER_KEY'),
+    ],
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
     ],
 ];

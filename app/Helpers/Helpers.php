@@ -517,8 +517,8 @@ if (!function_exists('calculate_duration_days')) {
     }
 }
 
-if (!function_exists('renderField')) {
-    function renderField($field, $value = null,  )
+if (!function_exists('renderField1')) {
+    function renderField1($field, $value = null,  )
     {
         $html = '';
         $field_name = \Illuminate\Support\Str::snake($field->label);
@@ -613,48 +613,304 @@ if (!function_exists('renderField')) {
     }
 }
 
+if (!function_exists('renderField')) {
+    function renderField($field, $value = null)
+    {
+        $html = '';
+
+        $type = $field->type ?? 'text';
+        $label = e($field->label ?? 'Field');
+        $isRequired = !empty($field->is_required);
+
+        // Stable id/name
+        $fieldBase = \Illuminate\Support\Str::snake($field->label ?? 'field');
+        $baseName = $fieldBase . '|' . ($field->id ?? \Illuminate\Support\Str::random(6));
+        $inputId = $baseName;
+
+        // Laravel errors
+        $errorsBag = session('errors');
+        $hasError = $errorsBag ? ($errorsBag->has($baseName) || $errorsBag->has($baseName . '.*')) : false;
+        $firstError = $errorsBag ? ($errorsBag->first($baseName) ?: $errorsBag->first($baseName . '.*')) : null;
+
+        // old() overrides value
+        $oldValue = old($baseName, $value);
+
+        $requiredAttr = $isRequired ? ' required' : '';
+        $requiredMark = $isRequired ? ' *' : '';
+        $invalidClass = $hasError ? ' is-invalid' : '';
+        $errorId = $inputId . '-error';
+        $helpId = $inputId . '-help';
+        $ariaInvalid = $hasError ? ' aria-invalid="true"' : '';
+        $ariaDescribedBy = ' aria-describedby="' . ($hasError ? $errorId : $helpId) . '"';
+
+        // Optional constraints
+        $maxLength = property_exists($field, 'max_length') && $field->max_length ? ' maxlength="' . (int) $field->max_length . '"' : '';
+        $minLength = property_exists($field, 'min_length') && $field->min_length ? ' minlength="' . (int) $field->min_length . '"' : '';
+        $placeholderAttr = property_exists($field, 'placeholder') && $field->placeholder ? ' placeholder="' . e($field->placeholder) . '"' : '';
+        $helpText = property_exists($field, 'help_text') && $field->help_text ? '<div id="' . $helpId . '" class="form-text small">' . e($field->help_text) . '</div>' : '<div id="' . $helpId . '" class="form-text small"></div>';
+
+        switch ($type) {
+            case 'email':
+            case 'text':
+                $html .= '
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="' . $type . '" class="form-control' . $invalidClass . '"
+                               id="' . $inputId . '" name="' . $baseName . '"'
+                               . $placeholderAttr . $requiredAttr . $minLength . $maxLength . $ariaInvalid . $ariaDescribedBy . '
+                               value="' . e((string)($oldValue ?? '')) . '">
+                        <label for="' . $inputId . '">' . $label . $requiredMark . '</label>
+                        ' . ($hasError ? '<div id="' . $errorId . '" class="invalid-feedback">' . e($firstError) . '</div>' : $helpText) . '
+                    </div>
+                </div>';
+                break;
+
+            case 'date':
+                $formatted = $oldValue ? \Carbon\Carbon::parse($oldValue)->format('Y-m-d') : '';
+                $html .= '
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control' . $invalidClass . '"
+                               id="' . $inputId . '" name="' . $baseName . '"'
+                               . $requiredAttr . $ariaInvalid . $ariaDescribedBy . '
+                               value="' . e($formatted) . '">
+                        <label for="' . $inputId . '">' . $label . $requiredMark . '</label>
+                        ' . ($hasError ? '<div id="' . $errorId . '" class="invalid-feedback">' . e($firstError) . '</div>' : $helpText) . '
+                    </div>
+                </div>';
+                break;
+
+            case 'datetime':
+            case 'datetime_local':
+                $formatted = $oldValue ? \Carbon\Carbon::parse($oldValue)->format('Y-m-d\TH:i') : '';
+                $html .= '
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="datetime-local" class="form-control' . $invalidClass . '"
+                               id="' . $inputId . '" name="' . $baseName . '"'
+                               . $requiredAttr . $ariaInvalid . $ariaDescribedBy . '
+                               value="' . e($formatted) . '">
+                        <label for="' . $inputId . '">' . $label . $requiredMark . '</label>
+                        ' . ($hasError ? '<div id="' . $errorId . '" class="invalid-feedback">' . e($firstError) . '</div>' : $helpText) . '
+                    </div>
+                </div>';
+                break;
+
+            case 'textarea':
+                $html .= '
+                <div class="col-12">
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control' . $invalidClass . '"
+                                  id="' . $inputId . '" name="' . $baseName . '" style="height: 140px"'
+                                  . $placeholderAttr . $requiredAttr . $minLength . $maxLength . $ariaInvalid . $ariaDescribedBy . '>'
+                                  . e((string)($oldValue ?? '')) . '</textarea>
+                        <label for="' . $inputId . '">' . $label . $requiredMark . '</label>
+                        ' . ($hasError ? '<div id="' . $errorId . '" class="invalid-feedback">' . e($firstError) . '</div>' : $helpText) . '
+                    </div>
+                </div>';
+                break;
+
+            case 'dropdown':
+            case 'multi_select':
+                // Use standard label + Select2 (floating label is poor with Select2)
+                $rawOptions = is_string($field->options ?? null)
+                    ? (json_decode($field->options, true) ?? [])
+                    : ($field->options ?? []);
+
+                $normalized = [];
+                foreach ($rawOptions as $opt) {
+                    if (is_array($opt)) {
+                        $val = (string)($opt['value'] ?? $opt['label'] ?? '');
+                        $lab = (string)($opt['label'] ?? $opt['value'] ?? '');
+                    } else {
+                        $val = (string)$opt;
+                        $lab = (string)$opt;
+                    }
+                    if ($val === '' && $lab === '') continue;
+                    $normalized[] = ['value' => $val, 'label' => $lab];
+                }
+
+                $isMulti = ($type === 'multi_select');
+
+                // Selected values (respect old())
+                if ($isMulti) {
+                    $oldArray = old($baseName);
+                    if (is_array($oldArray)) {
+                        $selectedValues = array_map('strval', $oldArray);
+                    } else {
+                        if (is_string($oldValue) && $oldValue !== '') {
+                            $decoded = json_decode($oldValue, true);
+                            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                $selectedValues = array_map('strval', $decoded);
+                            } else {
+                                $selectedValues = array_map('strval', array_filter(array_map('trim', explode(',', $oldValue))));
+                            }
+                        } elseif (is_array($oldValue)) {
+                            $selectedValues = array_map('strval', $oldValue);
+                        } else {
+                            $selectedValues = [];
+                        }
+                    }
+                } else {
+                    $selectedValues = [(string)($oldValue ?? '')];
+                }
+
+                $nameAttr = $isMulti ? ($baseName . '[]') : $baseName;
+                $multipleAttr = $isMulti ? ' multiple' : '';
+                $selectClasses = 'form-select select2' . ($invalidClass ? ' is-invalid' : '');
+                $placeholderText = $label;
+
+                $html .= '
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label" for="' . $inputId . '">' . $label . $requiredMark . '</label>
+                        <select class="' . $selectClasses . '" id="' . $inputId . '" name="' . $nameAttr . '"'
+                            . $multipleAttr . $requiredAttr . $ariaInvalid . $ariaDescribedBy . ' data-placeholder="' . e($placeholderText) . '">';
+
+                if (!$isMulti) {
+                    $isSelected = empty($selectedValues[0]) ? ' selected' : '';
+                    $html .= '<option value="" disabled ' . $isSelected . '>Select an option</option>';
+                }
+
+                foreach ($normalized as $opt) {
+                    $isSelected = in_array((string)$opt['value'], $selectedValues, true) ? ' selected' : '';
+                    $html .= '<option value="' . e($opt['value']) . '"' . $isSelected . '>' . e($opt['label']) . '</option>';
+                }
+
+                $html .= '</select>'
+                        . ($hasError ? '<div id="' . $errorId . '" class="invalid-feedback d-block">' . e($firstError) . '</div>' : $helpText) . '
+                    </div>
+                </div>';
+                break;
+
+            case 'images':
+                // Multi image uploader (UI only). Controller must accept an array input name.
+                $maxFiles = (int)($field->max_files ?? 8);
+                $maxSizeMb = (int)($field->max_size_mb ?? 5); // each
+                $accept = 'image/*';
+                // Name must be array to hold multiple files
+                $nameAttr = $baseName . '[]';
+
+                $html .= '
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label" for="' . $inputId . '">' . $label . $requiredMark . '</label>
+                        <div class="image-dropzone" data-target-input="' . $inputId . '" data-max-files="' . $maxFiles . '" data-max-size-mb="' . $maxSizeMb . '">
+                            <div class="text-muted">
+                                <i class="bi bi-cloud-arrow-up-fill"></i>
+                                <div><strong>Drag & drop</strong> images here, or click to browse</div>
+                                <div class="image-uploader-help">Up to ' . $maxFiles . ' images, ' . $maxSizeMb . 'MB each</div>
+                            </div>
+                        </div>
+                        <input type="file" class="d-none"
+                               id="' . $inputId . '" name="' . $nameAttr . '" accept="' . $accept . '" multiple' . $requiredAttr . '>
+                        <div class="image-previews" id="' . $inputId . '-previews"></div>
+                        ' . ($hasError ? '<div id="' . $errorId . '" class="invalid-feedback d-block">' . e($firstError) . '</div>' : $helpText) . '
+                    </div>
+                </div>';
+                break;
+        }
+
+        return $html;
+    }
+}
 if (!function_exists('renderTableField')) {
     function renderTableField($field, $value = null)
     {
         $html = '';
-        $field_name = \Illuminate\Support\Str::snake($field->label);
-        $name = $field_name . '|' . $field->id;
 
-        switch ($field->type) {
+        $label = e($field->label ?? '');
+        $type = $field->type ?? 'text';
+        $idSuffix = (string) ($field->id ?? \Illuminate\Support\Str::random(6));
+
+        // Choose an icon by field type
+        $icon = match ($type) {
+            'email'       => 'envelope',
+            'date'        => 'calendar-event',
+            'datetime'    => 'clock',
+            'textarea'    => 'chat-left-text',
+            'dropdown'    => 'chevron-double-down',
+            'multi_select'=> 'list-check',
+            default       => 'type',
+        };
+
+        // Helper: pretty placeholder
+        $placeholder = '<span class="text-muted">—</span>';
+
+        switch ($type) {
             case 'email':
             case 'text':
             case 'date':
             case 'datetime':
                 $formattedValue = $value;
 
-                if ($field->type === 'date' && $value) {
+                if ($type === 'date' && $value) {
                     $formattedValue = \Carbon\Carbon::parse($value)->format('Y-m-d');
-                } elseif ($field->type === 'datetime' && $value) {
+                } elseif ($type === 'datetime' && $value) {
                     $formattedValue = \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
                 }
 
-                $html .= '<li class="detail-item">
-                            <span class="detail-label">' . e($field->label) . '</span>
-                            <span class="detail-value">' . e($formattedValue) . '</span>
-                          </li>';
+                // If email, make it clickable
+                $displayValue = trim((string) $formattedValue) !== ''
+                    ? ($type === 'email'
+                        ? '<a href="mailto:' . e($formattedValue) . '" class="text-decoration-none">'
+                            . e($formattedValue) . '</a>'
+                        : '<span class="badge rounded-pill bg-light text-dark border px-3 py-2">'
+                            . e($formattedValue) . '</span>')
+                    : $placeholder;
+
+                $html .= '
+                <li class="detail-item d-flex align-items-start justify-content-between gap-3 py-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-' . $icon . ' text-muted"></i>
+                        <span class="detail-label">' . $label . '</span>
+                    </div>
+                    <div class="detail-value text-end">' . $displayValue . '</div>
+                </li>';
                 break;
 
             case 'textarea':
-                $html .= '<li class="detail-item">
-                            <span class="detail-label">' . e($field->label) . '</span>
-                            <p class="detail-value">' . nl2br(e($value ?? '')) . '</p>
-                          </li>';
+                $content = nl2br(e((string)($value ?? '')));
+                $hasContent = trim((string) $value) !== '';
+                $collapseId = 'field-textarea-' . $idSuffix;
+
+                $html .= '
+                <li class="detail-item py-3">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-' . $icon . ' text-muted"></i>
+                        <span class="detail-label">' . $label . '</span>
+                    </div>
+                    ' . ($hasContent
+                        ? '
+                        <div class="small">
+                            <a class="text-decoration-none" data-bs-toggle="collapse" href="#' . $collapseId . '" role="button" aria-expanded="false" aria-controls="' . $collapseId . '">
+                                Show details
+                            </a>
+                        </div>
+                        <div class="collapse mt-2" id="' . $collapseId . '">
+                            <div class="p-3 bg-light border rounded">' . $content . '</div>
+                        </div>'
+                        : '<div class="text-muted">—</div>') . '
+                </li>';
                 break;
 
             case 'dropdown':
-                $html .= '<li class="detail-item">
-                            <span class="detail-label">' . e($field->label) . '</span>
-                            <span class="detail-value">' . e($value ?? '-') . '</span>
-                          </li>';
+                $display = trim((string) $value) !== ''
+                    ? '<span class="badge rounded-pill bg-light text-dark border px-3 py-2">' . e($value) . '</span>'
+                    : $placeholder;
+
+                $html .= '
+                <li class="detail-item d-flex align-items-start justify-content-between gap-3 py-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-' . $icon . ' text-muted"></i>
+                        <span class="detail-label">' . $label . '</span>
+                    </div>
+                    <div class="detail-value text-end">' . $display . '</div>
+                </li>';
                 break;
 
             case 'multi_select':
-                // Normalize value: could be JSON, array, or comma string
+                // Normalize to array
                 if (is_string($value)) {
                     $decoded = json_decode($value, true);
                     if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
@@ -666,18 +922,26 @@ if (!function_exists('renderTableField')) {
                     $value = $value ? [$value] : [];
                 }
 
-                $html .= '<li class="detail-item">
-                            <span class="detail-label">' . e($field->label) . '</span>
-                            <ul class="detail-value">';
+                $chips = '';
                 foreach ($value as $v) {
-                    $html .= '<li>' . e($v) . '</li>';
+                    $chips .= '<span class="badge rounded-pill bg-light text-dark border me-1 mb-1 px-3 py-2">' . e($v) . '</span>';
                 }
-                $html .= '</ul></li>';
+                if ($chips === '') {
+                    $chips = $placeholder;
+                }
+
+                $html .= '
+                <li class="detail-item py-3">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-' . $icon . ' text-muted"></i>
+                        <span class="detail-label">' . $label . '</span>
+                    </div>
+                    <div class="detail-value d-flex flex-wrap">' . $chips . '</div>
+                </li>';
                 break;
         }
 
         return $html;
     }
 }
-
 
