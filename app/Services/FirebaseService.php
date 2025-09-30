@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 class FirebaseService
 {
     protected $messaging;
+    protected $auth;
     protected $logger;
 
     public function __construct(LoggerInterface $logger)
@@ -25,8 +26,9 @@ class FirebaseService
          
         $factory = (new Factory)
             ->withServiceAccount($serviceAccountPath);
-        
+
         $this->messaging = $factory->createMessaging();
+        $this->auth = $factory->createAuth();
     }
 
     /**
@@ -79,5 +81,14 @@ class FirebaseService
         }
 
         return $results;
+    }
+
+    /**
+     * Create a Firebase custom auth token for the given UID with optional claims
+     */
+    public function createCustomToken(string $uid, array $customClaims = []): string
+    {
+        $token = $this->auth->createCustomToken($uid, $customClaims);
+        return (string) $token;
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Apps\Admin\TattooStyleController;
 use App\Http\Controllers\Apps\ArtistManagementController;
 use App\Http\Controllers\Apps\ChatController;
 use App\Http\Controllers\Apps\Client\ClientController;
+use App\Http\Controllers\Apps\FirebaseAuthController;
 use App\Http\Controllers\Apps\PermissionManagementController;
 use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\StudioManagementController;
@@ -50,6 +51,10 @@ Route::post('/client/booking/{id}/payment', [ClientController::class, 'payDeposi
 
 Route::post('/client/booking/{id}/payment-intent', [ClientController::class, 'createPaymentIntent'])
     ->name('client.booking.createPaymentIntent');
+
+// Firebase custom token
+Route::middleware(['auth'])->get('/firebase/custom-token', [FirebaseAuthController::class, 'customToken'])
+    ->name('firebase.custom-token');
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     Route::get('/maintenance/clear-caches', function () {
