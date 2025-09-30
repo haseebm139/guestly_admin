@@ -31,5 +31,9 @@ class Payment extends Model
 		'transferred_at' => 'datetime',
 	];
 
-    public function booking() { return $this->belongsTo(ClientBookingForm::class, 'booking_id'); }
+    public function booking()
+    {
+        // Link payment to its client booking form
+        return $this->belongsTo(ClientBookingForm::class, 'client_booking_form_id');
+    }
 }

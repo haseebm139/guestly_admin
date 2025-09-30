@@ -197,7 +197,7 @@ class ClientController extends Controller
 
         // Persist the deposit payment
         $payment = Payment::create([
-            'client_booking_form_id' => 3,
+            'client_booking_form_id' => $booking->id,
             'client_id' => $booking->client_id,
             'artist_id' => $booking->artist_id,
             'amount' => $pi->amount_received, // cents
