@@ -31,6 +31,8 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+             
+            
         ];
     }
 
@@ -53,6 +55,8 @@ class LoginRequest extends FormRequest
             ]);
         }
         $user = Auth::user();
+
+         
         if ($user->user_type !== 'administrator') {
             Auth::logout(); // logout if not admin
             RateLimiter::hit($this->throttleKey());

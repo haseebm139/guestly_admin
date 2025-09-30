@@ -5,7 +5,7 @@ use App\Http\Controllers\Web\AuthController as WebAuthController;
 use App\Http\Controllers\Web\LanguageController as WebLanguageController;
 use App\Http\Controllers\Web\WebsiteController;
 use App\Http\Controllers\Web\Artist\ArtistController as WebArtistController;
-use App\Http\Controllers\Web\Artist\StudioController as WebStudioController;
+use App\Http\Controllers\Web\Studio\StudioController as WebStudioController;
 
 
 Route::get('/', function () {

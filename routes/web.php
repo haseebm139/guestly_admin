@@ -113,6 +113,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     });
 
+     
+
     Route::resource('image/upload', ImageUpload::class);
 
     // Route::resource('vendor/product', ProductController::class);
