@@ -53,7 +53,13 @@
                                      </div>
                                      <div class="p-5 rounded bg-light-primary text-dark fw-bold mw-lg-400px text-end"
                                          data-kt-element="message-text">
-                                         {{ $msg['message_text'] }}
+                                         @if (($msg['type'] ?? 'text') === 'image' && !empty($msg['image_url'] ?? ''))
+                                             <a href="{{ $msg['image_url'] }}" target="_blank">
+                                                 <img src="{{ $msg['image_url'] }}" alt="image" style="max-width: 280px; border-radius: 8px;" />
+                                             </a>
+                                         @else
+                                             {{ $msg['message_text'] ?? '' }}
+                                         @endif
                                      </div>
                                  </div>
                              </div>
@@ -74,7 +80,13 @@
                                      </div>
                                      <div class="p-5 rounded bg-light-info text-dark fw-bold mw-lg-400px text-start"
                                          data-kt-element="message-text">
-                                         {{ $msg['message_text'] }}
+                                         @if (($msg['type'] ?? 'text') === 'image' && !empty($msg['image_url'] ?? ''))
+                                             <a href="{{ $msg['image_url'] }}" target="_blank">
+                                                 <img src="{{ $msg['image_url'] }}" alt="image" style="max-width: 280px; border-radius: 8px;" />
+                                             </a>
+                                         @else
+                                             {{ $msg['message_text'] ?? '' }}
+                                         @endif
                                      </div>
                                  </div>
                              </div>
@@ -90,12 +102,13 @@
              </div>
          </div>
          @if ($selectedUser)
-             <div class="card-footer pt-4" id="kt_chat_messenger_footer">
+            <div class="card-footer pt-4" id="kt_chat_messenger_footer">
                  <textarea wire:model.live="message" wire:keydown.enter.prevent="sendMessage"
                      class="form-control form-control-flush mb-3" rows="1" placeholder="Type a message"></textarea>
                  <div class="d-flex flex-stack">
                      <div class="d-flex align-items-center me-2">
-                         {{-- Add any file upload/emoji buttons here if needed --}}
+                        <input id="chat-image-input" type="file" accept="image/*" style="display:none" />
+                        <button type="button" id="chat-image-btn" class="btn btn-light btn-sm">Send Image</button>
                      </div>
                      <button wire:click="sendMessage" class="btn btn-primary" type="button"
                          data-kt-element="send-button">Send</button>
