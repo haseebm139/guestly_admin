@@ -58,6 +58,17 @@ class PaymentController extends Controller
         //     return back()->with(['type' => 'error', 'message' => 'Booking is not completed yet.']);
         // }
 
+        // Stripe Connect stub mode: skip real transfer
+        if (config('services.stripe.connect_stub')) {
+             
+            $payment->update([
+                'stripe_transfer_id' => 'tr_stub_'.now()->timestamp,
+                'transferred_at' => now(),
+            ]);
+
+            return back()->with(['type' => 'success', 'message' => 'Deposit marked transferred (stub mode).']);
+        }
+
         // Real Stripe Connect transfer (requires artist connected account id on user)
         $artist = $booking->artist;
         $destinationAccount = $artist?->stripe_account_id;
@@ -76,8 +87,6 @@ class PaymentController extends Controller
                 'currency' => $payment->currency ?? 'usd',
                 'destination' => $destinationAccount,
                 'transfer_group' => $transferGroup,
-                // Optionally link to the charge that funded the transfer
-                // 'source_transaction' => $payment->stripe_charge_id,
             ]);
 
             $payment->update([
