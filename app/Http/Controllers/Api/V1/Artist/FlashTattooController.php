@@ -71,7 +71,7 @@ class FlashTattooController extends BaseController
         $tattoo = FlashTattoo::create([
             'title'       => $data['title'],
             'repeatable'  => $data['repeatable'],
-            'image'       => $data['image']??'',
+            'image'       => $data['image']??null,
             'description' => $data['description'],
             'artist_id'   => $data['artist_id'],
             'price'       => $data['options'][0]['price']??0,
