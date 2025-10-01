@@ -140,7 +140,7 @@ class ClientController extends Controller
         ->first();
         //  dd($booking);
         if (empty($booking)) {
-            dd('user not found');
+            dd('booking not found');
         }
 
         // Fetch bookings if needed
