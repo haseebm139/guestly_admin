@@ -122,8 +122,8 @@ class ClientController extends Controller
 
     public function profile($shared_code, $token)
     {
-        // $user = User::where('profile_link', $token)->first();
-        $user = User::first();
+        $user = User::where('profile_link', $token)->first();
+        // $user = User::first();
         if (empty($user)) {
             dd('user not found');
         }
@@ -134,7 +134,9 @@ class ClientController extends Controller
             'booking',
             'payment',
             'responses.field', // load fields
-        ])->whereIn('status', ['approve'])->first();
+        ])->whereIn('status', ['approve'])
+        ->where('shared_code', $shared_code)
+        ->first();
         //  dd($booking);
         if (empty($booking)) {
             dd('user not found');
