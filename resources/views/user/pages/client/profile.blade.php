@@ -852,12 +852,12 @@
                 } else if (msg.type === "File") {
                     div.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.imageUrl
  || 'File'}`;
-                }else if (msg.type === "Image") {
-                    
-                                const img = document.createElement("img");
+                } else if (msg.type === "image") {
+
+                    const img = document.createElement("img");
                     img.src = msg.imageUrl;
                     img.alt = "Image message";
-                    img.style.maxWidth = "200px";  // limit size
+                    img.style.maxWidth = "200px"; // limit size
                     img.style.borderRadius = "8px"; // optional styling
                     div.appendChild(img);
                 }
