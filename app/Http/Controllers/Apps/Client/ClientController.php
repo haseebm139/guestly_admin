@@ -101,7 +101,9 @@ class ClientController extends Controller
             }
 
         }
-        $profileUrl = route('client.profile', ['shared_code' => $request->shared_code,'token' => $user->profile_link ]);
+        dd($request->shared_code, $user->profile_link);
+        $profileUrl = route('client.profile', ['shared_code' => $request->shared_code, 'token' => $user->profile_link]);
+         
         sendBookingMail($user->name, $user->last_name, $user->email, $profileUrl);
 
         return redirect()->route('client.done');
