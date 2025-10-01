@@ -122,8 +122,9 @@ class ClientController extends Controller
 
     public function profile($shared_code, $token)
     {
-        dd($shared_code, $token);
+        
         $user = User::where('profile_link', $token)->first();
+        dd($user);
         // $user = User::first();
         if (empty($user)) {
             dd('user not found');
