@@ -738,7 +738,7 @@
             let userName = "Guest";
 
             try {
-                 
+
                 const tokenResponse = await fetch('/firebase/token', {
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -753,19 +753,19 @@
                 }
 
                 const tokenData = await tokenResponse.json();
-                
+
 
                 if (!tokenData.success) {
                     throw new Error(tokenData.error || 'Failed to get Firebase token');
                 }
 
                 // Sign in to Firebase with the custom token
-                 
+
                 const userCredential = await auth.signInWithCustomToken(tokenData.firebase_token);
                 myUid = tokenData.uid;
                 userName = tokenData.name || "Guest";
 
-                 
+
 
             } catch (error) {
                 console.error('Firebase auth failed:', error);
@@ -777,7 +777,7 @@
                 // Try to sign in anonymously as fallback
                 try {
                     const anonUser = await auth.signInAnonymously();
-                     
+
                 } catch (anonError) {
                     console.error('Anonymous sign-in also failed:', anonError);
                 }
@@ -813,7 +813,7 @@
                     await initializeRoom();
                     loadExistingMessages();
                     setupMessageListener();
-                     
+
                 } catch (error) {
                     console.error('Error initializing chat:', error);
                     showChatError('Failed to initialize chat. Please refresh the page.');
@@ -844,13 +844,14 @@
                     div.appendChild(nameDiv);
                 }
                 console.log(msg);
-                
+
                 if (msg.type === "text") {
                     const textDiv = document.createElement("div");
                     textDiv.textContent = msg.text || "";
                     div.appendChild(textDiv);
                 } else if (msg.type === "image") {
-                    div.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.fileName || 'File'}`;
+                    div.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.imageUrl
+ || 'File'}`;
                 }
 
                 // Add timestamp
@@ -901,7 +902,7 @@
                         };
 
                         await db.ref(roomBase).set(roomData);
-                        
+
                     } else {
                         // Room exists, just add/update current user as member
                         const updates = {};
@@ -915,7 +916,7 @@
                         updates[`${roomBase}/meta/lastActive`] = firebase.database.ServerValue.TIMESTAMP;
 
                         await db.ref().update(updates);
-                         
+
                     }
 
                 } catch (error) {
@@ -953,7 +954,7 @@
                         [`${roomBase}/meta/lastActive`]: firebase.database.ServerValue.TIMESTAMP
                     });
 
-                    
+
                 } catch (error) {
                     console.error('Error sending message:', error);
                     showChatError('Failed to send message. Please try again.');
