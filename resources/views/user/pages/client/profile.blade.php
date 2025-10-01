@@ -843,7 +843,8 @@
                     nameDiv.textContent = msg.senderName;
                     div.appendChild(nameDiv);
                 }
-
+                console.log(msg);
+                
                 if (msg.type === "text") {
                     const textDiv = document.createElement("div");
                     textDiv.textContent = msg.text || "";
