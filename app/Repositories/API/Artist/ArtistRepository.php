@@ -68,7 +68,8 @@ class ArtistRepository implements ArtistRepositoryInterface
         // $studio_id = SpotBooking::where('artist_id', $artistId)->pluck('studio_id');
         $studioIds = SpotBooking::where('artist_id', $artistId)
             ->where('status', 'approved')  // only approved bookings
-            ->whereDate('end_date', '>=', now()) // ongoing/future bookings
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
             ->pluck('studio_id')
             ->unique()
             ->toArray();
@@ -94,22 +95,22 @@ class ArtistRepository implements ArtistRepositoryInterface
         $artistId = auth()->id();
         $longitude = auth()->user()->longitude;
         $latitude = auth()->user()->latitude;
-        
+
         return User::where('user_type', 'studio')
-        ->where('id', $id) // ✅ filter by studio ID
-        ->withCount([
-            'favoritedBy as is_favorite' => function ($q) use ($artistId) {
-                $q->where('artist_id', $artistId);
-            },
-        ])
-        ->with([
-            'supplies:id,name',
-            'stationAmenities:id,name',
-            'studioImages:id,user_id,image_path',
-            'designSpecialties:id,name',
-            'tattooStyles:id,name'
-        ]) 
-        ->selectRaw('
+            ->where('id', $id) // ✅ filter by studio ID
+            ->withCount([
+                'favoritedBy as is_favorite' => function ($q) use ($artistId) {
+                    $q->where('artist_id', $artistId);
+                },
+            ])
+            ->with([
+                'supplies:id,name',
+                'stationAmenities:id,name',
+                'studioImages:id,user_id,image_path',
+                'designSpecialties:id,name',
+                'tattooStyles:id,name',
+            ])
+            ->selectRaw('
             (6371 * acos(
                 cos(radians(?)) *
                 cos(radians(latitude)) *
@@ -118,6 +119,6 @@ class ArtistRepository implements ArtistRepositoryInterface
                 sin(radians(latitude))
             )) AS distance
         ', [$latitude, $longitude, $latitude])
-        ->first();
+            ->first();
     }
 }
