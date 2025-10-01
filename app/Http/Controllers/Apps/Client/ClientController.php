@@ -95,6 +95,11 @@ class ClientController extends Controller
                 if (! $user->hasRole('user')) {
                     $user->assignRole('user');
                 }
+                if ($user->profile_link == null) {
+                    $user->update([
+                        'profile_link' => Str::uuid(),
+                    ]);
+                }
                 $booking->update([
                     'client_id' => $user->id,
                 ]);
