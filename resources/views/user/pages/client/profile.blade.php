@@ -849,10 +849,19 @@
                     const textDiv = document.createElement("div");
                     textDiv.textContent = msg.text || "";
                     div.appendChild(textDiv);
-                } else if (msg.type === "image") {
+                } else if (msg.type === "File") {
                     div.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.imageUrl
  || 'File'}`;
+                }else if (msg.type === "Image") {
+                    
+                                const img = document.createElement("img");
+                    img.src = msg.imageUrl;
+                    img.alt = "Image message";
+                    img.style.maxWidth = "200px";  // limit size
+                    img.style.borderRadius = "8px"; // optional styling
+                    div.appendChild(img);
                 }
+
 
                 // Add timestamp
                 const timeDiv = document.createElement("div");
