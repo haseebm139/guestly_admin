@@ -849,7 +849,7 @@
                     const textDiv = document.createElement("div");
                     textDiv.textContent = msg.text || "";
                     div.appendChild(textDiv);
-                } else if (msg.type === "file") {
+                } else if (msg.type === "image") {
                     div.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.fileName || 'File'}`;
                 }
 
