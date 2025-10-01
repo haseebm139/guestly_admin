@@ -124,9 +124,8 @@ class ClientController extends Controller
     {
         
         $user = User::where('profile_link', $token)->first();
-        dd($user);
-        // $user = User::first();
-        if (empty($user)) {
+         
+        if (!isset($user)) {
             dd('user not found');
         }
         $booking = ClientBookingForm::with([
