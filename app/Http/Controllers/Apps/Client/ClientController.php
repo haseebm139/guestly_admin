@@ -136,7 +136,7 @@ class ClientController extends Controller
             'payment',
             'responses.field', // load fields
         ])
-            
+            ->where('status', ['approve', 'approved_pending_payment','pending'])    
             ->where('shared_code', $sharedCode)
             ->first();
 
