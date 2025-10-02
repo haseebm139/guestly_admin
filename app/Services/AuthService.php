@@ -47,6 +47,12 @@ class AuthService extends BaseController
                 'data'   => $data['user']->user_type
             ];
         }
+        if ($data['user']->is_active == 0) {
+            return [
+                'status'  => 'error',
+                'message' => 'Your account has been deactivated. Please contact support.'
+            ];
+        }
 
         if (isset($credentials['latitude']) && isset($credentials['longitude'])) {
             $data['user']->latitude = $credentials['latitude'];
