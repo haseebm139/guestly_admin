@@ -35,7 +35,7 @@ class AuthService extends BaseController
     {
 
         $data['user'] = $this->userRepo->findByEmail($credentials['email']);
-
+         
         if (! $data['user'] || ! Hash::check($credentials['password'], $data['user']->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Invalid credentials.'],
@@ -47,10 +47,11 @@ class AuthService extends BaseController
                 'data'   => $data['user']->user_type
             ];
         }
+        
         if ($data['user']->is_active == 0) {
             return [
                 'status'  => 'error',
-                'message' => 'Your account has been deactivated. Please contact support.'
+                'data' => 'Your account has been deactivated. Please contact support.'
             ];
         }
 

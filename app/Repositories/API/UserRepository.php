@@ -16,7 +16,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function findByEmail(string $email)
     {
-        return User::where('email', $email)->with(['activeSubscription.plan'])->first();
+        return User::withoutGlobalScope('active')->where('email', $email)->with(['activeSubscription.plan'])->first();
     }
 
     public function updateOtp(string $email, int $otp)
