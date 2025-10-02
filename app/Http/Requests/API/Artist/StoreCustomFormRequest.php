@@ -27,7 +27,7 @@ class StoreCustomFormRequest extends FormRequest
             'title' => 'nullable|string|max:255',
             'fields' => 'required|array|min:1',
             'fields.*.label' => 'required|string|max:255',
-            'fields.*.type' => 'required|in:text,email,phone,textarea,dropdown,multi_select',
+            'fields.*.type' => 'required|in:text,email,phone,textarea,dropdown,multi_select,image',
             'fields.*.options' => 'nullable|array',
             'fields.*.is_required' => 'integer|in:0,1',
             'fields.*.order' => 'integer',
