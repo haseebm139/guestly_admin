@@ -21,18 +21,18 @@ class StudioController extends BaseController
     public function update(StudioUpdateProfileRequest $request)
     {
         
-        try {
-            $studio = auth()->user();
-            $data = $request->validated();
+        $studio = auth()->user();
+        $data = $request->validated();
 
-            $updatedStudio = $this->service->updateProfile($studio->id, $data);
-            if (!$updatedStudio) {
-                return $this->sendError('Studio not found or update failed', 404);
-            }
-            return $this->sendResponse(
-                $updatedStudio,
-                'Studio profile updated successfully.'
-            );
+        $updatedStudio = $this->service->updateProfile($studio->id, $data);
+        if (!$updatedStudio) {
+            return $this->sendError('Studio not found or update failed', 404);
+        }
+        return $this->sendResponse(
+            $updatedStudio,
+            'Studio profile updated successfully.'
+        );
+        try {
         }catch (\Throwable $th) {
             return $this->sendError('Something went wrong while updating the profile', 500);
 

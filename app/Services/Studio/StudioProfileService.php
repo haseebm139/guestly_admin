@@ -37,7 +37,7 @@ class StudioProfileService
 
             $data['guest_policy'] = $this->imageService->uploadImage($data['guest_policy'], 'guest_policy', 'guest_policy');
         }
-
+            
         $this->repo->updateProfile($userId, $data);
         return $this->repo->getById($userId);
     }

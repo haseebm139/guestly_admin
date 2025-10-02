@@ -10,7 +10,7 @@ class StudioRepository implements StudioRepositoryInterface
 {
     public function updateProfile(int $userId, array $data)
     {
-        $user = User::where('id', $userId)
+        $user = User::withoutGlobalScope('active')->where('id', $userId)
             ->where('user_type', 'studio')
             ->firstOrFail();
             // ✅ Upload logo
@@ -27,7 +27,8 @@ class StudioRepository implements StudioRepositoryInterface
 
     public function getById(int $userId)
     {
-        $user = User::with(['supplies', 'stationAmenities', 'studioImages','designSpecialties','activeSubscription.plan'])->where('id', $userId)
+        $user = User::withoutGlobalScope('active')
+            ->with(['supplies', 'stationAmenities', 'studioImages','designSpecialties','activeSubscription.plan'])->where('id', $userId)
             ->where('user_type', 'studio')
             ->firstOrFail();
 
