@@ -4,16 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+// use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
-// use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany; 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -37,7 +36,9 @@ class User extends Authenticatable
         // hide sensitive stripe account id from serialization by default
         'stripe_account_id',
     ];
+
     protected $dates = ['deleted_at'];
+
     /**
      * The attributes that should be cast.
      *
@@ -48,6 +49,13 @@ class User extends Authenticatable
         'last_login_at' => 'datetime',
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope('active', function ($builder) {
+            $builder->where('is_active', 1);
+        });
+    }
+
     /**
      * Get all of the comments for the User
      *
@@ -55,35 +63,35 @@ class User extends Authenticatable
      */
     public function interests()
     {
-        return $this->hasMany(Interest::class)->select('id','name','user_id');
+        return $this->hasMany(Interest::class)->select('id', 'name', 'user_id');
     }
 
     public function videos()
     {
         return $this->hasMany(Gallery::class)
-        ->select('id','user_id','file_path','file_type','caption')
-        ->skip(0)->take(6)
-        ->orderBy('created_at','DESC')
-        ->where('file_type','video');
+            ->select('id', 'user_id', 'file_path', 'file_type', 'caption')
+            ->skip(0)->take(6)
+            ->orderBy('created_at', 'DESC')
+            ->where('file_type', 'video');
     }
+
     public function images()
     {
         return $this->hasMany(Gallery::class)
-        ->select('id','user_id','file_path','file_type','caption')
-        ->skip(0)->take(6)
-        ->orderBy('created_at','DESC')
-        ->where('file_type','image');
+            ->select('id', 'user_id', 'file_path', 'file_type', 'caption')
+            ->skip(0)->take(6)
+            ->orderBy('created_at', 'DESC')
+            ->where('file_type', 'image');
     }
+
     public function getProfilePhotoUrlAttribute()
     {
         if ($this->profile_photo_path) {
-            return asset('storage/' . $this->profile_photo_path);
+            return asset('storage/'.$this->profile_photo_path);
         }
 
         return $this->profile_photo_path;
     }
-
-
 
     /**
      * studio-specific attributes
@@ -93,7 +101,6 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Supply::class, 'studio_supply');
     }
-
 
     /**
      * The specific station amenities provided by the studio.
@@ -114,32 +121,30 @@ class User extends Authenticatable
         return $this->hasMany(StudioImage::class);
     }
 
-     public function portfolioFile()
+    public function portfolioFile()
     {
         return $this->hasMany(PortfolioFile::class);
     }
 
     public function tattooStyles()
     {
-        return $this->belongsToMany(TattooStyle::class) ;
+        return $this->belongsToMany(TattooStyle::class);
     }
 
-
-    public function spotBookingsAsArtist() {
+    public function spotBookingsAsArtist()
+    {
         return $this->hasMany(SpotBooking::class, 'artist_id');
     }
 
-    public function spotBookingsAsStudio() {
+    public function spotBookingsAsStudio()
+    {
         return $this->hasMany(SpotBooking::class, 'studio_id');
     }
-
-
 
     public function designSpecialties()
     {
         return $this->belongsToMany(DesignSpecialty::class);
     }
-
 
     public function favorites()
     {
@@ -162,6 +167,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(ClientBookingForm::class, 'artist_id');
     }
+
     public function clientBookingFormsAsStudio()
     {
         return $this->hasMany(ClientBookingForm::class, 'studio_id');
@@ -176,6 +182,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(BoostAd::class, 'user_id');
     }
+
     public function getIsBoostedAttribute()
     {
         return $this->boostAds()
@@ -184,6 +191,7 @@ class User extends Authenticatable
             ->where('end_date', '>=', now())
             ->exists();
     }
+
     public function activeBoost()
     {
         return $this->hasOne(BoostAd::class, 'user_id')
@@ -200,6 +208,6 @@ class User extends Authenticatable
     public function activeSubscription()
     {
         return $this->hasOne(\App\Models\Subscription::class)
-                    ->where('end_date', '>', now())->latest();
+            ->where('end_date', '>', now())->latest();
     }
 }
