@@ -1137,7 +1137,7 @@
                     
                     img.src = imgUrl;
                     img.alt = "Image message";
-                    img.style.maxWidth = "200px";
+                    img.style.maxWidth = "100px";
                     img.style.borderRadius = "8px";
                     img.style.cursor = "pointer";
 
