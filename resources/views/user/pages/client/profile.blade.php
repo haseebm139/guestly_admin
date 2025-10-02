@@ -1133,7 +1133,8 @@
                     imgContainer.className = "image-message";
 
                     const img = document.createElement("img");
-
+                    console.log(imgUrl);
+                    
                     img.src = imgUrl;
                     img.alt = "Image message";
                     img.style.maxWidth = "200px";
@@ -1358,7 +1359,7 @@
                 updateSendButtonState();
 
                 try {
-                    showTemporaryMessage(`Uploading ${files.length} image(s)...`, 'info');
+                    showTemporaryMessage(`Uploading images...`, 'info');
 
                     // Upload all files in parallel
                     const uploadPromises = Array.from(files).map(file => uploadSingleFile(file));
@@ -1383,14 +1384,14 @@
                     if (successfulUploads.length > 0) {
                         showImagesPreview(successfulUploads);
                         showTemporaryMessage(
-                            `Successfully uploaded ${successfulUploads.length} image(s)! Click send to share.`,
+                            `Successfully uploaded image! Click send to share.`,
                             'success'
                         );
                     }
 
                     if (failedUploads.length > 0) {
                         showTemporaryMessage(
-                            `Failed to upload ${failedUploads.length} image(s): ${failedUploads.join(', ')}`,
+                            `Failed to upload image: ${failedUploads.join(', ')}`,
                             'error'
                         );
                     }
@@ -1496,7 +1497,7 @@
 
                     // Clear the pending uploads after successful send
                     clearPendingUploads();
-                    showTemporaryMessage(`Successfully sent ${pendingUploads.length} image(s)!`, 'success');
+                    showTemporaryMessage(`Successfully sent image.`, 'success');
 
                 } catch (error) {
                     console.error('Error sending image message:', error);
@@ -1534,7 +1535,7 @@
                     if (pendingUploads.length === 0) {
                         clearPendingUploads();
                     } else {
-                        showTemporaryMessage('Image removed. ' + pendingUploads.length + ' image(s) remaining.',
+                        showTemporaryMessage('Image removed from queue.',
                             'info');
                     }
                 }
