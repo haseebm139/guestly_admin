@@ -108,7 +108,7 @@ class ClientController extends Controller
         }
         // dd($request->shared_code, $user->profile_link);
         $profileUrl = route('client.profile', ['shared_code' => $request->shared_code, 'token' => $user->profile_link]);
-         
+
         sendBookingMail($user->name, $user->last_name, $user->email, $profileUrl);
 
         return redirect()->route('client.done');
@@ -136,7 +136,7 @@ class ClientController extends Controller
             'payment',
             'responses.field', // load fields
         ])
-            // ->where('status', ['approve', 'approved_pending_payment','pending'])    
+            // ->where('status', ['approve', 'approved_pending_payment','pending'])
             ->where('shared_code', $sharedCode)
             ->first();
 
@@ -232,6 +232,31 @@ class ClientController extends Controller
             'message' => 'Deposit saved',
             'booking' => $booking,
             'payment_id' => $payment->id,
+        ]);
+    }
+
+    public function imageUpload(Request $request)
+    {
+        
+        $validator = \Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $file = $request->file('image');
+        $filename = 'chat-images-'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+        $file->move(public_path('chat_images/clients'), $filename);
+         
+        $path = 'chat_images/clients'.'/'.$filename;
+
+        return response()->json([
+            'success' => true,
+            'url' => asset($path),
+            'path' => $path,
+            'message' => 'Image uploaded successfully.',
         ]);
     }
 }

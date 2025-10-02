@@ -262,6 +262,258 @@
             background: #fff3cd;
             color: #b58100
         }
+
+        .image-preview {
+            border-left: 4px solid #28a745;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .temporary-message {
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+
+
+
+
+        /* Message Groups */
+        .message-group {
+            display: flex;
+            margin-bottom: 2px;
+            padding: 2px 16px;
+        }
+
+        .message-group.mine {
+            justify-content: flex-end;
+        }
+
+        .message-group.theirs {
+            justify-content: flex-start;
+        }
+
+        .message-group.grouped {
+            margin-bottom: 1px;
+        }
+
+        .message-group.grouped .chat-bubble {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .message-group.mine:not(.grouped) .chat-bubble {
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-group.theirs:not(.grouped) .chat-bubble {
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Chat Bubbles */
+        .chat-bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            animation: messageSlide 0.3s ease;
+        }
+
+        .chat-bubble.sent {
+            background: #28a745;
+            color: white;
+        }
+
+        .chat-bubble.received {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        /* Message Meta */
+        .message-meta {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 4px;
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .message-time {
+            font-size: 11px;
+        }
+
+        .message-status {
+            display: inline-flex;
+        }
+
+        /* Smooth scrolling */
+        #chat-area {
+            scroll-behavior: smooth;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            border-left: 4px solid #28a745;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Temporary Messages */
+        .temporary-message {
+            animation: fadeInOut 3s ease-in-out;
+            margin: 8px 16px;
+        }
+
+        /* Animations */
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            10%,
+            90% {
+                opacity: 1;
+            }
+        }
+
+        /* Multiple Images Preview */
+        .images-preview {
+            border-left: 4px solid #28a745;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 4px;
+            background: white;
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .image-info {
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .file-name {
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .btn-remove-image {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            background: #dc3545;
+            color: white;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .btn-remove-image:hover {
+            background: #c82333;
+        }
+
+        /* Multiple Images in Chat */
+        .multiple-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 100%;
+        }
+
+        .single-image-container {
+            flex: 1 1 calc(50% - 4px);
+            min-width: 0;
+        }
+
+        .single-image-container img {
+            width: 100%;
+            height: auto;
+            max-height: 150px;
+            object-fit: cover;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .temporary-message {
+            animation: fadeInOut 3s ease-in-out;
+            margin: 8px 16px;
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            10%,
+            90% {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
@@ -520,7 +772,9 @@
                     <!-- Input -->
                     <div class="chat-input-area mt-3">
                         <div class="chat-input-group d-flex">
-                            <button class="btn attachment-btn" id="attach-btn" type="button" title="Attach file">
+
+                            <button class="btn attachment-btn" id="attach-btn" type="button" title="Attach file"
+                                data-upload-url="{{ route('chat.uploadImage') }}">
                                 <i class="bi bi-paperclip"></i>
                             </button>
                             <input type="text" id="chat-input" class="form-control mx-2"
@@ -738,7 +992,6 @@
             let userName = "Guest";
 
             try {
-
                 const tokenResponse = await fetch('/firebase/token', {
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -754,30 +1007,22 @@
 
                 const tokenData = await tokenResponse.json();
 
-
                 if (!tokenData.success) {
                     throw new Error(tokenData.error || 'Failed to get Firebase token');
                 }
-
-                // Sign in to Firebase with the custom token
 
                 const userCredential = await auth.signInWithCustomToken(tokenData.firebase_token);
                 myUid = tokenData.uid;
                 userName = tokenData.name || "Guest";
 
-
-
             } catch (error) {
                 console.error('Firebase auth failed:', error);
-                // Fallback to completely random guest mode
                 myUid = "guest_" + Math.random().toString(36).slice(2) + '_' + Date.now();
                 userName = "Guest";
                 console.warn('Using fallback guest mode with UID:', myUid);
 
-                // Try to sign in anonymously as fallback
                 try {
-                    const anonUser = await auth.signInAnonymously();
-
+                    await auth.signInAnonymously();
                 } catch (anonError) {
                     console.error('Anonymous sign-in also failed:', anonError);
                 }
@@ -792,8 +1037,6 @@
 
             const clientId = chatTab.dataset.clientId;
             const artistId = chatTab.dataset.artistId;
-
-            // Use the client's name from booking data
             const clientName = "{{ $booking->client->name ?? 'Client' }}";
 
             // RTDB paths
@@ -804,6 +1047,15 @@
             const chatArea = document.getElementById("chat-area");
             const inputEl = document.getElementById("chat-input");
             const sendBtn = document.getElementById("send-btn");
+            const attachBtn = document.getElementById('attach-btn');
+
+            // State management
+            let pendingUploads = []; // Changed to array for multiple images
+            let fileInputEl;
+            let lastMessageSender = null;
+            let lastMessageTime = null;
+            let isScrolledToBottom = true;
+            let isUploading = false;
 
             // Initialize chat functionality
             initializeChat();
@@ -813,72 +1065,596 @@
                     await initializeRoom();
                     loadExistingMessages();
                     setupMessageListener();
-
+                    setupScrollListener();
                 } catch (error) {
                     console.error('Error initializing chat:', error);
-                    showChatError('Failed to initialize chat. Please refresh the page.');
+                    showTemporaryMessage('Failed to initialize chat. Please refresh the page.', 'error');
                 }
             }
 
-            // 📩 Listen for new messages in realtime
+            // 📩 Enhanced message listener with status tracking
             function setupMessageListener() {
                 db.ref(msgsBase).orderByChild("timestamp").on("child_added", snap => {
                     const msg = snap.val();
-                    renderMessage(msg);
+                    renderMessage(msg, snap.key);
+
+                    // Mark as delivered and read if it's not our message
+                    if (msg.senderId !== myUid) {
+                        markMessageAsRead(snap.key);
+                    }
+                });
+
+                // Listen for message updates (status changes)
+                db.ref(msgsBase).on("child_changed", snap => {
+                    const msg = snap.val();
+                    updateMessageStatus(snap.key, msg);
                 });
             }
 
-            // Render chat bubble
-            function renderMessage(msg) {
-                if (!chatArea) return;
-
-                const div = document.createElement("div");
-                const isMine = msg.senderId === myUid;
-                div.className = "chat-bubble " + (isMine ? "sent" : "received");
-
-                // Add sender name for received messages
-                if (!isMine && msg.senderName) {
-                    const nameDiv = document.createElement("div");
-                    nameDiv.className = "sender-name small text-muted mb-1";
-                    nameDiv.textContent = msg.senderName;
-                    div.appendChild(nameDiv);
-                }
-                console.log(msg);
-
-                if (msg.type === "text") {
-                    const textDiv = document.createElement("div");
-                    textDiv.textContent = msg.text || "";
-                    div.appendChild(textDiv);
-                } else if (msg.type === "File") {
-                    div.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.imageUrl
- || 'File'}`;
-                } else if (msg.type === "image") {
-
-                    const img = document.createElement("img");
-                    img.src = msg.imageUrl;
-                    img.alt = "Image message";
-                    img.style.maxWidth = "200px"; // limit size
-                    img.style.borderRadius = "8px"; // optional styling
-                    div.appendChild(img);
-                }
-
-
-                // Add timestamp
-                const timeDiv = document.createElement("div");
-                timeDiv.className = "message-time small mt-1 text-end";
-                timeDiv.textContent = formatTime(msg.timestamp);
-                div.appendChild(timeDiv);
-
-                chatArea.appendChild(div);
-                chatArea.scrollTop = chatArea.scrollHeight;
+            // 👀 Mark messages as read
+            function markMessageAsRead(messageId) {
+                db.ref(`${msgsBase}/${messageId}/readBy/${myUid}`).set(true);
             }
 
-            function formatTime(timestamp) {
-                if (!timestamp) return '';
-                const date = new Date(timestamp);
-                return date.toLocaleTimeString([], {
+            // 💬 Enhanced message rendering with grouping and status
+            function renderMessage(msg, messageId) {
+                if (!chatArea) return;
+
+                const isMine = msg.senderId === myUid;
+                const messageTime = msg.timestamp ? new Date(msg.timestamp) : new Date();
+
+                // Check if we should group with previous message
+                const shouldGroup = shouldGroupWithPrevious(msg, messageTime, isMine);
+
+                const messageGroup = document.createElement("div");
+                messageGroup.className =
+                    `message-group ${isMine ? 'mine' : 'theirs'} ${shouldGroup ? 'grouped' : ''}`;
+                messageGroup.dataset.messageId = messageId;
+
+                const bubble = document.createElement("div");
+                bubble.className = `chat-bubble ${isMine ? "sent" : "received"}`;
+
+                // Message content
+                if (msg.type === "text") {
+                    const textDiv = document.createElement("div");
+                    textDiv.className = "message-text";
+                    textDiv.textContent = msg.text || "";
+                    bubble.appendChild(textDiv);
+                } else if (msg.type === "File") {
+                    bubble.innerHTML = `<i class="bi bi-file-earmark"></i> ${msg.imageUrl || 'File'}`;
+                } else if (msg.type === "image") {
+                    const imgContainer = document.createElement("div");
+                    let imgUrl = msg.imageUrl;
+
+                    // ✅ Only prepend base URL if it's not already absolute
+                    if (!/^https?:\/\//i.test(imgUrl)) {
+                        imgUrl = window.location.origin.replace(/\/$/, "") + "/" + imgUrl.replace(/^\//, "");
+                    }
+                    imgContainer.className = "image-message";
+
+                    const img = document.createElement("img");
+
+                    img.src = imgUrl;
+                    img.alt = "Image message";
+                    img.style.maxWidth = "200px";
+                    img.style.borderRadius = "8px";
+                    img.style.cursor = "pointer";
+
+                    img.addEventListener('click', () => {
+                        window.open(imgUrl, '_blank');
+                    });
+
+                    imgContainer.appendChild(img);
+                    bubble.appendChild(imgContainer);
+                } else if (msg.type === "multiple_images") {
+                    const imagesContainer = document.createElement("div");
+                    imagesContainer.className = "multiple-images";
+
+                    if (msg.images && Array.isArray(msg.images)) {
+                        msg.images.forEach((imageObj, index) => {
+                            const singleImageContainer = document.createElement("div");
+                            singleImageContainer.className = "single-image-container";
+
+                            const img = document.createElement("img");
+                            img.src = imageObj.url;
+                            img.alt = `Image ${index + 1}`;
+                            img.style.maxWidth = "150px";
+                            img.style.borderRadius = "8px";
+                            img.style.cursor = "pointer";
+                            img.style.margin = "2px";
+
+                            img.addEventListener('click', () => {
+                                window.open(imageObj.url, '_blank');
+                            });
+
+                            singleImageContainer.appendChild(img);
+                            imagesContainer.appendChild(singleImageContainer);
+                        });
+                    }
+
+                    bubble.appendChild(imagesContainer);
+                }
+
+                // Message status and timestamp
+                const metaDiv = document.createElement("div");
+                metaDiv.className = "message-meta";
+
+                const timeDiv = document.createElement("span");
+                timeDiv.className = "message-time";
+                timeDiv.textContent = formatMessageTime(messageTime);
+                timeDiv.title = messageTime.toLocaleString();
+
+                // Status indicator for my messages
+                if (isMine) {
+                    const statusDiv = document.createElement("span");
+                    statusDiv.className = "message-status";
+                    statusDiv.innerHTML = getStatusIcon(msg);
+                    metaDiv.appendChild(statusDiv);
+                }
+
+                metaDiv.appendChild(timeDiv);
+                bubble.appendChild(metaDiv);
+
+                messageGroup.appendChild(bubble);
+                chatArea.appendChild(messageGroup);
+
+                // Update last message info for grouping
+                lastMessageSender = msg.senderId;
+                lastMessageTime = messageTime;
+
+                // Auto-scroll if at bottom
+                if (isScrolledToBottom) {
+                    smoothScrollToBottom();
+                }
+            }
+
+            function shouldGroupWithPrevious(currentMsg, currentTime, isMine) {
+                if (!lastMessageSender || !lastMessageTime) return false;
+
+                const isSameSender = lastMessageSender === currentMsg.senderId;
+                if (!isSameSender) return false;
+
+                // Group if within 5 minutes and same sender
+                const timeDiff = currentTime - lastMessageTime;
+                return timeDiff < 5 * 60 * 1000; // 5 minutes
+            }
+
+            function formatMessageTime(date) {
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / (3600000 * 24));
+
+                if (diffMins < 1) return 'Now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return date.toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit'
+                });
+                if (diffDays < 7) return date.toLocaleDateString([], {
+                    weekday: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            function getStatusIcon(msg) {
+                if (msg.readBy && Object.keys(msg.readBy).length > 0) {
+                    return '<i class="bi bi-check2-all text-primary" title="Read"></i>';
+                } else if (msg.delivered) {
+                    return '<i class="bi bi-check2-all" title="Delivered"></i>';
+                } else {
+                    return '<i class="bi bi-check2" title="Sent"></i>';
+                }
+            }
+
+            function updateMessageStatus(messageId, msg) {
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (!messageElement) return;
+
+                const statusElement = messageElement.querySelector('.message-status');
+                if (statusElement) {
+                    statusElement.innerHTML = getStatusIcon(msg);
+                }
+            }
+
+            // 🚀 Enhanced send message with delivery tracking
+            async function sendMessage() {
+                // If there are pending uploads (images), send them instead of text
+                if (pendingUploads.length > 0) {
+                    await sendPendingImages();
+                    return;
+                }
+
+                const text = inputEl.value.trim();
+                if (!text) return;
+
+                const messageId = db.ref(msgsBase).push().key;
+                const timestamp = Date.now();
+                const payload = {
+                    senderId: myUid,
+                    senderName: clientName,
+                    text: text,
+                    type: "text",
+                    timestamp: timestamp,
+                    messageId: messageId
+                };
+
+                inputEl.value = "";
+                updateSendButtonState();
+
+                try {
+                    // Save message
+                    await db.ref(`${msgsBase}/${messageId}`).set(payload);
+
+                    // Update room last message
+                    await db.ref().update({
+                        [`${roomBase}/lastMessage/text`]: text,
+                        [`${roomBase}/lastMessage/timestamp`]: timestamp,
+                        [`${roomBase}/lastMessage/senderId`]: myUid,
+                        [`${roomBase}/lastMessage/senderName`]: clientName,
+                        [`${roomBase}/meta/lastActive`]: timestamp
+                    });
+
+                    // Mark as delivered after a short delay
+                    setTimeout(() => {
+                        db.ref(`${msgsBase}/${messageId}/delivered`).set(true);
+                    }, 1000);
+
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                    showTemporaryMessage('Failed to send message. Please try again.', 'error');
+                    inputEl.value = text;
+                    updateSendButtonState();
+                }
+            }
+
+            // 🖼️ Enhanced image handling for multiple images
+            function ensureFileInput() {
+                if (fileInputEl) return;
+                fileInputEl = document.createElement('input');
+                fileInputEl.type = 'file';
+                fileInputEl.accept = 'image/*';
+                fileInputEl.multiple = true; // Enable multiple selection
+                fileInputEl.style.display = 'none';
+                document.body.appendChild(fileInputEl);
+
+                fileInputEl.addEventListener('change', handleFileSelect);
+            }
+
+            async function handleFileSelect(e) {
+                const files = e.target.files;
+                if (!files || files.length === 0) return;
+
+                // Validate number of files (max 10)
+                if (files.length > 10) {
+                    showTemporaryMessage('Maximum 10 images allowed at once.', 'error');
+                    e.target.value = '';
+                    return;
+                }
+
+                // Validate each file
+                for (let file of files) {
+                    if (!file.type.startsWith('image/')) {
+                        showTemporaryMessage('Please select only image files.', 'error');
+                        e.target.value = '';
+                        return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        showTemporaryMessage(`Image ${file.name} is too large (max 5MB).`, 'error');
+                        e.target.value = '';
+                        return;
+                    }
+                }
+
+                isUploading = true;
+                updateSendButtonState();
+
+                try {
+                    showTemporaryMessage(`Uploading ${files.length} image(s)...`, 'info');
+
+                    // Upload all files in parallel
+                    const uploadPromises = Array.from(files).map(file => uploadSingleFile(file));
+                    const uploadResults = await Promise.allSettled(uploadPromises);
+
+                    // Process results
+                    const successfulUploads = [];
+                    const failedUploads = [];
+
+                    uploadResults.forEach((result, index) => {
+                        if (result.status === 'fulfilled' && result.value) {
+                            successfulUploads.push(result.value);
+                        } else {
+                            failedUploads.push(files[index].name);
+                        }
+                    });
+
+                    // Add successful uploads to pending
+                    pendingUploads = [...pendingUploads, ...successfulUploads];
+
+                    // Show results
+                    if (successfulUploads.length > 0) {
+                        showImagesPreview(successfulUploads);
+                        showTemporaryMessage(
+                            `Successfully uploaded ${successfulUploads.length} image(s)! Click send to share.`,
+                            'success'
+                        );
+                    }
+
+                    if (failedUploads.length > 0) {
+                        showTemporaryMessage(
+                            `Failed to upload ${failedUploads.length} image(s): ${failedUploads.join(', ')}`,
+                            'error'
+                        );
+                    }
+
+                } catch (err) {
+                    console.error('Image upload failed:', err);
+                    showTemporaryMessage('Upload failed. Please try again.', 'error');
+                } finally {
+                    isUploading = false;
+                    updateSendButtonState();
+                    e.target.value = '';
+                }
+            }
+
+            async function uploadSingleFile(file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+                const uploadUrl = attachBtn?.dataset.uploadUrl || '/chat/upload-image';
+
+                const resp = await fetch(uploadUrl, {
+                    method: 'POST',
+                    headers: csrf ? {
+                        'X-CSRF-TOKEN': csrf
+                    } : undefined,
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+
+                if (!resp.ok) {
+                    throw new Error(`HTTP ${resp.status}`);
+                }
+
+                const data = await resp.json();
+                const imageUrl = data?.url || data?.data?.url || data?.payload?.url;
+
+                if (!imageUrl) {
+                    throw new Error('Upload response missing url');
+                }
+
+                return {
+                    imageUrl: imageUrl,
+                    fileName: file.name,
+                    type: 'image'
+                };
+            }
+
+            async function sendPendingImages() {
+                if (pendingUploads.length === 0) return;
+
+                const messageId = db.ref(msgsBase).push().key;
+                const timestamp = Date.now();
+
+                try {
+                    let payload;
+
+                    if (pendingUploads.length === 1) {
+                        // Single image
+                        payload = {
+                            senderId: myUid,
+                            senderName: clientName,
+                            senderRole: 'client',
+                            type: 'image',
+                            imageUrl: pendingUploads[0].imageUrl,
+                            timestamp: timestamp,
+                            messageId: messageId
+                        };
+                    } else {
+                        // Multiple images
+                        payload = {
+                            senderId: myUid,
+                            senderName: clientName,
+                            senderRole: 'client',
+                            type: 'multiple_images',
+                            images: pendingUploads.map(upload => ({
+                                url: upload.imageUrl,
+                                fileName: upload.fileName
+                            })),
+                            timestamp: timestamp,
+                            messageId: messageId
+                        };
+                    }
+
+                    // Save message
+                    await db.ref(`${msgsBase}/${messageId}`).set(payload);
+
+                    // Update room last message
+                    const lastMessageText = pendingUploads.length === 1 ? '[Image]' :
+                        `[${pendingUploads.length} Images]`;
+                    await db.ref().update({
+                        [`${roomBase}/lastMessage/text`]: lastMessageText,
+                        [`${roomBase}/lastMessage/timestamp`]: timestamp,
+                        [`${roomBase}/lastMessage/senderId`]: myUid,
+                        [`${roomBase}/lastMessage/senderName`]: clientName,
+                        [`${roomBase}/meta/lastActive`]: timestamp
+                    });
+
+                    // Mark as delivered after a short delay
+                    setTimeout(() => {
+                        db.ref(`${msgsBase}/${messageId}/delivered`).set(true);
+                    }, 1000);
+
+                    // Clear the pending uploads after successful send
+                    clearPendingUploads();
+                    showTemporaryMessage(`Successfully sent ${pendingUploads.length} image(s)!`, 'success');
+
+                } catch (error) {
+                    console.error('Error sending image message:', error);
+                    showTemporaryMessage('Failed to send images. Please try again.', 'error');
+                }
+            }
+
+            function cancelPendingUploads() {
+                clearPendingUploads();
+                showTemporaryMessage('Image uploads cancelled.', 'info');
+            }
+
+            function clearPendingUploads() {
+                pendingUploads = [];
+                updateSendButtonState();
+
+                // Remove preview if exists
+                const preview = document.getElementById('images-preview');
+                if (preview) {
+                    preview.remove();
+                }
+
+                // Show attachment button again
+                if (attachBtn) {
+                    attachBtn.style.display = 'block';
+                }
+            }
+
+            function removeSingleImage(index) {
+                if (index >= 0 && index < pendingUploads.length) {
+                    pendingUploads.splice(index, 1);
+                    updateImagesPreview();
+                    updateSendButtonState();
+
+                    if (pendingUploads.length === 0) {
+                        clearPendingUploads();
+                    } else {
+                        showTemporaryMessage('Image removed. ' + pendingUploads.length + ' image(s) remaining.',
+                            'info');
+                    }
+                }
+            }
+
+            function showImagesPreview(uploads) {
+                // Hide attachment button
+                if (attachBtn) {
+                    attachBtn.style.display = 'none';
+                }
+
+                // Remove existing preview if any
+                const existingPreview = document.getElementById('images-preview');
+                if (existingPreview) {
+                    existingPreview.remove();
+                }
+
+                // Create preview element
+                const preview = document.createElement('div');
+                preview.id = 'images-preview';
+                preview.className = 'images-preview alert alert-light mb-2';
+
+                let previewHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="fw-bold">
+                    <i class="bi bi-images"></i> 
+                    ${uploads.length} Image(s) Ready to Send
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger" id="cancel-all-uploads">
+                    <i class="bi bi-x-circle"></i> Cancel All
+                </button>
+            </div>
+            <div class="images-grid">
+        `;
+
+                uploads.forEach((upload, index) => {
+                    previewHTML += `
+                <div class="image-preview-item">
+                    <img src="${upload.imageUrl}" alt="Preview" class="preview-img">
+                    <div class="image-info small">
+                        <div class="file-name">${upload.fileName}</div>
+                    </div>
+                    <button type="button" class="btn-remove-image" data-index="${index}">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            `;
+                });
+
+                previewHTML += `</div>`;
+                preview.innerHTML = previewHTML;
+
+                // Insert preview above input
+                const inputContainer = inputEl.closest('.chat-input-container') || inputEl.parentElement;
+                inputContainer.parentNode.insertBefore(preview, inputContainer);
+
+                // Add event listeners
+                document.getElementById('cancel-all-uploads').addEventListener('click', cancelPendingUploads);
+
+                const removeButtons = preview.querySelectorAll('.btn-remove-image');
+                removeButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                        removeSingleImage(index);
+                    });
+                });
+            }
+
+            function updateImagesPreview() {
+                if (pendingUploads.length === 0) {
+                    clearPendingUploads();
+                    return;
+                }
+
+                showImagesPreview(pendingUploads);
+            }
+
+            // Update send button state based on content
+            function updateSendButtonState() {
+                if (!sendBtn) return;
+
+                const hasText = inputEl.value.trim().length > 0;
+                const hasPendingUploads = pendingUploads.length > 0;
+                const shouldDisable = isUploading || (!hasText && !hasPendingUploads);
+
+                sendBtn.disabled = shouldDisable;
+
+                // Update button text and style for image upload
+                if (hasPendingUploads) {
+                    const count = pendingUploads.length;
+                    sendBtn.innerHTML = '<i class="bi bi-send-fill"></i>';
+                    sendBtn.classList.add('btn-primary');
+                    sendBtn.classList.remove('btn-success');
+                } else if (isUploading) {
+                    sendBtn.innerHTML = `<i class="bi bi-hourglass-split"></i> Uploading...`;
+                    sendBtn.disabled = true;
+                } else {
+                    sendBtn.innerHTML = '<i class="bi bi-send-fill"></i>';
+                    sendBtn.classList.add('btn-primary');
+                    sendBtn.classList.remove('btn-success');
+                }
+            }
+
+            // 🔄 Scroll management
+            function setupScrollListener() {
+                if (!chatArea) return;
+
+                chatArea.addEventListener('scroll', () => {
+                    const tolerance = 10;
+                    isScrolledToBottom =
+                        chatArea.scrollHeight - chatArea.clientHeight <= chatArea.scrollTop + tolerance;
+                });
+            }
+
+            function smoothScrollToBottom() {
+                if (!chatArea) return;
+
+                chatArea.scrollTo({
+                    top: chatArea.scrollHeight,
+                    behavior: 'smooth'
                 });
             }
 
@@ -888,9 +1664,8 @@
                     const roomSnapshot = await db.ref(roomBase).once('value');
 
                     if (!roomSnapshot.exists()) {
-                        // Create room structure if it doesn't exist
                         const roomData = {
-                            createdAt: firebase.database.ServerValue.TIMESTAMP,
+                            createdAt: Date.now(),
                             uids: {
                                 client: myUid
                             },
@@ -898,7 +1673,7 @@
                                 [myUid]: {
                                     name: clientName,
                                     role: 'client',
-                                    joinedAt: firebase.database.ServerValue.TIMESTAMP,
+                                    joinedAt: Date.now(),
                                     isGuest: myUid.startsWith('guest_')
                                 }
                             },
@@ -906,73 +1681,29 @@
                                 clientId: clientId,
                                 artistId: artistId,
                                 clientName: clientName,
-                                lastActive: firebase.database.ServerValue.TIMESTAMP
+                                lastActive: Date.now()
                             }
                         };
-
                         await db.ref(roomBase).set(roomData);
-
                     } else {
-                        // Room exists, just add/update current user as member
                         const updates = {};
                         updates[`${roomBase}/uids/client`] = myUid;
                         updates[`${roomBase}/members/${myUid}`] = {
                             name: clientName,
                             role: 'client',
-                            joinedAt: firebase.database.ServerValue.TIMESTAMP,
+                            joinedAt: Date.now(),
                             isGuest: myUid.startsWith('guest_')
                         };
-                        updates[`${roomBase}/meta/lastActive`] = firebase.database.ServerValue.TIMESTAMP;
-
+                        updates[`${roomBase}/meta/lastActive`] = Date.now();
                         await db.ref().update(updates);
-
                     }
-
                 } catch (error) {
                     console.error('Error initializing room:', error);
                     throw error;
                 }
             }
 
-            // 🚀 Send message
-            async function sendMessage() {
-                const text = inputEl.value.trim();
-                if (!text) return;
-
-                const payload = {
-                    senderId: myUid,
-                    senderName: clientName,
-                    text: text,
-                    type: "text",
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                };
-
-                inputEl.value = "";
-
-                try {
-                    // Save message
-                    const messageRef = await db.ref(msgsBase).push(payload);
-
-                    // Update room last message
-                    await db.ref().update({
-                        [`${roomBase}/lastMessage/text`]: text,
-                        [`${roomBase}/lastMessage/timestamp`]: firebase.database.ServerValue
-                            .TIMESTAMP,
-                        [`${roomBase}/lastMessage/senderId`]: myUid,
-                        [`${roomBase}/lastMessage/senderName`]: clientName,
-                        [`${roomBase}/meta/lastActive`]: firebase.database.ServerValue.TIMESTAMP
-                    });
-
-
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                    showChatError('Failed to send message. Please try again.');
-                    // Restore the message if sending failed
-                    inputEl.value = text;
-                }
-            }
-
-            // Load existing messages
+            // Load existing messages with grouping
             async function loadExistingMessages() {
                 try {
                     const snapshot = await db.ref(msgsBase).orderByChild("timestamp").once('value');
@@ -985,36 +1716,47 @@
                         });
                     });
 
-                    // Sort by timestamp
                     messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
-                    // Clear and render all messages
                     if (chatArea) {
                         chatArea.innerHTML = '';
                         if (messages.length === 0) {
                             const emptyDiv = document.createElement("div");
-                            emptyDiv.className = "text-center text-muted small py-4";
+                            emptyDiv.className = "empty-chat text-center text-muted small py-4";
                             emptyDiv.textContent = "No messages yet. Start the conversation!";
                             chatArea.appendChild(emptyDiv);
                         } else {
-                            messages.forEach(msg => renderMessage(msg));
+                            // Reset grouping state
+                            lastMessageSender = null;
+                            lastMessageTime = null;
+
+                            messages.forEach(msg => renderMessage(msg, msg.id));
+                            smoothScrollToBottom();
                         }
                     }
 
                 } catch (error) {
                     console.error('Error loading messages:', error);
-                    showChatError('Failed to load messages.');
+                    showTemporaryMessage('Failed to load messages.', 'error');
                 }
             }
 
-            // Show error message in chat area
-            function showChatError(message) {
+            // Show temporary message
+            function showTemporaryMessage(message, type = 'info') {
                 if (!chatArea) return;
 
-                const errorDiv = document.createElement("div");
-                errorDiv.className = "alert alert-warning small text-center";
-                errorDiv.textContent = message;
-                chatArea.appendChild(errorDiv);
+                const messageDiv = document.createElement("div");
+                messageDiv.className = `temporary-message alert alert-${type} small text-center`;
+                messageDiv.textContent = message;
+                chatArea.appendChild(messageDiv);
+
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 3000);
+
+                smoothScrollToBottom();
             }
 
             // Event listeners
@@ -1030,22 +1772,25 @@
                     }
                 });
 
-                // Enable send button only when there's text
-                inputEl.addEventListener("input", () => {
-                    if (sendBtn) {
-                        sendBtn.disabled = !inputEl.value.trim();
-                    }
+                inputEl.addEventListener("input", updateSendButtonState);
+            }
+
+            if (attachBtn) {
+                attachBtn.addEventListener('click', () => {
+                    ensureFileInput();
+                    fileInputEl.click();
                 });
             }
+
+            // Initialize send button state
+            updateSendButtonState();
 
             // Auto-scroll when tab is shown
             const messagesTab = document.getElementById('messages-tab');
             if (messagesTab) {
                 messagesTab.addEventListener('shown.bs.tab', function() {
                     setTimeout(() => {
-                        if (chatArea) {
-                            chatArea.scrollTop = chatArea.scrollHeight;
-                        }
+                        smoothScrollToBottom();
                     }, 100);
                 });
             }

@@ -51,7 +51,7 @@ Route::get('/booking/done', [ClientController::class, 'thankyouPage'])->name('cl
 Route::get('/client/{shared_code}/profile/{token}', [ClientController::class, 'profile'])->name('client.profile');
 Route::post('/client/booking/{id}/payment', [ClientController::class, 'payDeposit'])
     ->name('client.booking.payment');
-
+Route::post('chat/imageUpload', [ClientController::class, 'imageUpload'])->name('chat.uploadImage');
 Route::post('/client/booking/{id}/payment-intent', [ClientController::class, 'createPaymentIntent'])
     ->name('client.booking.createPaymentIntent');
 Route::get('/firebase/token', [FirebaseAuthController::class, 'getFirebaseToken']);
