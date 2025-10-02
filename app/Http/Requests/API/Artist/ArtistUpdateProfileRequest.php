@@ -41,6 +41,7 @@ class ArtistUpdateProfileRequest extends FormRequest
             'tattoo_style' => 'nullable|array',
             'avatar'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'tattoo_style.*' => 'integer|exists:tattoo_styles,id',
+            'is_active' => 'nullable|boolean',
 
         ];
     }
