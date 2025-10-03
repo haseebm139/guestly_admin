@@ -624,7 +624,7 @@ if (!function_exists('renderField')) {
 
         // Stable id/name
         $fieldBase = \Illuminate\Support\Str::snake($field->label ?? 'field');
-        $baseName = $fieldBase . '|' . ($field->id ?? \Illuminate\Support\Str::random(6));
+        $baseName = $fieldBase . '|' . ($field->id ?? \Illuminate\Support\Str::random(6)) . '|' . $type;
         $inputId = $baseName;
 
         // Laravel errors
@@ -783,7 +783,7 @@ if (!function_exists('renderField')) {
                 </div>';
                 break;
 
-            case 'images':
+            case 'image':
                 // Multi image uploader (UI only). Controller must accept an array input name.
                 $maxFiles = (int)($field->max_files ?? 8);
                 $maxSizeMb = (int)($field->max_size_mb ?? 5); // each
@@ -937,6 +937,67 @@ if (!function_exists('renderTableField')) {
                         <span class="detail-label">' . $label . '</span>
                     </div>
                     <div class="detail-value d-flex flex-wrap">' . $chips . '</div>
+                </li>';
+                break;
+
+            case 'image':
+                // Handle different data formats
+                $images = [];
+                
+                if (is_string($value)) {
+                    // Try to decode JSON string
+                    $decoded = json_decode($value, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        $images = $decoded;
+                    }
+                } elseif (is_array($value)) {
+                    // Value is already an array
+                    $images = $value;
+                }
+                
+                if (!empty($images) && is_array($images)) {
+                    $imageHtml = '<div class="image-gallery row g-2">';
+                    foreach ($images as $image) {
+                        // Handle both old format (string) and new format (array with metadata)
+                        if (is_array($image)) {
+                            $imagePath = $image['path'] ?? $image['url'] ?? '';
+                            $originalName = $image['original_name'] ?? 'Image';
+                        } else {
+                            $imagePath = (string) $image;
+                            $originalName = 'Image';
+                        }
+                        
+                        // Ensure we have a valid path
+                        if (!empty($imagePath) && is_string($imagePath)) {
+                            $imageHtml .= '<div class="col-md-3 col-sm-4 col-6">
+                                <div class="position-relative">
+                                    <img src="' . asset($imagePath) . '" 
+                                         class="img-thumbnail w-100" 
+                                         style="height: 100px; object-fit: cover; cursor: pointer;"
+                                         onclick="window.open(\'' . asset($imagePath) . '\', \'_blank\')"
+                                         title="Click to view full size">
+                                    <div class="position-absolute top-0 end-0 p-1">
+                                        <span class="badge bg-dark bg-opacity-75 small">' . 
+                                        e(substr($originalName, 0, 10)) . '...' . 
+                                        '</span>
+                                    </div>
+                                </div>
+                            </div>';
+                        }
+                    }
+                    $imageHtml .= '</div>';
+                    $displayValue = $imageHtml;
+                } else {
+                    $displayValue = $placeholder;
+                }
+
+                $html .= '
+                <li class="detail-item py-3">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-images text-muted"></i>
+                        <span class="detail-label">' . $label . '</span>
+                    </div>
+                    <div class="detail-value">' . $displayValue . '</div>
                 </li>';
                 break;
         }

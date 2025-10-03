@@ -36,33 +36,47 @@ class ClientController extends Controller
 
     public function submitForm(Request $request, $shared_code)
     {
-
         // Find booking using shared_code
         $booking = ClientBookingForm::where('shared_code', $request->shared_code)->firstOrFail();
         $userEmail = '';
         $name = '';
         $lastName = '';
         $password = Hash::make('haseeb@123');
+        
         // Update booking status
         $booking->status = 'pending';
         $booking->save();
         $user = null;
+        
         foreach ($request->except(['_token', 'shared_code', 'studio_name', 'booking_date', 'booking_time']) as $key => $value) {
-            // Split the field name and field ID
-            [$fieldName, $fieldId] = explode('|', $key);
-            if ($fieldName == 'email') {
-                $userEmail = $value;
-            }
-            if ($fieldName == 'full_name' || $fieldName == 'name' || $fieldName == 'first_name') {
-                $name = $value;
-            }
-
-            if ($fieldName == 'last_name') {
-                $lastName = $value;
-            }
-            // If multi-select, store as JSON
-            if (is_array($value)) {
-                $value = json_encode($value);
+            // Split the field name, field ID, and field type
+            $parts = explode('|', $key);
+            $fieldName = $parts[0] ?? '';
+            $fieldId = $parts[1] ?? '';
+            $fieldType = $parts[2] ?? 'text';
+            
+            // Handle different field types
+            if ($fieldType === 'image') {
+                // Handle image uploads - use the key with [] for file uploads
+                $fileKey = $key . '[]';
+                $value = $this->processImageUploads($request, $fileKey);
+                 
+            } else {
+                // Handle other field types
+                if ($fieldName == 'email') {
+                    $userEmail = $value;
+                }
+                if ($fieldName == 'full_name' || $fieldName == 'name' || $fieldName == 'first_name') {
+                    $name = $value;
+                }
+                if ($fieldName == 'last_name') {
+                    $lastName = $value;
+                }
+                
+                // If multi-select, store as JSON
+                if (is_array($value)) {
+                    $value = json_encode($value);
+                }
             }
 
             // Save response
@@ -75,10 +89,9 @@ class ClientController extends Controller
             );
 
             if ($userEmail) {
-
                 $user = User::where('email', $userEmail)->first();
 
-                if (! $user) {
+                if (!$user) {
                     // Create new user if not exists
                     $user = User::create([
                         'name' => $name ?? '',
@@ -92,7 +105,7 @@ class ClientController extends Controller
                 }
 
                 // ✅ Assign role "user" if not already assigned
-                if (! $user->hasRole('user')) {
+                if (!$user->hasRole('user')) {
                     $user->assignRole('user');
                 }
                 if ($user->profile_link == null) {
@@ -104,11 +117,9 @@ class ClientController extends Controller
                     'client_id' => $user->id,
                 ]);
             }
-
         }
-        // dd($request->shared_code, $user->profile_link);
+        
         $profileUrl = route('client.profile', ['shared_code' => $request->shared_code, 'token' => $user->profile_link]);
-
         sendBookingMail($user->name, $user->last_name, $user->email, $profileUrl);
 
         return redirect()->route('client.done');
@@ -146,7 +157,7 @@ class ClientController extends Controller
 
         $bookings = $booking;
         $messages = [];
-
+         
         return view('user.pages.client.profile', compact('user', 'bookings', 'booking', 'messages'));
     }
 
@@ -258,5 +269,82 @@ class ClientController extends Controller
             'path' => $path,
             'message' => 'Image uploaded successfully.',
         ]);
+    }
+
+    /**
+     * Process image uploads for form fields
+     */
+    private function processImageUploads(Request $request, $key)
+    {
+        // Try the key as-is first, then with [] suffix
+        $fileKey = $key;
+        if (!$request->hasFile($key)) {
+            // Remove [] from the end and try again
+            $fileKey = rtrim($key, '[]');
+            if (!$request->hasFile($fileKey)) {
+                \Log::warning('File not found for either key: ' . $key . ' or ' . $fileKey);
+                return json_encode([]);
+            }
+        }
+          
+        $uploadedImages = $request->file($fileKey);
+         
+        if (!is_array($uploadedImages)) {
+            $uploadedImages = [$uploadedImages];
+        }
+
+        $imagePaths = [];
+        
+        // Create directory if it doesn't exist
+        $uploadPath = public_path('uploads/client-images');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        foreach ($uploadedImages as $image) {
+             
+            if (!$image->isValid()) {
+                continue;
+            }
+            // Validate file type
+            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($image->getMimeType(), $allowedTypes)) {
+                continue;
+            }
+            
+            // Validate file size (5MB max)
+            if ($image->getSize() > 5 * 1024 * 1024) {
+                continue;
+            }
+            
+            try {
+                // Get file properties BEFORE moving the file
+                $originalName = $image->getClientOriginalName();
+                $fileSize = $image->getSize();
+                $mimeType = $image->getMimeType();
+                
+                // Generate unique filename
+                $filename = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+                
+                // Store image
+                $image->move($uploadPath, $filename);
+                $path = 'uploads/client-images/' . $filename;
+                
+                $imageData = [
+                    'path' => $path,
+                    'original_name' => $originalName,
+                    'size' => $fileSize,
+                    'mime_type' => $mimeType,
+                    'uploaded_at' => now()->toISOString()
+                ];
+                
+                $imagePaths[] = $imageData;
+                
+            } catch (\Exception $e) {
+                \Log::error('Failed to upload image: ' . $e->getMessage());
+                continue;
+            }
+        }
+        return json_encode($imagePaths);
     }
 }

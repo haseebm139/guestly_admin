@@ -133,6 +133,21 @@
             font-weight: 600;
         }
 
+        .detail-value.status-pending {
+            color: #b58100;
+            font-weight: 600;
+        }
+
+        .detail-value.status-declined {
+            color: #721c24;
+            font-weight: 600;
+        }
+
+        .detail-value.status-payment-pending {
+            color: #055160;
+            font-weight: 600;
+        }
+
         #pay-btn {
             background-color: var(--primary-green);
             color: white;
@@ -261,6 +276,16 @@
         .badge-status.pending {
             background: #fff3cd;
             color: #b58100
+        }
+
+        .badge-status.declined {
+            background: #f8d7da;
+            color: #721c24
+        }
+
+        .badge-status.payment-pending {
+            background: #cff4fc;
+            color: #055160
         }
 
         .image-preview {
@@ -519,11 +544,12 @@
 
 <body class="d-flex align-items-center justify-content-center min-vh-100 p-3">
     @php
-        $paymentSucceeded = isset($booking) && optional($booking->payment)->status === 'succeeded';
+        $paymentSucceeded = isset($booking) && optional($booking->status) === 'approve';
         $depositAmount = (float) ($booking->deposit ?? 0);
         $currency = 'USD';
         $currencySymbol = '$';
         $depositFormatted = number_format($depositAmount, 2);
+
     @endphp
 
     <div class="card custom-card shadow-lg">
@@ -540,14 +566,15 @@
 
             <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link {{ $paymentSucceeded ? 'active' : '' }}" id="appointment-tab"
-                        data-bs-toggle="tab" data-bs-target="#appointment-tab-pane" type="button" role="tab"
-                        aria-controls="appointment-tab-pane" aria-selected="true">Appointment</button>
+                    <button
+                        class="nav-link {{ ($booking->status ?? '') !== 'approved_pending_payment' ? 'active' : '' }}"
+                        id="appointment-tab" data-bs-toggle="tab" data-bs-target="#appointment-tab-pane" type="button"
+                        role="tab" aria-controls="appointment-tab-pane" aria-selected="true">Appointment</button>
                 </li>
-                @if (!$paymentSucceeded)
+                @if (($booking->status ?? '') === 'approved_pending_payment')
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link {{ !$paymentSucceeded ? 'active' : '' }}" id="payment-tab"
-                            data-bs-toggle="tab" data-bs-target="#payment-tab-pane" type="button" role="tab"
+                        <button class="nav-link active" id="payment-tab" data-bs-toggle="tab"
+                            data-bs-target="#payment-tab-pane" type="button" role="tab"
                             aria-controls="payment-tab-pane" aria-selected="true">Payment</button>
                     </li>
                 @endif
@@ -559,8 +586,8 @@
             </ul>
 
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade {{ $paymentSucceeded ? 'show active' : '' }}" id="appointment-tab-pane"
-                    role="tabpanel" aria-labelledby="appointment-tab" tabindex="0">
+                <div class="tab-pane fade {{ ($booking->status ?? '') !== 'approved_pending_payment' ? 'show active' : '' }}"
+                    id="appointment-tab-pane" role="tabpanel" aria-labelledby="appointment-tab" tabindex="0">
                     @php
                         $bookingDate = isset($booking->booking_date)
                             ? \Carbon\Carbon::parse($booking->booking_date)->format('Y-m-d')
@@ -579,10 +606,22 @@
                                         {{ ($booking->artist->phone_verified ?? 0) == 1 || ($booking->artist->email_verified ?? 0) == 1 ? 'Verified' : 'Unverified' }}
                                     </span>
                                     <span
-                                        class="badge-status {{ ($booking->status ?? 'pending') === 'approved' || ($booking->status ?? 'pending') === 'approve' ? 'approved' : 'pending' }}">
+                                        class="badge-status {{ ($booking->status ?? 'pending') === 'approved' || ($booking->status ?? 'pending') === 'approve'
+                                            ? 'approved'
+                                            : (($booking->status ?? 'pending') === 'approved_pending_payment'
+                                                ? 'payment-pending'
+                                                : (($booking->status ?? 'pending') === 'decline'
+                                                    ? 'declined'
+                                                    : 'pending')) }}">
                                         <i
-                                            class="bi {{ ($booking->status ?? 'pending') === 'approved' || ($booking->status ?? 'pending') === 'approve' ? 'bi-check2-circle' : 'bi-hourglass-split' }} me-1"></i>
-                                        {{ ucfirst($booking->status ?? 'pending') }}
+                                            class="bi {{ ($booking->status ?? 'pending') === 'approved' || ($booking->status ?? 'pending') === 'approve'
+                                                ? 'bi-check2-circle'
+                                                : (($booking->status ?? 'pending') === 'approved_pending_payment'
+                                                    ? 'bi-credit-card'
+                                                    : (($booking->status ?? 'pending') === 'decline'
+                                                        ? 'bi-x-circle'
+                                                        : 'bi-hourglass-split')) }} me-1"></i>
+                                        {{ ($booking->status ?? 'pending') === 'approved_pending_payment' ? 'Approved - Payment Pending' : ucfirst($booking->status ?? 'pending') }}
                                     </span>
                                     @if ($paymentSucceeded)
                                         <span class="badge-status approved">
@@ -627,8 +666,14 @@
                                 <li class="detail-item">
                                     <span class="detail-label">Status</span>
                                     <span
-                                        class="detail-value {{ ($booking->status ?? '') === 'approved' || ($booking->status ?? '') === 'approve' ? 'status-approved' : '' }}">
-                                        {{ ucfirst($booking->status ?? 'Pending') }}
+                                        class="detail-value {{ ($booking->status ?? '') === 'approved' || ($booking->status ?? '') === 'approve'
+                                            ? 'status-approved'
+                                            : (($booking->status ?? '') === 'approved_pending_payment'
+                                                ? 'status-payment-pending'
+                                                : (($booking->status ?? '') === 'decline'
+                                                    ? 'status-declined'
+                                                    : 'status-pending')) }}">
+                                        {{ ($booking->status ?? '') === 'approved_pending_payment' ? 'Approved - Payment Pending' : ucfirst($booking->status ?? 'Pending') }}
                                     </span>
                                 </li>
                                 @if ($paymentSucceeded)
@@ -676,87 +721,82 @@
                     @endif
                 </div>
 
-                <div class="tab-pane fade show active" id="payment-tab-pane" role="tabpanel"
-                    aria-labelledby="payment-tab" tabindex="0">
-                    @if (!$paymentSucceeded)
-                        <div class="tab-pane fade show active" id="payment-tab-pane" role="tabpanel"
-                            aria-labelledby="payment-tab" tabindex="0">
-                            @if (!$paymentSucceeded)
-                                <div class="alert alert-info d-flex align-items-center justify-content-between"
-                                    role="alert">
-                                    <div>
-                                        <strong>Deposit due:</strong> {{ $currencySymbol }}{{ $depositFormatted }}
-                                        {{ $currency }}
-                                    </div>
-                                    <span class="text-muted small">This amount will be charged now.</span>
-                                </div>
-                            @endif
-                            <form id="payment-form" class="mt-2">
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <label class="form-label fw-bold">Cardholder Name</label>
-                                        <input id="cardholder-name" type="text" class="form-control"
-                                            placeholder="Full name" required>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <label class="form-label fw-bold">Address line 1</label>
-                                        <input id="addr-line1" type="text" class="form-control"
-                                            placeholder="House/Flat, Street" required>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <label class="form-label fw-bold">Address line 2 (optional)</label>
-                                        <input id="addr-line2" type="text" class="form-control"
-                                            placeholder="Area, Landmark (optional)">
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">City</label>
-                                        <input id="addr-city" type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">State/Region</label>
-                                        <input id="addr-state" type="text" class="form-control">
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Postal Code</label>
-                                        <input id="addr-postal" type="text" class="form-control">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Country (2-letter code, e.g. US, GB,
-                                            IN)</label>
-                                        <input id="addr-country" type="text" class="form-control"
-                                            placeholder="US" maxlength="2" required>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <label class="form-label fw-bold d-flex align-items-center gap-2">
-                                            Select a payment method
-                                            <span class="text-muted small">(Cards, Link, Wallets, etc.)</span>
-                                        </label>
-                                        <div id="payment-element" class="form-control p-2"></div>
-                                        <small class="text-muted">We support major cards and wallet methods where
-                                            available.</small>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <div id="payment-message" class="fw-bold small"></div>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex align-items-center gap-3 mt-3">
-                                    <button id="pay-btn" type="submit" class="btn btn-primary mt-3">
-                                        Pay Deposit ({{ $currencySymbol }}{{ $depositFormatted }})
-                                    </button>
-                                    <div id="spinner" class="spinner-border spinner-border-sm text-primary d-none"
-                                        role="status"></div>
-                                </div>
-                            </form>
+                @if (($booking->status ?? '') === 'approved_pending_payment')
+                    <div class="tab-pane fade show active" id="payment-tab-pane" role="tabpanel"
+                        aria-labelledby="payment-tab" tabindex="0">
+                        <div class="alert alert-info d-flex align-items-center justify-content-between"
+                            role="alert">
+                            <div>
+                                <strong>Deposit due:</strong> {{ $currencySymbol }}{{ $depositFormatted }}
+                                {{ $currency }}
+                            </div>
+                            <span class="text-muted small">This amount will be charged now.</span>
                         </div>
-                    @endif
-                </div>
+                        <form id="payment-form" class="mt-2">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Cardholder Name</label>
+                                    <input id="cardholder-name" type="text" class="form-control"
+                                        placeholder="Full name" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Address line 1</label>
+                                    <input id="addr-line1" type="text" class="form-control"
+                                        placeholder="House/Flat, Street" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Address line 2 (optional)</label>
+                                    <input id="addr-line2" type="text" class="form-control"
+                                        placeholder="Area, Landmark (optional)">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">City</label>
+                                    <input id="addr-city" type="text" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">State/Region</label>
+                                    <input id="addr-state" type="text" class="form-control">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Postal Code</label>
+                                    <input id="addr-postal" type="text" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Country (2-letter code, e.g. US, GB,
+                                        IN)</label>
+                                    <input id="addr-country" type="text" class="form-control" placeholder="US"
+                                        maxlength="2" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold d-flex align-items-center gap-2">
+                                        Select a payment method
+                                        <span class="text-muted small">(Cards, Link, Wallets, etc.)</span>
+                                    </label>
+                                    <div id="payment-element" class="form-control p-2"></div>
+                                    <small class="text-muted">We support major cards and wallet methods where
+                                        available.</small>
+                                </div>
+
+                                <div class="col-12">
+                                    <div id="payment-message" class="fw-bold small"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3 mt-3">
+                                <button id="pay-btn" type="submit" class="btn btn-primary mt-3">
+                                    Pay Deposit ({{ $currencySymbol }}{{ $depositFormatted }})
+                                </button>
+                                <div id="spinner" class="spinner-border spinner-border-sm text-primary d-none"
+                                    role="status"></div>
+                            </div>
+                        </form>
+                    </div>
+                @endif
 
 
                 <div class="tab-pane fade" id="messages-tab-pane" role="tabpanel" aria-labelledby="messages-tab"
@@ -1134,7 +1174,7 @@
 
                     const img = document.createElement("img");
                     console.log(imgUrl);
-                    
+
                     img.src = imgUrl;
                     img.alt = "Image message";
                     img.style.maxWidth = "100px";
