@@ -973,7 +973,7 @@ if (!function_exists('renderTableField')) {
                                 <div class="position-relative">
                                     <img src="' . asset($imagePath) . '" 
                                          class="img-thumbnail w-100" 
-                                         style="height: 100px; object-fit: cover; cursor: pointer;"
+                                         style=" object-fit: cover; cursor: pointer;"
                                          onclick="window.open(\'' . asset($imagePath) . '\', \'_blank\')"
                                          title="Click to view full size">
                                     <div class="position-absolute top-0 end-0 p-1">

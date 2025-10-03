@@ -1116,6 +1116,10 @@
             function setupMessageListener() {
                 db.ref(msgsBase).orderByChild("timestamp").on("child_added", snap => {
                     const msg = snap.val();
+
+                    // Hide empty state when new message is received
+                    hideEmptyState();
+
                     renderMessage(msg, snap.key);
 
                     // Mark as delivered and read if it's not our message
@@ -1316,6 +1320,9 @@
                 const text = inputEl.value.trim();
                 if (!text) return;
 
+                // Hide empty state when sending a message
+                hideEmptyState();
+
                 const messageId = db.ref(msgsBase).push().key;
                 const timestamp = Date.now();
                 const payload = {
@@ -1482,6 +1489,9 @@
 
             async function sendPendingImages() {
                 if (pendingUploads.length === 0) return;
+
+                // Hide empty state when sending images
+                hideEmptyState();
 
                 const messageId = db.ref(msgsBase).push().key;
                 const timestamp = Date.now();
@@ -1744,6 +1754,24 @@
                 }
             }
 
+            // Function to hide empty state when messages are sent
+            function hideEmptyState() {
+                const emptyDiv = chatArea?.querySelector('.empty-chat');
+                if (emptyDiv) {
+                    emptyDiv.remove();
+                }
+            }
+
+            // Function to show empty state when no messages
+            function showEmptyState() {
+                if (chatArea && chatArea.children.length === 0) {
+                    const emptyDiv = document.createElement("div");
+                    emptyDiv.className = "empty-chat text-center text-muted small py-4";
+                    emptyDiv.textContent = "No messages yet. Start the conversation!";
+                    chatArea.appendChild(emptyDiv);
+                }
+            }
+
             // Load existing messages with grouping
             async function loadExistingMessages() {
                 try {
@@ -1762,10 +1790,7 @@
                     if (chatArea) {
                         chatArea.innerHTML = '';
                         if (messages.length === 0) {
-                            const emptyDiv = document.createElement("div");
-                            emptyDiv.className = "empty-chat text-center text-muted small py-4";
-                            emptyDiv.textContent = "No messages yet. Start the conversation!";
-                            chatArea.appendChild(emptyDiv);
+                            showEmptyState();
                         } else {
                             // Reset grouping state
                             lastMessageSender = null;
