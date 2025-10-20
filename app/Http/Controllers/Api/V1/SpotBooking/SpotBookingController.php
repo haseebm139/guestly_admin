@@ -171,7 +171,7 @@ class SpotBookingController extends BaseController
                 $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
                 $dayName = strtolower(Carbon::parse($date)->format('l'));
 
-                $isAvailable = $weeklyAvailability[$dayName] ?? true;
+                $isAvailable = (bool) ($weeklyAvailability[$dayName] ?? true);
                 $reason = $isAvailable ? 'Working day' : 'Holiday';
 
             if (isset($unavailableDates[$date])) {
@@ -199,7 +199,7 @@ class SpotBookingController extends BaseController
                     'total' => $totalStations,
                     'stations' => $stations,
                     'status' => $isAvailable ? 'free' : 'blocked',
-                    'studio_availability' => $isAvailable,
+                    'studio_availability' => (bool) $isAvailable,
                     'reason' => $reason,
                 ];
 
@@ -368,7 +368,7 @@ class SpotBookingController extends BaseController
             $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
             $dayName = strtolower(Carbon::parse($date)->format('l'));
 
-            $isAvailable = $weeklyAvailability[$dayName] ?? true;
+            $isAvailable = (bool) ($weeklyAvailability[$dayName] ?? true);
             $reason = $isAvailable ? 'Working day' : 'Holiday';
 
             if (isset($unavailableDates[$date])) {
@@ -397,7 +397,7 @@ class SpotBookingController extends BaseController
                 'status' => $isAvailable ? 'free' : 'blocked',
                 'stations_available' => $isAvailable ? $totalStations : 0,
                 'stations_unavailable' => $isAvailable ? 0 : $totalStations,
-                'studio_availability' => $isAvailable,
+                'studio_availability' => (bool) $isAvailable,
                 'reason' => $reason,
             ];
 
