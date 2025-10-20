@@ -171,11 +171,12 @@ class SpotBookingController extends BaseController
                 $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
                 $dayName = strtolower(Carbon::parse($date)->format('l'));
 
-                $isAvailable = $weeklyAvailability[$dayName] ?? true;
+                $isAvailable = (bool) ($weeklyAvailability[$dayName] ?? true);
                 $reason = $isAvailable ? 'Working day' : 'Holiday';
 
+                // Override weekly availability if studio has an explicit unavailable date
                 if (isset($unavailableDates[$date])) {
-                    $studioAvailable = false;
+                    $isAvailable = false;
                     $reason = $unavailableDates[$date];
                 }
                 // Pre-fill all stations as free
@@ -277,6 +278,22 @@ class SpotBookingController extends BaseController
 
             // --- 6. Update daily status (free / partial / fully / blocked) ---
             foreach ($calendar as $date => &$dayData) {
+                // If the studio is unavailable for this date (weekly off/holiday or explicit block),
+                // force the day to be blocked regardless of per-station statuses.
+                if (! $dayData['studio_availability']) {
+                    foreach ($dayData['stations'] as $idx => $station) {
+                        $dayData['stations'][$idx]['status'] = 'blocked';
+                        if (empty($dayData['stations'][$idx]['reason'])) {
+                            $dayData['stations'][$idx]['reason'] = $dayData['reason'];
+                        }
+                    }
+                    $dayData['stations_available'] = 0;
+                    $dayData['stations_unavailable'] = $dayData['total'];
+                    $dayData['status'] = 'blocked';
+                    $dayData['booked'] = $dayData['total'];
+                    continue;
+                }
+
                 // count how many stations are not free (booked or blocked)
                 $statuses = collect($dayData['stations'])->pluck('status');
                 $unavailableCount = $statuses->filter(fn ($s) => $s !== 'free')->count();
@@ -366,11 +383,12 @@ class SpotBookingController extends BaseController
             $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
             $dayName = strtolower(Carbon::parse($date)->format('l'));
 
-            $isAvailable = $weeklyAvailability[$dayName] ?? true;
+            $isAvailable = (bool) ($weeklyAvailability[$dayName] ?? true);
             $reason = $isAvailable ? 'Working day' : 'Holiday';
 
+            // Override weekly availability if studio has an explicit unavailable date
             if (isset($unavailableDates[$date])) {
-                $studioAvailable = false;
+                $isAvailable = false;
                 $reason = $unavailableDates[$date];
             }
             // Pre-fill all stations as free
@@ -474,6 +492,22 @@ class SpotBookingController extends BaseController
 
         // --- 6. Update daily status (free / partial / fully / blocked) ---
         foreach ($calendar as $date => &$dayData) {
+            // If the studio is unavailable for this date (weekly off/holiday or explicit block),
+            // force the day to be blocked regardless of per-station statuses.
+            if (! $dayData['studio_availability']) {
+                foreach ($dayData['stations'] as $idx => $station) {
+                    $dayData['stations'][$idx]['status'] = 'blocked';
+                    if (empty($dayData['stations'][$idx]['reason'])) {
+                        $dayData['stations'][$idx]['reason'] = $dayData['reason'];
+                    }
+                }
+                $dayData['stations_available'] = 0;
+                $dayData['stations_unavailable'] = $dayData['total'];
+                $dayData['status'] = 'blocked';
+                $dayData['booked'] = $dayData['total'];
+                continue;
+            }
+
             // count how many stations are not free (booked or blocked)
             $statuses = collect($dayData['stations'])->pluck('status');
             $unavailableCount = $statuses->filter(fn ($s) => $s !== 'free')->count();
