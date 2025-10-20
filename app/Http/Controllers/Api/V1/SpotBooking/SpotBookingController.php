@@ -174,8 +174,10 @@ class SpotBookingController extends BaseController
                 $isAvailable = $weeklyAvailability[$dayName] ?? true;
                 $reason = $isAvailable ? 'Working day' : 'Holiday';
 
-                if (isset($unavailableDates[$date])) {
-                    $studioAvailable = false;
+            if (isset($unavailableDates[$date])) {
+                    // If the studio is marked unavailable for this specific date,
+                    // force the day availability to false and set the reason accordingly.
+                    $isAvailable = false;
                     $reason = $unavailableDates[$date];
                 }
                 // Pre-fill all stations as free
@@ -370,7 +372,8 @@ class SpotBookingController extends BaseController
             $reason = $isAvailable ? 'Working day' : 'Holiday';
 
             if (isset($unavailableDates[$date])) {
-                $studioAvailable = false;
+                // Specific date is unavailable: mark not available and carry the reason.
+                $isAvailable = false;
                 $reason = $unavailableDates[$date];
             }
             // Pre-fill all stations as free
