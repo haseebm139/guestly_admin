@@ -48,7 +48,7 @@ class StudioBlockStationController extends BaseController
          
     }
 
-    public function store(Request $request)
+    public function storeSingle(Request $request)
     {
 
         $studio = $request->user(); // authenticated studio
@@ -104,6 +104,73 @@ class StudioBlockStationController extends BaseController
         return $this->sendResponse($block, 'Station blocked successfully.');
     }
 
+    public function store(Request $request)
+    {
+        $studio = $request->user(); // authenticated studio
+        
+        // Validate request - expecting an array of block station data
+        $validator = Validator::make($request->all(), [
+            '*.station_number' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) use ($studio) {
+                    if ($value < 1) {
+                        $fail("The station number must be at least 1.");
+                    }
+                    if ($value > $studio->total_stations) {
+                        $fail("The selected station number cannot be greater than the studio's total stations ({$studio->total_stations}).");
+                    }
+                },
+            ],
+            '*.start_date'     => 'required|date',
+            '*.end_date'       => 'required|date|after_or_equal:*.start_date',
+            '*.reason'         => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first());
+        }
+
+        $blocks = [];
+        $errors = [];
+
+        foreach ($request->all() as $index => $blockData) {
+            // Check for overlapping blocks
+            $alreadyBlocked = BlockStation::where('studio_id', $studio->id)
+                ->where('station_number', $blockData['station_number'])
+                ->where(function ($query) use ($blockData) {
+                    $query->whereBetween('start_date', [$blockData['start_date'], $blockData['end_date']])
+                          ->orWhereBetween('end_date', [$blockData['start_date'], $blockData['end_date']])
+                          ->orWhere(function ($q) use ($blockData) {
+                              $q->where('start_date', '<=', $blockData['start_date'])
+                                ->where('end_date', '>=', $blockData['end_date']);
+                          });
+                })
+                ->exists();
+
+            if ($alreadyBlocked) {
+                $errors[] = "Station {$blockData['station_number']} is already blocked for the date range {$blockData['start_date']} to {$blockData['end_date']}.";
+                continue;
+            }
+
+            // Create block record
+            $block = BlockStation::create([
+                'studio_id'      => $studio->id,
+                'station_number' => $blockData['station_number'],
+                'start_date'     => $blockData['start_date'],
+                'end_date'       => $blockData['end_date'],
+                'reason'         => $blockData['reason'] ?? null,
+            ]);
+
+            $blocks[] = $block;
+        }
+
+        if (!empty($errors)) {
+            return $this->sendError('Some blocks could not be created: ' . implode(' ', $errors));
+        }
+
+        return $this->sendResponse($blocks, 'Stations blocked successfully.');
+    }
 
     public function unblock(Request $request, $id)
     {

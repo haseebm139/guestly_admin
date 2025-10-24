@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
 
             'email' => 'required|email',
             'password' => 'required',
-            'user_type' => 'required|in:artist,studio',
+            'user_type' => 'nullable|in:artist,studio',
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'fcm_token' => 'nullable|string'

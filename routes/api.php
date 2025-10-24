@@ -65,6 +65,7 @@ Route::prefix('v1')->group(function () {
         });
         Route::controller(SpotBookingController::class)->prefix('bookings')->group(function () {
             Route::get('/monthly-bookings-calandar/{studio_id}', 'monthlyCalendar');
+            Route::get('/monthly-bookings-calandar-artist', 'clientBookingCalendar');
             // Artist books a new spot
             Route::post('/', 'store');
 

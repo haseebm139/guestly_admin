@@ -41,6 +41,7 @@ Route::middleware(['auth:sanctum', 'studio'])->group(function () {
     Route::controller(StudioBlockStationController::class)->group(function () {
         Route::get('/block-stations','index');
         Route::post('/block-stations','store');
+        Route::post('/block-stations/bulk','storeBulk');
         Route::post('/unblock-stations/{id}','unblock');
         Route::delete('/block-stations/{id}','destroy');
     });

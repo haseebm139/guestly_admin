@@ -8,6 +8,7 @@ use App\Models\BlockStation;
 use App\Models\SpotBooking;
 use App\Models\StudioWeeklyAvailability;
 use App\Models\StudioUnavailableDate;
+use App\Models\ClientBookingForm;
 
 
 use App\Models\User;
@@ -303,6 +304,110 @@ class SpotBookingController extends BaseController
             }
 
             return $this->sendResponse($calendar, 'Monthly calendar with per-station details.');
+        } catch (\Throwable $th) {
+            return $this->sendError($th->getMessage() ?? 'Something went wrong.');
+        }
+    }
+
+    public function clientBookingCalendar(Request $request)
+    {
+         
+        try {
+            $validator = Validator::make($request->all(), [
+                'month' => 'nullable|integer|min:1|max:12',
+                'year' => 'nullable|integer|min:2000|max:2100',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first(), [], 422);
+            }
+
+            $month = $request->input('month') ?: now()->month;
+            $year = $request->input('year') ?: now()->year;
+            $artistId = auth()->id();
+            $artist = User::where('user_type', 'artist')->where('id', $artistId)->first();
+
+            if (!$artist) {
+                return $this->sendError('Artist not found.');
+            }
+             
+            // Get client booking forms for the specified month/year for this artist
+            $clientBookings = ClientBookingForm::where('artist_id', $artistId)
+                ->whereMonth('booking_date', $month)
+                ->whereYear('booking_date', $year)
+                ->with([
+                    'client',
+                    'artist',
+                    'studio',
+                ])
+                ->get();
+
+            // Initialize calendar
+            $calendar = [];
+            $daysInMonth = now()->setYear($year)->setMonth($month)->daysInMonth;
+
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
+                
+                $dayBookings = $clientBookings->filter(function ($booking) use ($date) {
+                    return $booking->booking_date === $date;
+                });
+
+                $calendar[$date] = [
+                    'date' => $date,
+                    'day' => $day,
+                    'day_name' => Carbon::parse($date)->format('l'),
+                    'total_bookings' => $dayBookings->count(),
+                    'bookings' => $dayBookings->map(function ($booking) {
+                        return [
+                            'id' => $booking->id,
+                            'shared_code' => $booking->shared_code,
+                            'booking_date' => $booking->booking_date,
+                            'booking_time' => $booking->booking_time,
+                            'duration' => $booking->duration,
+                            'hourly_rate' => $booking->hourly_rate,
+                            'deposit' => $booking->deposit,
+                            'estimate_start' => $booking->estimate_start,
+                            'estimate_end' => $booking->estimate_end,
+                            'notes' => $booking->notes,
+                            'status' => $booking->status,
+                            'cancel_reason' => $booking->cancel_reason,
+                            'client' => $booking->client ??null,
+                            'artist' => $booking->artist  ??null,
+                            'studio' => $booking->studio ??null,
+                            'created_at' => $booking->created_at,
+                            'updated_at' => $booking->updated_at,
+                        ];
+                    }),
+                ];
+            }
+
+            // Add summary statistics
+            $summary = [
+                'total_bookings' => $clientBookings->count(),
+                'by_status' => $clientBookings->groupBy('status')->map->count(),
+                'by_studio' => $clientBookings->groupBy('studio_id')->map(function ($bookings) {
+                    return [
+                        'studio_name' => $bookings->first()->studio->name ?? 'Unknown Studio',
+                        'total_bookings' => $bookings->count(),
+                        'by_status' => $bookings->groupBy('status')->map->count(),
+                    ];
+                }),
+            ];
+
+            return $this->sendResponse([
+                'calendar' => $calendar,
+                'summary' => $summary,
+                'month' => $month,
+                'year' => $year,
+                'artist' => [
+                    'id' => $artist->id,
+                    'name' => $artist->name,
+                    'last_name' => $artist->last_name,
+                    'avatar' => $artist->avatar,
+                ]
+            ], 'Artist booking calendar retrieved successfully.');
+
         } catch (\Throwable $th) {
             return $this->sendError($th->getMessage() ?? 'Something went wrong.');
         }

@@ -41,12 +41,16 @@ class AuthService extends BaseController
                 'email' => ['Invalid credentials.'],
             ]);
         }
-        if ($credentials['user_type'] !== $data['user']->user_type) {
-            return [
-                'status' => 'error',
-                'data'   => $data['user']->user_type
-            ];
-        }
+         
+        // if (isset($credentials['user_type'])) {
+        //     # code...
+        //     if ($credentials['user_type'] !== $data['user']->user_type) {
+        //         return [
+        //             'status' => 'error',
+        //             'data'   => $data['user']->user_type
+        //         ];
+        //     }
+        // }
         
         if ($data['user']->is_active == 0) {
             return [
