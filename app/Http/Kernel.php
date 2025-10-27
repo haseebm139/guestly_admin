@@ -70,6 +70,9 @@ class Kernel extends HttpKernel
         'user' => \App\Http\Middleware\UserMiddleware::class,
         'ws.dashboard' => \App\Http\Middleware\WebSocketDashboardAccess::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'ensure.verified' => \App\Http\Middleware\EnsureUserIsVerified::class,
+        'restrict.admin.routes' => \App\Http\Middleware\RestrictAdminRoutes::class,
+
 
     ];
 }

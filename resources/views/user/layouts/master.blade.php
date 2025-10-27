@@ -404,6 +404,38 @@
             });
         });
     </script>
+    <script>
+    $(document).ready(function () {
+        // Language dropdown toggle
+        $("#selectedLanguage").on("click", function () {
+            $("#languageDropdown").toggle();
+            $(".language-selector").toggleClass("open");
+        });
+
+        // Close when clicking outside
+        $(document).on("click", function (e) {
+            if (!$(e.target).closest('.language-selector').length) {
+                $("#languageDropdown").hide();
+                $(".language-selector").removeClass("open");
+            }
+        });
+
+        // Language change AJAX (aapki wali script)
+        $('input[name="language"]').on('change', function () {
+            let lang = $(this).val();
+
+            $.post("{{ route('lang.ajaxSwitch') }}", {
+                _token: "{{ csrf_token() }}",
+                lang: lang
+            }, function (data) {
+                if (data.status === 'success') {
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 
 </html>
