@@ -159,7 +159,7 @@ Route::get('/error', function () {
 });
 
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
-Route::get('/clear-cache', function () {
+Route::get('/clear', function () {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
     Artisan::call('route:clear');
