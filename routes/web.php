@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
+  
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -158,6 +159,13 @@ Route::get('/error', function () {
 });
 
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
+Route::get('/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
 
+    return '<h2 style="color:green;">✅ All caches cleared successfully!</h2>';
+})->name('clear.cache');
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
