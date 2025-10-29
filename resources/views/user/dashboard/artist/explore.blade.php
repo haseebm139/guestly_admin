@@ -12,11 +12,11 @@
                     <div class="search-controls">
                         <div class="search-input-wrapper">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" placeholder="Where are you guesting next?" class="search-input">
+                            <input type="text" placeholder="{{ __('search_paragraph') }}" class="search-input">
                         </div>
                         <button class="filter-button" data-bs-toggle="modal" data-bs-target="#filter-modal-overlay">
                             <i class="fa-solid fa-sliders"></i>
-                            <span>Filter</span>
+                            <span>{{ __('filter') }}</span>
                         </button>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                                         </div>
                                     </div>
                                     <div class="card_content_wrapper"
-                                        onclick=window.location.href="{{ asset('assets/web/dashboard/studio_detail') }}">
+                                        onclick=window.location.href="{{ asset('dashboard/studio_detail') }}">
                                         <div class="card-header">
                                             <div class="card-logo-wrapper">
                                                 <img src="{{ asset('assets/web/dashboard/default_1.png') }}"
@@ -297,11 +297,11 @@
                             <label class="form-label">Date Range</label>
                             <div class="calendar-container">
                                 <div class="calendar-header">
-                                    <button id="prev-month-btn" class="calendar-nav">
-                                        << /button>
-                                            <span id="calendar-month-year" class="calendar-month-year"></span>
-                                            <button id="next-month-btn" class="calendar-nav">></button>
+                                    <button id="prev-month-btn" class="calendar-nav">&lt;</button>
+                                    <span id="calendar-month-year" class="calendar-month-year"></span>
+                                    <button id="next-month-btn" class="calendar-nav">&gt;</button>
                                 </div>
+
                                 <div class="calendar-grid calendar-grid-header">
                                     <div class="day-name">M</div>
                                     <div class="day-name">T</div>

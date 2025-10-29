@@ -168,7 +168,7 @@
                     <div class="card-content">
                         <div class="icon-placeholder">
                             {{--                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 22H18.016C18.896 22 19.744 21.72 20.408 21.16C21.064 20.592 21.504 19.8 21.64 18.912C21.928 17.16 22.016 15.3 22.016 13.408V6.016C22.016 4.912 21.568 3.936 20.824 3.192C20.072 2.44 19.096 2 18.016 2H4C3.472 2 2.984 2.208 2.592 2.6C2.2 3 2 3.488 2 4V20C2 20.528 2.2 21.016 2.592 21.408C2.984 21.8 3.472 22 4 22ZM9 12V4H18C18.528 4 19.016 4.2 19.408 4.592C19.8 4.984 20 5.472 20 6V13.2C20 15.16 19.928 16.968 19.672 18.52C19.584 19.088 19.24 19.576 18.736 19.88C18.224 20.192 17.616 20.12 17.128 19.768L14.5 17.5L9 12Z" fill="#014122"/></svg>--}}
-                            <img  height="80" src="{{ asset ('document.png') }}">
+                            <img  height="80" src="{{ asset ('assets/web/document.png') }}">
                         </div>
                         <h3 class="title">Tattoo Request Forms</h3>
                     </div>
@@ -178,11 +178,11 @@
                     <div class="card-content">
                         <div class="icon-placeholder">
                             {{--                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 22H18.016C18.896 22 19.744 21.72 20.408 21.16C21.064 20.592 21.504 19.8 21.64 18.912C21.928 17.16 22.016 15.3 22.016 13.408V6.016C22.016 4.912 21.568 3.936 20.824 3.192C20.072 2.44 19.096 2 18.016 2H4C3.472 2 2.984 2.208 2.592 2.6C2.2 3 2 3.488 2 4V20C2 20.528 2.2 21.016 2.592 21.408C2.984 21.8 3.472 22 4 22ZM9 12V4H18C18.528 4 19.016 4.2 19.408 4.592C19.8 4.984 20 5.472 20 6V13.2C20 15.16 19.928 16.968 19.672 18.52C19.584 19.088 19.24 19.576 18.736 19.88C18.224 20.192 17.616 20.12 17.128 19.768L14.5 17.5L9 12Z" fill="#014122"/></svg>--}}
-                            <img  height="80" src="{{ asset ('document.png') }}">
+                            <img  height="80" src="{{ asset ('assets/web/document.png') }}">
                         </div>
                         <h3 class="title">Flash Tattoos</h3>
                     </div>
-                    <a href="#" class="view-link">View Tattoos</a>
+                    <a href="{{ asset ('dashboard/artist_tattoo') }}" class="view-link">View Tattoos</a>
                 </div>
             </div>
         </div>

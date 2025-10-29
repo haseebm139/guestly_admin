@@ -99,7 +99,35 @@
     "tattoo_verify_message" : "타투 라이선스 사진을 업로드하세요",
     "tattoo_confirm_heading" : "타투 라이선스 확인",
     "tattoo_image" : "타투 라이선스 사진",
-    "phone_otp_message" : "등록된 휴대폰 번호로 보낸 네 자리 인증번호를 입력하세요."
+    "phone_otp_message" : "등록된 휴대폰 번호로 보낸 네 자리 인증번호를 입력하세요.",
+
+    "search_paragraph" : "다음에는 어디에서 게스트로 활동하시나요?",
+    "filter" : "필터",
+    "explore_heading" : "탐색",
+    "messages_heading" : "메시지",
+    "bookings_heading" : "예약",
+    "requests_heading" : "요청",
+    "flash_tattoos_heading" : "플래시 타투",
+    "profile_heading" : "프로필 관리",
+    "studios_heading" : "스튜디오",
+    "clients_heading" : "고객",
+    "profile_personal_heading" : "프로필",
+    "personal_information_heading" : "개인 정보",
+    "login_security_heading" : "로그인 및 보안",
+    "bio_tattoo_styles_heading" : "소개 및 타투 스타일",
+    "subscription_management_heading" : "구독 관리",
+    "view_ratings_heading" : "평점 보기",
+    "payments_methods_heading" : "결제 수단",
+
+    "studio_dashboard_heading" : "대시보드",
+    "studio_guest_artist_search_heading" : "게스트 아티스트",
+    "studio_guest_artist_request_heading" : "게스트 아티스트 요청",
+    "studio_search_artist_heading" : "아티스트 검색",
+    "studio_artist_request_heading" : "요청",
+    "studio_profile_heading" : "스튜디오 프로필 보기",
+    "studio_availability_heading" : "스튜디오 이용 가능 시간",
+    "studio_ads_promotion_heading" : "광고 및 홍보"
+
 
 
 

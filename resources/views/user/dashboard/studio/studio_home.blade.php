@@ -587,8 +587,8 @@
             <div class="col-md-12">
                 <div class="search-section">
                     <div class="search-controls">
-                         
-                        <button type="button" class="view_icon_img_btn"><img src="{{ asset('assets/web/extra/view_icon_img.png') }}"
+
+                        <button type="button" class="view_icon_img_btn"><img src="{{ asset('assets/web/eye_icon.png') }}"
                                 alt="see"></button>
                         <div class="search-input-wrapper">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -644,7 +644,7 @@
                         <div class="white_box upcoming_guests_wrapper">
                             <div class="upcoming_guests_header">
                                 <div class="heading_wrapper">
-                                    <img src="{{ asset('assets/web/extra/calendar_icon_img.svg') }}" alt="upcoming guest icon">
+                                    <img src="{{ asset('assets/web/upcoming_guest.png') }}" alt="upcoming guest icon">
                                     <h5>Upcoming Guests</h5>
                                 </div>
                                 <a href="#">View All</a>
@@ -660,7 +660,7 @@
                                 <tbody>
                                     @for ($i = 0; $i < 3; $i++)
                                         <tr>
-                                            <td><img class="user_icon_img" src="{{ asset('assets/web/extra/user-profile.jpg') }}"
+                                            <td><img class="user_icon_img" src="{{ asset('assets/web/person_icon.png') }}"
                                                     alt="User Icon"> John Doe</td>
                                             <td><i class="fa-solid fa-message"></i> <a href="#">Message Artist</a>
                                             </td>
@@ -674,7 +674,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="card_border stations_status_wrapper">
-                            <img src="{{ asset('assets/web/extra/tatoo_chair_img.png') }}" alt="chair">
+                            <img src="{{ asset('assets/web/studio_chair.png') }}" alt="chair">
                             <h5>Stations Available</h5>
                             <div class="stations_status">
                                 <span>4 Available</span> <span class="danger_txt">2 Booked</span>

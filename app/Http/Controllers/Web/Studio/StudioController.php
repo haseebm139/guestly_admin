@@ -11,7 +11,7 @@ class StudioController extends Controller
     public function home()
     {
         return view('user.dashboard.studio.studio_home', [
-            'pageTitle' => 'Studio Dashboard'
+            'pageTitle' => __('studio_dashboard_heading')
         ]);
     }
 
@@ -60,7 +60,7 @@ class StudioController extends Controller
                 'firebaseToken' => $firebaseToken,
                 'currentUser' => $user,
                 'currentFirebaseUid' => $currentFirebaseUid,
-                'pageTitle' => 'Messages'
+                'pageTitle' => __('messages_heading')
             ]);
 
         } catch (\Throwable $e) {
@@ -75,59 +75,59 @@ class StudioController extends Controller
     public function searchArtist()
     {
         return view('user.dashboard.studio.studio_search_artist', [
-            'pageTitle' => 'Guest Artist Search'
+            'pageTitle' => __('studio_guest_artist_search_heading')
         ]);
     }
     public function studioRequest()
     {
         return view('user.dashboard.studio.studio_request', [
-            'pageTitle' => 'Guest Artist Request'
+            'pageTitle' => __('studio_guest_artist_request_heading')
         ]);
     }
     public function studioSubscription()
     {
         return view('user.dashboard.studio.studio_subscription', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
     public function studioAvailability()
     {
         return view('user.dashboard.studio.studio_availability', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
     public function studioPromotion()
     {
         return view('user.dashboard.studio.studio_promotion', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function profile()
     {
         return view('user.dashboard.studio.studio_profile', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function rating()
     {
         return view('user.dashboard.studio.studio_rating', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function payment()
     {
         return view('user.dashboard.studio.studio_payment', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function security()
     {
         return view('user.dashboard.studio.studio_security', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 }

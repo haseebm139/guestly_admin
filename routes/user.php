@@ -14,10 +14,11 @@ Route::get('/', function () {
     return view('user.welcome');
 });
 
+ Route::middleware('guest')->group(function () {
 
-Route::get('form_slider', [WebsiteController::class, 'formSlider'])->name('form_slider');
-Route::get('form_slider_two', [WebsiteController::class, 'formSliderTwo'])->name('form_slider_two');
-Route::get('form_login_signup', [WebsiteController::class, 'formLoginSignup'])->name('form_login_signup');
+     Route::get('form_slider', [WebsiteController::class, 'formSlider'])->name('form_slider');
+     Route::get('form_slider_two', [WebsiteController::class, 'formSliderTwo'])->name('form_slider_two');
+     Route::get('form_login_signup', [WebsiteController::class, 'formLoginSignup'])->name('form_login_signup');
 //Route::get('choose_plan', [WebsiteController::class, 'choosePlan'])->name('choose_plan');
 //Route::get('studio_choose_plan', [WebsiteController::class, 'studioChoosePlan'])->name('studio_choose_plan');
 //Route::get('user_identification', [WebsiteController::class, 'userIdentification'])->name('user_identification');
@@ -25,14 +26,14 @@ Route::get('form_login_signup', [WebsiteController::class, 'formLoginSignup'])->
 //Route::get('phone_email_verification', [WebsiteController::class, 'phoneEmailVerification'])->name('phone_email_verification');
 //Route::get('studio_step_form', [WebsiteController::class, 'studioStepForm'])->name('studio_step_form');
 //Route::get('boost_studio', [WebsiteController::class, 'boostStudio'])->name('boost_studio');
-Route::get('forgot_password', [WebsiteController::class, 'forgotPassword'])->name('forgot_password');
-Route::get('reset_password', [WebsiteController::class, 'resetPassword'])->name('reset_password');
-Route::get('verify_otp', [WebsiteController::class, 'verifyOtp'])->name('verify_otp');
-Route::post('forgot_password_submit', [WebsiteController::class, 'forgotPasswordSubmit'])->name('forgot_password_submit');
-Route::post('verify_otp_submit', [WebsiteController::class, 'verifyOtpSubmit'])->name('verify_otp_submit');
-Route::post('reset_password_submit', [WebsiteController::class, 'resetPasswordSubmit'])->name('reset_password_submit');
-Route::post('resend_otp', [WebsiteController::class, 'resendOtp'])->name('resend_otp');
-
+     Route::get('forgot_password', [WebsiteController::class, 'forgotPassword'])->name('forgot_password');
+     Route::get('reset_password', [WebsiteController::class, 'resetPassword'])->name('reset_password');
+     Route::get('verify_otp', [WebsiteController::class, 'verifyOtp'])->name('verify_otp');
+     Route::post('forgot_password_submit', [WebsiteController::class, 'forgotPasswordSubmit'])->name('forgot_password_submit');
+     Route::post('verify_otp_submit', [WebsiteController::class, 'verifyOtpSubmit'])->name('verify_otp_submit');
+     Route::post('reset_password_submit', [WebsiteController::class, 'resetPasswordSubmit'])->name('reset_password_submit');
+     Route::post('resend_otp', [WebsiteController::class, 'resendOtp'])->name('resend_otp');
+ });
 
 // -- Artist Dashboard Routes
 

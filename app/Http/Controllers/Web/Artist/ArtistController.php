@@ -14,14 +14,14 @@ class ArtistController extends Controller
     public function explore()
     {
         return view('user.dashboard.artist.explore', [
-            'pageTitle' => 'Explore'
+            'pageTitle' => __('explore_heading')
         ]);
     }
 
     public function studioDetail()
     {
         return view('user.dashboard.artist.studio_detail', [
-            'pageTitle' => 'Explore'
+            'pageTitle' => __('explore_heading')
         ]);
     }
 
@@ -70,7 +70,8 @@ class ArtistController extends Controller
                 'firebaseToken' => $firebaseToken,
                 'currentUser' => $user,
                 'currentFirebaseUid' => $currentFirebaseUid,
-                'pageTitle' => 'Messages'
+                'pageTitle' => __('messages_heading')
+
             ]);
 
         } catch (\Throwable $e) {
@@ -85,70 +86,70 @@ class ArtistController extends Controller
     public function profile()
     {
         return view('user.dashboard.artist.artist_profile', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function security()
     {
         return view('user.dashboard.artist.artist_security', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function bio()
     {
         return view('user.dashboard.artist.artist_bio', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function subscription()
     {
         return view('user.dashboard.artist.artist_subscription', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function rating()
     {
         return view('user.dashboard.artist.artist_rating', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function payment()
     {
         return view('user.dashboard.artist.artist_payment', [
-            'pageTitle' => 'Profile Management'
+            'pageTitle' => __('profile_heading')
         ]);
     }
 
     public function booking()
     {
         return view('user.dashboard.artist.artist_booking', [
-            'pageTitle' => 'Bookings'
+            'pageTitle' => __('bookings_heading')
         ]);
     }
 
     public function guestSpot()
     {
         return view('user.dashboard.artist.artist_guest_spot', [
-            'pageTitle' => 'Bookings'
+            'pageTitle' => __('bookings_heading')
         ]);
     }
 
     public function request()
     {
         return view('user.dashboard.artist.artist_request', [
-            'pageTitle' => 'Requests'
+            'pageTitle' => __('requests_heading')
         ]);
     }
 
     public function tattoo()
     {
         return view('user.dashboard.artist.artist_tattoo', [
-            'pageTitle' => 'Flash Tattoos'
+            'pageTitle' => __('flash_tattoos_heading')
         ]);
     }
 }
