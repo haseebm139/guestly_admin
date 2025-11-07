@@ -97,12 +97,16 @@ class StudioController extends BaseController
     }
     public function upcommingGuests(Request $request)
     {
-        $studio = $request->user(); // Authenticated studio user
-        $perPage = $request->query('per_page', 20);
+        try {
+            $studio = $request->user(); // Authenticated studio user
+            $perPage = $request->query('per_page', 20);
 
-        $data = $this->service->getUpcomingGuests($studio->id, $perPage);
+            $data = $this->service->getUpcomingGuests($studio->id, $perPage);
 
-        return $this->sendResponse($data, 'Upcoming guests retrieved.');
+            return $this->sendResponse($data, 'Upcoming guests retrieved.');
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong while fetching upcoming guests', 500);
+        }
     }
 
     public function requestGuests(Request $request)
