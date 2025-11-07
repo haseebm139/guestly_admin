@@ -168,6 +168,34 @@
             font-size: 14px;
         }
 
+        input.error {
+            border: 1px solid red !important;
+            /* red border */
+        }
+
+        label.error {
+            color: red;
+            font-size: 10px;
+            margin-top: auto;
+            display: block;
+            width: 100%;
+            /* label ka width input ke barabar */
+            text-align: center;
+            /* text center align */
+        }
+
+        /* Style for the input fields when they have an error */
+        input.error,
+        select.error {
+            border: 1px solid red !important;
+        }
+
+        /* Style for the entire group container when there is an error */
+        .input-group-connected.error-group {
+            border: 1px solid red !important;
+        }
+
+
         .back-link a {
             color: #014122;
             font-weight: 500;
@@ -199,14 +227,20 @@
             <p class="instruction-text">
                 {{ __('forgot_password_message') }}
             </p>
-            <form>
+            @if ($errors->any())
+                <div style="color: red; margin-bottom: 10px; text-align: center;">
+                    {{ $errors->first('email') }}
+                </div>
+            @endif
+            <form method="POST" id="forgotForm" action="{{ route('forgot_password_submit') }}">
+                @csrf
                 <div class="form-group">
                     <label>{{ __('email') }}</label>
-                    <input type="email" placeholder="{{ __('enter_register_email') }}" required>
+                    <input type="email" name="email" placeholder="{{ __('enter_register_email') }}" required>
                 </div>
-                <button type="submit"
-                    onclick="window.location.href='{{ asset('assets/web/verify_otp') }}?role={{ request('role', 'artist') }}'"
-                    class="continue-btn">{{ __('send_code') }}</button>
+                <button type="submit" class="continue-btn">
+                    {{ __('send_code') }}
+                </button>
             </form>
             <p class="back-link">
                 {{--            <a href="{{ asset ('form_login_signup') }}">← {{ __('back_to_login') }}</a> --}}
@@ -221,6 +255,38 @@
             document.body.style.opacity = 1;
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#forgotForm').validate({
+                rules: {
+                    email: {
+                        required: true,
+                        email: true
+                    }
+                },
+                messages: {
+                    email: {
+                        required: "Email is required",
+                        email: "Please enter a valid email address"
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass(errorClass).removeClass(validClass);
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass(errorClass).addClass(validClass);
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

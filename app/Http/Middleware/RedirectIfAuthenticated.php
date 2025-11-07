@@ -23,7 +23,20 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::ADMINHOME);
+
+                $user = Auth::user();
+
+                if ($user->user_type === 'admin') {
+                    return redirect(RouteServiceProvider::ADMINHOME);
+                }
+                elseif ($user->user_type === 'artist') {
+                    return redirect(RouteServiceProvider::ARTIST_HOME);
+                }
+                elseif ($user->user_type === 'studio') {
+                    return redirect(RouteServiceProvider::STUDIO_HOME);
+                }
+
+                return redirect('/home');
             }
         }
 

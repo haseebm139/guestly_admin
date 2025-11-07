@@ -55,4 +55,7 @@ return [
         'database_url' => env('FIREBASE_DATABASE_URL', 'https://guestly-8aa9a-default-rtdb.firebaseio.com'),
         'project_id' => env('FIREBASE_PROJECT_ID', 'guestly-8aa9a'),
     ],
+    'google_maps' => [
+        'key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
 ];

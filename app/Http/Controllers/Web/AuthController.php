@@ -16,7 +16,7 @@ class AuthController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:6',
             'phone_number' => 'required|string',
         ]);
 
@@ -39,11 +39,8 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        if ($roleName === 'artist') {
-            return redirect()->route('choose_plan');
-        } else {
-            return redirect()->route('studio_choose_plan');
-        }
+        return redirect()->route('choose_plan');
+
     }
 
     public function login(Request $request)
@@ -94,10 +91,10 @@ class AuthController extends Controller
             }
         }
 
-        // if login fail
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => 'Invalid login details. Please check your email or password.',
         ])->onlyInput('email');
+
     }
 
 

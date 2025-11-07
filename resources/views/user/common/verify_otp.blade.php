@@ -209,18 +209,40 @@
                 <p class="instruction-text">
                     {{ __('otp_message') }}
                 </p>
-                <form>
-                    <div class="otp-inputs">
-                        <input type="text" maxlength="1" required>
-                        <input type="text" maxlength="1" required>
-                        <input type="text" maxlength="1" required>
-                        <input type="text" maxlength="1" required>
+
+                @if ($errors->any())
+                    <div style="color: red; margin-bottom: 10px; text-align: center;">
+                        {{ $errors->first('otp') }}
                     </div>
-                    <button type="submit"
-                        onclick="window.location.href='{{ route('reset_password', ['role' => request('role', 'artist')]) }}'"
-                        class="continue-btn">{{ __('confirm_button') }}</button>
+                @endif
+                <div id="otp-error-container" style="color:red; margin-top:5px; text-align: center"></div>
+                <form method="POST" id="otpForm" action="{{ route('verify_otp_submit') }}">
+                    @csrf
+                    <!-- Hidden fields -->
+                    <input type="hidden" name="email" value="{{ session('email') }}">
+                    <input type="hidden" name="role" value="{{ request('role', 'artist') }}">
+
+                    <div class="otp-inputs">
+                        <input type="text" name="otp1" maxlength="1" required>
+                        <input type="text" name="otp2" maxlength="1" required>
+                        <input type="text" name="otp3" maxlength="1" required>
+                        <input type="text" name="otp4" maxlength="1" required>
+                    </div>
+
+                    <button type="submit" class="continue-btn">
+                        {{ __('confirm_button') }}
+                    </button>
                 </form>
-                <p class="resend-otp">{{ __('otp_not_receive') }} <a>{{ __('otp_resend') }}</a></p>
+
+
+                <p class="resend-otp">
+                    Didn’t receive OTP?
+                    <a href="javascript:void(0)" id="resendOtpBtn">Resend OTP</a>
+                    <span id="timerText" style="margin-left: 5px; color: gray;"></span>
+                </p>
+
+                <input type="hidden" id="userEmail" value="{{ session('email') }}">
+
             </div>
         </div>
         <script>
@@ -261,6 +283,143 @@
                 });
             });
         </script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                // ✅ Custom validator: check if all 4 digits entered
+                $.validator.addMethod("otpComplete", function(value, element) {
+                    var otp1 = $("input[name='otp1']").val();
+                    var otp2 = $("input[name='otp2']").val();
+                    var otp3 = $("input[name='otp3']").val();
+                    var otp4 = $("input[name='otp4']").val();
+                    return (otp1 && otp2 && otp3 && otp4); // true if all filled
+                }, "4 digit OTP is required");
+
+                $('#otpForm').validate({
+                    onkeyup: false,
+                    onfocusout: false,
+                    rules: {
+                        otp1: { otpComplete: true, digits: true },
+                        otp2: { otpComplete: true, digits: true },
+                        otp3: { otpComplete: true, digits: true },
+                        otp4: { otpComplete: true, digits: true }
+                    },
+                    messages: {
+                        otp1: "4 digit OTP is required",
+                        otp2: "4 digit OTP is required",
+                        otp3: "4 digit OTP is required",
+                        otp4: "4 digit OTP is required"
+                    },
+                    errorPlacement: function(error, element) {
+                        if (element.attr("name").match(/^otp/)) {
+                            if ($("#otp-error-container").is(':empty')) {
+                                error.appendTo("#otp-error-container");
+                            }
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    }
+                });
+
+                // ✅ Only allow numbers & auto move to next input
+                $('.otp-inputs input').on('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (this.value.length === this.maxLength) {
+                        $(this).next('input').focus();
+                    }
+                });
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            const resendBtn = document.getElementById('resendOtpBtn');
+            const timerText = document.getElementById('timerText');
+            const email = document.getElementById('userEmail').value;
+            let cooldown = false;
+            let timerInterval;
+
+            // ✅ Check previous cooldown from localStorage
+            const lastSentTime = localStorage.getItem('otpLastSentTime');
+            if (lastSentTime) {
+                const diff = Math.floor((Date.now() - parseInt(lastSentTime)) / 1000);
+                if (diff < 60) {
+                    cooldown = true;
+                    resendBtn.style.pointerEvents = 'none';
+                    resendBtn.style.opacity = '0.6';
+                    startTimer(60 - diff);
+                }
+            }
+
+            resendBtn.addEventListener('click', function () {
+                if (cooldown) return;
+
+                resendBtn.style.pointerEvents = 'none';
+                resendBtn.style.opacity = '0.6';
+                cooldown = true;
+
+                // ✅ Save resend time
+                localStorage.setItem('otpLastSentTime', Date.now());
+                startTimer(60);
+
+                // ✅ Send request to Laravel route
+                fetch("{{ route('resend_otp') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ email: email })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "OTP Sent!",
+                                text: data.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: data.message
+                            });
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Something went wrong. Please try again."
+                        });
+                    });
+            });
+
+            function startTimer(seconds) {
+                let remaining = seconds;
+                timerText.textContent = `(${remaining}s)`;
+
+                timerInterval = setInterval(() => {
+                    remaining--;
+                    timerText.textContent = `(${remaining}s)`;
+
+                    if (remaining <= 0) {
+                        clearInterval(timerInterval);
+                        timerText.textContent = '';
+                        resendBtn.style.pointerEvents = 'auto';
+                        resendBtn.style.opacity = '1';
+                        cooldown = false;
+                        localStorage.removeItem('otpLastSentTime'); // clear old timestamp
+                    }
+                }, 1000);
+            }
+        </script>
+
     </body>
 
     </html>

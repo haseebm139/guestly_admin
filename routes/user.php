@@ -6,76 +6,122 @@ use App\Http\Controllers\Web\LanguageController as WebLanguageController;
 use App\Http\Controllers\Web\WebsiteController;
 use App\Http\Controllers\Web\Artist\ArtistController as WebArtistController;
 use App\Http\Controllers\Web\Studio\StudioController as WebStudioController;
+use App\Http\Controllers\Web\Stripe\StripePaymentController as WebStripePaymentController;
+use App\Http\Controllers\Web\Chat\ChatController as WebChatController;
 
 
 Route::get('/', function () {
     return view('user.welcome');
 });
 
+ Route::middleware('guest')->group(function () {
 
-Route::get('form_slider', [WebsiteController::class, 'formSlider'])->name('form_slider');
-Route::get('form_slider_two', [WebsiteController::class, 'formSliderTwo'])->name('form_slider_two');
-Route::get('form_login_signup', [WebsiteController::class, 'formLoginSignup'])->name('form_login_signup');
-Route::get('choose_plan', [WebsiteController::class, 'choosePlan'])->name('choose_plan');
-Route::get('studio_choose_plan', [WebsiteController::class, 'studioChoosePlan'])->name('studio_choose_plan');
-Route::get('user_identification', [WebsiteController::class, 'userIdentification'])->name('user_identification');
-Route::get('doc_verification', [WebsiteController::class, 'docVerification'])->name('doc_verification');
-Route::get('phone_email_verification', [WebsiteController::class, 'phoneEmailVerification'])->name('phone_email_verification');
-Route::get('studio_step_form', [WebsiteController::class, 'studioStepForm'])->name('studio_step_form');
-Route::get('boost_studio', [WebsiteController::class, 'boostStudio'])->name('boost_studio');
-Route::get('forgot_password', [WebsiteController::class, 'forgotPassword'])->name('forgot_password');
-Route::get('reset_password', [WebsiteController::class, 'resetPassword'])->name('reset_password');
-Route::get('verify_otp', [WebsiteController::class, 'verifyOtp'])->name('verify_otp');
-
+     Route::get('form_slider', [WebsiteController::class, 'formSlider'])->name('form_slider');
+     Route::get('form_slider_two', [WebsiteController::class, 'formSliderTwo'])->name('form_slider_two');
+     Route::get('form_login_signup', [WebsiteController::class, 'formLoginSignup'])->name('form_login_signup');
+//Route::get('choose_plan', [WebsiteController::class, 'choosePlan'])->name('choose_plan');
+//Route::get('studio_choose_plan', [WebsiteController::class, 'studioChoosePlan'])->name('studio_choose_plan');
+//Route::get('user_identification', [WebsiteController::class, 'userIdentification'])->name('user_identification');
+//Route::get('doc_verification', [WebsiteController::class, 'docVerification'])->name('doc_verification');
+//Route::get('phone_email_verification', [WebsiteController::class, 'phoneEmailVerification'])->name('phone_email_verification');
+//Route::get('studio_step_form', [WebsiteController::class, 'studioStepForm'])->name('studio_step_form');
+//Route::get('boost_studio', [WebsiteController::class, 'boostStudio'])->name('boost_studio');
+     Route::get('forgot_password', [WebsiteController::class, 'forgotPassword'])->name('forgot_password');
+     Route::get('reset_password', [WebsiteController::class, 'resetPassword'])->name('reset_password');
+     Route::get('verify_otp', [WebsiteController::class, 'verifyOtp'])->name('verify_otp');
+     Route::post('forgot_password_submit', [WebsiteController::class, 'forgotPasswordSubmit'])->name('forgot_password_submit');
+     Route::post('verify_otp_submit', [WebsiteController::class, 'verifyOtpSubmit'])->name('verify_otp_submit');
+     Route::post('reset_password_submit', [WebsiteController::class, 'resetPasswordSubmit'])->name('reset_password_submit');
+     Route::post('resend_otp', [WebsiteController::class, 'resendOtp'])->name('resend_otp');
+ });
 
 // -- Artist Dashboard Routes
 
-Route::middleware('auth')->middleware('role:artist')->group(function () {
-    // routes here
-    Route::get('/dashboard/explore', [WebArtistController::class, 'explore'])->name('dashboard.explore');
-    Route::get('/dashboard/studio_detail', [WebArtistController::class, 'studioDetail'])->name('dashboard.studio_detail');
-    Route::get('/dashboard/artist_chat', [WebArtistController::class, 'chat'])->name('dashboard.artist_chat');
-    Route::get('/dashboard/artist_profile', [WebArtistController::class, 'profile'])->name('dashboard.artist_profile');
-    Route::get('/dashboard/artist_security', [WebArtistController::class, 'security'])->name('dashboard.artist_security');
-    Route::get('/dashboard/artist_bio', [WebArtistController::class, 'bio'])->name('dashboard.artist_bio');
-    Route::get('/dashboard/artist_subscription', [WebArtistController::class, 'subscription'])->name('dashboard.artist_subscription');
-    Route::get('/dashboard/artist_rating', [WebArtistController::class, 'rating'])->name('dashboard.artist_rating');
-    Route::get('/dashboard/artist_payment', [WebArtistController::class, 'payment'])->name('dashboard.artist_payment');
-    Route::get('/dashboard/artist_booking', [WebArtistController::class, 'booking'])->name('dashboard.artist_booking');
-    Route::get('/dashboard/artist_guest_spot', [WebArtistController::class, 'guestSpot'])->name('dashboard.artist_guest_spot');
-    Route::get('/dashboard/artist_request', [WebArtistController::class, 'request'])->name('dashboard.artist_request');
-    Route::get('/dashboard/artist_tattoo', [WebArtistController::class, 'tattoo'])->name('dashboard.artist_tattoo');
-});
-//            == > End Artist
+ Route::middleware(['auth', 'ensure.verified'])->group(function () {
+
+     // ------------------------------------------------------------------
+     // Route #1: Logout
+     // This should always work, regardless of the user's status.
+     // Our middleware logic is designed to always allow this route.
+     // ------------------------------------------------------------------
+     Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 
+     // ------------------------------------------------------------------
+     // Route #2: Onboarding, Verification, and Payment Routes
+     // Users will be directed to these pages based on their current status.
+     // The middleware will also prevent them from navigating back to previous steps.
 
-// -- Dashboard Studio
-Route::middleware('auth')->middleware('role:studio')->group(function () {
-    Route::get('/dashboard/studio_home', [WebStudioController::class, 'home'])->name('dashboard.studio_home');
-    Route::get('/dashboard/studio_chat', [WebStudioController::class, 'chat'])->name('dashboard.studio_chat');
-    Route::get('/dashboard/studio_search_artist', [WebStudioController::class, 'searchArtist'])->name('dashboard.studio_search_artist');
-    Route::get('/dashboard/studio_request', [WebStudioController::class, 'studioRequest'])->name('dashboard.studio_request');
-    Route::get('/dashboard/studio_profile', [WebStudioController::class, 'profile'])->name('dashboard.studio_profile');
-    Route::get('/dashboard/studio_subscription', [WebStudioController::class, 'studioSubscription'])->name('dashboard.studio_subscription');
-    Route::get('/dashboard/studio_availability', [WebStudioController::class, 'studioAvailability'])->name('dashboard.studio_availability');
-    Route::get('/dashboard/studio_promotion', [WebStudioController::class, 'studioPromotion'])->name('dashboard.studio_promotion');
-    Route::get('/dashboard/studio_rating', [WebStudioController::class, 'rating'])->name('dashboard.studio_rating');
-    Route::get('/dashboard/studio_payment', [WebStudioController::class, 'payment'])->name('dashboard.studio_payment');
-    Route::get('/dashboard/studio_security', [WebStudioController::class, 'security'])->name('dashboard.studio_security');
-});
-//            == > End Studio
+     // ------------------------------------------------------------------
+     Route::get('choose_plan', [WebsiteController::class, 'choosePlan'])->name('choose_plan');
+     Route::get('user_identification', [WebsiteController::class, 'userIdentification'])->middleware('role:artist')->name('user_identification');
+     Route::get('studio_step_form', [WebsiteController::class, 'studioStepForm'])->middleware('role:studio')->name('studio_step_form');
+     Route::get('boost_studio', [WebsiteController::class, 'boostStudio'])->middleware('role:studio')->name('boost_studio');
+     Route::post('verify-documents', [WebsiteController::class, 'verifyDocuments'])->name('verify.documents');
+     Route::post('generate-otp', [WebsiteController::class, 'generateOtp'])->name('generate.otp');
+     Route::post('auth-verify-otp', [WebsiteController::class, 'authVerifyOtpSubmit'])->name('auth.verify.otp');
+     Route::post('auth-resend-otp', [WebsiteController::class, 'authResendOtp'])->name('auth.resend.otp');
+     Route::post('auth-verify-phone', [WebsiteController::class, 'authVerifyPhone'])->name('auth.verify.phone');
+     // Stripe Payment Routes
+     Route::post('/stripe/create-payment-intent', [WebStripePaymentController::class, 'createPaymentIntent'])->name('stripe.create_intent');
+     Route::post('/stripe/confirm-payment', [WebStripePaymentController::class, 'confirmPayment'])->name('stripe.confirm_payment');
 
-//            == > Notification
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard/notification', function () {
-        return view('user.dashboard.notification', [
-            'pageTitle' => 'Notifications'
-        ]);
-    })->name('dashboard.notification');
-});
+//     Route::get('/chat', [WebChatController::class, 'showChat'])->name('chat.show');
+     Route::post('/send-message', [WebChatController::class, 'sendMessage'])->name('chat.send');
+
+
+     // ------------------------------------------------------------------
+     // Route #3: Main Dashboard Routes
+     // Users can access these pages only when their status is 2 (complete).
+     // If the status is 0 or 1, the middleware will redirect them to the previous steps.
+     // ------------------------------------------------------------------
+
+     // -- Artist Dashboard Routes
+     Route::middleware('role:artist')->prefix('dashboard')->name('dashboard.')->group(function () {
+         Route::get('/explore', [WebArtistController::class, 'explore'])->name('explore');
+         Route::get('/studio_detail', [WebArtistController::class, 'studioDetail'])->name('studio_detail');
+         Route::get('/artist_chat', [WebArtistController::class, 'chat'])->name('artist_chat');
+         Route::get('/artist_profile', [WebArtistController::class, 'profile'])->name('artist_profile');
+         Route::get('/artist_security', [WebArtistController::class, 'security'])->name('artist_security');
+         Route::get('/artist_bio', [WebArtistController::class, 'bio'])->name('artist_bio');
+         Route::get('/artist_subscription', [WebArtistController::class, 'subscription'])->name('artist_subscription');
+         Route::get('/artist_rating', [WebArtistController::class, 'rating'])->name('artist_rating');
+         Route::get('/artist_payment', [WebArtistController::class, 'payment'])->name('artist_payment');
+         Route::get('/artist_booking', [WebArtistController::class, 'booking'])->name('artist_booking');
+         Route::get('/artist_guest_spot', [WebArtistController::class, 'guestSpot'])->name('artist_guest_spot');
+         Route::get('/artist_request', [WebArtistController::class, 'request'])->name('artist_request');
+         Route::get('/artist_tattoo', [WebArtistController::class, 'tattoo'])->name('artist_tattoo');
+         Route::get('/create-test-chat/{artistId}/{studioId}', [WebArtistController::class, 'createTestChat'])->name('test.chat.create');
+         Route::post('/artist_profile_update', [WebArtistController::class, 'artistProfileUpdate'])->name('artist_profile_update');
+     });
+
+     // -- Studio Dashboard Routes
+     Route::middleware('role:studio')->prefix('dashboard')->name('dashboard.')->group(function () {
+         Route::get('/studio_home', [WebStudioController::class, 'home'])->name('studio_home');
+         Route::get('/studio_chat', [WebStudioController::class, 'chat'])->name('studio_chat');
+//         Route::get('/artist_chat', [WebStudioController::class, 'chat'])->name('artist_chat');
+
+         Route::get('/studio_search_artist', [WebStudioController::class, 'searchArtist'])->name('studio_search_artist');
+         Route::get('/studio_request', [WebStudioController::class, 'studioRequest'])->name('studio_request');
+         Route::get('/studio_profile', [WebStudioController::class, 'profile'])->name('studio_profile');
+         Route::get('/studio_subscription', [WebStudioController::class, 'studioSubscription'])->name('studio_subscription');
+         Route::get('/studio_availability', [WebStudioController::class, 'studioAvailability'])->name('studio_availability');
+         Route::get('/studio_promotion', [WebStudioController::class, 'studioPromotion'])->name('studio_promotion');
+         Route::get('/studio_rating', [WebStudioController::class, 'rating'])->name('studio_rating');
+         Route::get('/studio_payment', [WebStudioController::class, 'payment'])->name('studio_payment');
+         Route::get('/studio_security', [WebStudioController::class, 'security'])->name('studio_security');
+     });
+
+     // -- Common Dashboard Routes (Notification, etc.)
+     Route::get('/dashboard/notification', function () {
+         return view('user.dashboard.notification', [
+             'pageTitle' => 'Notifications'
+         ]);
+     })->name('dashboard.notification');
+
+
+ });
 //            == > End Notification
-
 
 // -- For Testing
 
@@ -94,7 +140,7 @@ Route::post('/signup', [WebAuthController::class, 'signup'])->name('signup');
 Route::post('/login', [WebAuthController::class, 'login'])->name('login');
 
 // Logout
-Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
+//Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 Route::post('/language-switch', [WebLanguageController::class, 'ajaxSwitch'])->name('lang.ajaxSwitch');
 

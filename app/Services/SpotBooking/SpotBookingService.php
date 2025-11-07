@@ -16,12 +16,7 @@ class SpotBookingService
     public function create(array $data){
         $data['artist_id']   = auth()->user()->id;
         $data['status']      = 'pending';
-        $groupArtists = $data['group_artists'] ?? [];
-        if (is_string($groupArtists)) {
-            $decoded = json_decode($groupArtists, true);
-            $groupArtists = is_array($decoded) ? $decoded : [];
-        }
-        $data['group_artists'] = json_encode($groupArtists);
+        $data['group_artists'] = json_encode($data['group_artists']);
 
         if (isset($data['portfolio_files']) && is_array($data['portfolio_files'])) {
             $galleryPaths = $this->uploadPortfolio($data['portfolio_files'],$data['artist_id']);

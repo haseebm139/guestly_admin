@@ -2,9 +2,53 @@
     <div class="header-row">
         <h1 class="page-title">{{ $pageTitle ?? '' }}</h1>
         <div class="user-profile">
+
+        <!-- Language Selector Start -->
+<div class="language-selector">
+    <div class="selected-language" id="selectedLanguage">
+        @if(session('locale') === 'ko')
+            <img src="https://flagcdn.com/kr.svg" alt="Korean (South Korea)">
+            <span>한국어</span>
+        @else
+            <img src="https://flagcdn.com/gb.svg" alt="English">
+            <span>English</span>
+        @endif
+        <i class="arrow-down"></i>
+    </div>
+    <ul class="language-dropdown" id="languageDropdown">
+        <li>
+            <label>
+                <input type="radio" name="language" value="en"
+                       {{ session('locale') === 'en' ? 'checked' : '' }}>
+                <img src="https://flagcdn.com/gb.svg" alt="English">
+                English
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="language" value="ko"
+                       {{ session('locale') === 'ko' ? 'checked' : '' }}>
+                <img src="https://flagcdn.com/kr.svg" alt="Korean (South Korea)">
+                한국어
+            </label>
+        </li>
+    </ul>
+</div>
+<!-- Language Selector End -->
+
             <!-- Profile Dropdown Area (Pehle se maujood) -->
             <div class="profile-toggle-area" id="profileToggleArea">
-                <img src="{{ asset('assets/web/dashboard/user-profile.jpg') }}" alt="Chris Johnson avatar" class="user-avatar">
+{{--                <img src="{{ asset('assets/web/dashboard/user-profile.jpg') }}" alt="Chris Johnson avatar" class="user-avatar">--}}
+                @if (Auth::check() && Auth::user()->avatar && !str_contains(Auth::user()->avatar, 'avatar/001-boy.svg'))
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
+                         alt="{{ Auth::user()->name }} avatar"
+                         class="user-avatar">
+                @else
+                    <img src="{{ asset('avatar/001-boy.svg') }}"
+                         alt="Default avatar"
+                         class="user-avatar">
+                @endif
+
                 <div class="user-info">
                     <p>{{ ucwords(Auth::user()->name) }} {{ ucwords(Auth::user()->last_name) }}</p>
                     <p>{{ ucwords(Auth::user()->role_id) }}</p>

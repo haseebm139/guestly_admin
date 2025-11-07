@@ -273,6 +273,32 @@
                 cursor: pointer;
                 font-family: 'Arial Rounded MT Bold', sans-serif;
             }
+            input.error {
+                border: 1px solid red !important;
+                /* red border */
+            }
+
+            label.error {
+                color: red;
+                font-size: 10px;
+                margin-top: auto;
+                display: block;
+                width: 100%;
+                /* label ka width input ke barabar */
+                text-align: center;
+                /* text center align */
+            }
+
+            /* Style for the input fields when they have an error */
+            input.error,
+            select.error {
+                border: 1px solid red !important;
+            }
+
+            /* Style for the entire group container when there is an error */
+            .input-group-connected.error-group {
+                border: 1px solid red !important;
+            }
         </style>
     </head>
 
@@ -289,21 +315,36 @@
                     {{ __('set_password_message') }}
                 </p>
 
-                <form>
+
+
+                @if ($errors->has('password'))
+                    <div style="color:red; text-align:center; margin-bottom:10px;">
+                        {{ $errors->first('password') }}
+                    </div>
+                @endif
+
+                <form method="POST" id="resetForm" action="{{ route('reset_password_submit') }}">
+                    @csrf
+
+                    <input type="hidden" name="email" value="{{ session('email') }}">
+                    <input type="hidden" name="role" value="{{ request('role', 'artist') }}">
+
                     <div class="form-group">
                         <label>{{ __('new_password') }}</label>
-                        <input type="password" id="new-password" placeholder="{{ __('enter_new_password') }}" required>
+                        <input type="password" name="password" id="new-password" placeholder="{{ __('enter_new_password') }}" required>
                         <i class="fa-solid fa-eye toggle-password" data-target="new-password"></i>
                     </div>
+
                     <div class="form-group">
                         <label>{{ __('confirm_password') }}</label>
-                        <input type="password" id="confirm-password" placeholder="{{ __('confirm_new_password') }}"
-                            required>
+                        <input type="password" name="password_confirmation" id="confirm-password"
+                               placeholder="{{ __('confirm_new_password') }}" required>
                         <i class="fa-solid fa-eye toggle-password" data-target="confirm-password"></i>
                     </div>
-                    <button type="button" class="continue-btn"
-                        id="updatePasswordBtn">{{ __('updated_password_button') }}</button>
+
+                    <button type="submit" class="continue-btn">{{ __('updated_password_button') }}</button>
                 </form>
+
             </div>
         </div>
 
@@ -324,57 +365,54 @@
                 document.body.style.opacity = 1;
             });
 
-            // Password toggle script (no change)
-            const passwordField = document.getElementById('new-password');
-            const container = document.querySelector('.container');
-            // const toggleIcon = document.getElementById('toggle-password-icon');
-            // toggleIcon.addEventListener('click', function() {
-            //     const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            //     passwordField.setAttribute('type', type);
-            //     this.classList.toggle('fa-eye');
-            //     this.classList.toggle('fa-eye-slash');
-            // });
-
-            // ✅ SCRIPT FOR MODAL FROM YOUR REFERENCE FILE
-            const updateBtn = document.getElementById('updatePasswordBtn');
-            const successModal = document.getElementById('success-modal');
-            const doneBtn = document.getElementById('done-btn');
-
-            // Show modal on button click
-            updateBtn.addEventListener('click', (event) => {
-                // IMPORTANT: Prevent the form from submitting and reloading the page
-                event.preventDefault();
-                container.classList.add('blur-background');
-                // Show the modal
-                successModal.classList.add('active');
-            });
-            // Jab modal ke overlay (bahar) par click ho
-            // successModal.addEventListener('click', (event) => {
-            //     if (event.target === successModal) { // Sirf overlay par click ho, content par nahi
-            //         successModal.classList.remove('active');
-            //         container.classList.remove('blur-background'); // Blur hata dein
-            //     }
-            // });
-            // Redirect on "Back to Login" button click
-            doneBtn.addEventListener('click', () => {
-                // Redirect to your main login page
-                window.location.href = "{{ asset('assets/web/form_login_signup') }}?role={{ request('role', 'artist') }}";
 
 
-            });
-            document.querySelectorAll('.toggle-password').forEach(icon => {
-                icon.addEventListener('click', function() {
-                    const input = document.getElementById(this.dataset.target);
-                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                    input.setAttribute('type', type);
+        </script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-                    // Icon toggle
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
+        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // ✅ Toggle eye icon
+                $('.toggle-password').on('click', function () {
+                    let target = $('#' + $(this).data('target'));
+                    if (target.attr('type') === 'password') {
+                        target.attr('type', 'text');
+                        $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+                    } else {
+                        target.attr('type', 'password');
+                        $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+                    }
+                });
+
+                // ✅ Password validation
+                $('#resetForm').validate({
+                    rules: {
+                        password: {
+                            required: true,
+                            minlength: 8
+                        },
+                        password_confirmation: {
+                            required: true,
+                            equalTo: "#new-password"
+                        }
+                    },
+                    messages: {
+                        password: {
+                            required: "Please enter a new password",
+                            minlength: "Password must be at least 6 characters"
+                        },
+                        password_confirmation: {
+                            required: "Please confirm your new password",
+                            equalTo: "Passwords do not match"
+                        }
+                    },
+                    errorPlacement: function (error, element) {
+                        error.insertAfter(element);
+                    }
                 });
             });
         </script>
-
     </body>
 
     </html>

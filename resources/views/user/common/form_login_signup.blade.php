@@ -380,8 +380,32 @@
                 text-align: center;
                 width: 100%;
             }
+                 /* ✅ Success Message */
+             .alert-success {
+                 background-color: #d4edda;  /* light green */
+                 color: #155724;             /* dark green text */
+                 border: 1px solid #c3e6cb;  /* green border */
+                 padding: 12px 20px;
+                 border-radius: 6px;
+                 margin: 10px 0;
+                 font-size: 14px;
+             }
 
-            @media (max-width: 768px) {
+            /* ✅ Error Message */
+            .alert-danger {
+                background-color: #f8d7da;  /* light red */
+                color: #721c24;             /* dark red text */
+                border: 1px solid #f5c6cb;  /* red border */
+                padding: 12px 20px;
+                border-radius: 6px;
+                margin: 10px 0;
+                font-size: 14px;
+            }
+
+
+
+
+        @media (max-width: 768px) {
                 .container {
                     flex-direction: column;
                     align-items: center;
@@ -410,6 +434,17 @@
                     @if ($errors->any())
                         <div style="color: red; margin-bottom: 10px; text-align: center;">
                             {{ $errors->first('email') }}
+                        </div>
+                    @endif
+                    @if (session('success'))
+                        <div class="alert alert-success flash-message">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger flash-message">
+                            {{ $errors->first() }}
                         </div>
                     @endif
 
@@ -484,24 +519,6 @@
                                 placeholder="{{ __('enter_password') }}">
                             <i class="fa-solid fa-eye toggle-password" id="toggle-signup-password"></i>
                         </div>
-
-{{--                        <div class="input-group-connected">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>{{ __('country_region') }}</label>--}}
-{{--                                <select name="country_region">--}}
-{{--                                    <option value="" disabled selected style="color: gray;">--}}
-{{--                                        {{ __('enter_country_region') }}</option>--}}
-{{--                                    <option>United States (+1)</option>--}}
-{{--                                    <option>United Kingdom (+44)</option>--}}
-{{--                                    <option>Canada (+1)</option>--}}
-{{--                                </select>--}}
-{{--                            </div>--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>{{ __('phone_number') }}</label>--}}
-{{--                                <input type="text" name="phone_number"--}}
-{{--                                    placeholder="{{ __('enter_phone_number') }}">--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
                         <div class="input-group-connected">
                             <div class="form-group">
                                 <label>{{ __('country_region') }}</label>
@@ -708,7 +725,7 @@
                         },
                         password: {
                             required: true,
-                            minlength: 8
+                            minlength: 6
                         }
                     },
                     messages: {
@@ -719,7 +736,7 @@
                         },
                         password: {
                             required: "Password is required",
-                            minlength: "Password must be at least 8 characters"
+                            minlength: "Password must be at least 6 characters"
                         }
                     },
                     errorPlacement: function(error, element) {
@@ -823,6 +840,17 @@
                 }
             });
         </script>
+        <script>
+            // flash message auto-hide after 3 seconds
+            setTimeout(function() {
+                document.querySelectorAll('.flash-message').forEach(function(el) {
+                    el.style.transition = 'opacity 0.5s ease';
+                    el.style.opacity = '0';
+                    setTimeout(() => el.remove(), 500); // element remove after fade
+                });
+            }, 3000); // 3 seconds baad fade out
+        </script>
+
     </body>
 
     </html>

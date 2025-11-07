@@ -99,7 +99,34 @@
     "tattoo_verify_message" : "Upload a photo of your Tattoo License.",
     "tattoo_confirm_heading" : "Confirm Your Tattoo License",
     "tattoo_image" : "Tattoo License Image",
-    "phone_otp_message" : "Please enter the four digit OTP code we sent to your registered phone number."
+    "phone_otp_message" : "Please enter the four digit OTP code we sent to your registered phone number.",
+
+    "search_paragraph" : "Where are you guesting next?",
+    "filter" : "Filter",
+    "explore_heading" : "Explore",
+    "messages_heading" : "Messages",
+    "bookings_heading" : "Bookings",
+    "requests_heading" : "Requests",
+    "flash_tattoos_heading" : "Flash Tattoos",
+    "profile_heading" : "Profile Management",
+    "studios_heading" : "Studios",
+    "clients_heading" : "Clients",
+    "profile_personal_heading" : "Profile",
+    "personal_information_heading" :"Personal Information",
+    "login_security_heading" : "Login & Security",
+    "bio_tattoo_styles_heading" : "Bio & Tattoo Styles",
+    "subscription_management_heading" : "Subscription Management",
+    "view_ratings_heading" : "View Ratings",
+    "payments_methods_heading" : "Payment Methods",
+
+    "studio_dashboard_heading" : "Dashboard",
+    "studio_guest_artist_search_heading" : "Guest Artist",
+    "studio_guest_artist_request_heading" : "Guest Artist Request",
+    "studio_search_artist_heading" : "Search Artists",
+    "studio_artist_request_heading" : "Requests",
+    "studio_profile_heading" : "Studio Profile View",
+    "studio_availability_heading" : "Studio Availability",
+    "studio_ads_promotion_heading" : "Ads Promotion"
 
 
 

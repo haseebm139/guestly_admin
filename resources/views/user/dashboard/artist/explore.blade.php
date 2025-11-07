@@ -12,11 +12,11 @@
                     <div class="search-controls">
                         <div class="search-input-wrapper">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" placeholder="Where are you guesting next?" class="search-input">
+                            <input type="text" placeholder="{{ __('search_paragraph') }}" class="search-input">
                         </div>
                         <button class="filter-button" data-bs-toggle="modal" data-bs-target="#filter-modal-overlay">
                             <i class="fa-solid fa-sliders"></i>
-                            <span>Filter</span>
+                            <span>{{ __('filter') }}</span>
                         </button>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                                         </div>
                                     </div>
                                     <div class="card_content_wrapper"
-                                        onclick=window.location.href="{{ asset('assets/web/dashboard/studio_detail') }}">
+                                        onclick=window.location.href="{{ asset('dashboard/studio_detail') }}">
                                         <div class="card-header">
                                             <div class="card-logo-wrapper">
                                                 <img src="{{ asset('assets/web/dashboard/default_1.png') }}"
@@ -158,118 +158,6 @@
                 </div>
             </div>
         </div>
-        {{-- <!-- Studio Card 2 -->
-        <div class="studio-card" onclick=window.location.href="{{ asset('assets/web/dashboard/studio_detail') }}">
-            <div class="card-image-wrapper">
-                <img src="{{ asset ('dashboard/default_3_profile.jpg') }}" alt="Arm tattoo" class="card-image">
-                <div class="card-image-dots">
-                    <span class="active"></span><span></span><span></span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="card-header">
-                    <div class="card-logo-wrapper">
-                        <img src="{{ asset ('dashboard/default_3.png') }}" alt="Electric Tiger Tattoo Logo" class="card-logo">
-                        <div class="card-title-location">
-                            <h3 class="card-title">Electric Tiger Tattoo</h3>
-                            <p class="card-location">
-                                <img src="{{ asset ('extra/location_logo.png') }}" alt="Location" style="width: 16px; height: 16px; vertical-align: middle;">
-                                San Diego, California, USA
-                            </p>
-                        </div>
-                    </div>
-                    <button class="card-like-btn">
-                        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                    </button>
-                </div>
-                <div class="card-info-section">
-                    <div class="card-status-row">
-                        <span class="card-verified">
-                            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                            <span>Verified</span>
-                        </span>
-                        <span class="card-status-badge open">OPEN</span>
-                    </div>
-                    <div class="card-details">
-                        <p>Open Today: 9:00 AM - 5:00 PM</p>
-                        <p>Specialties: Painterly & Abstract</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Studio Card 3 -->
-        <div class="studio-card" onclick=window.location.href="{{ asset('assets/web/dashboard/studio_detail') }}">
-            <div class="card-image-wrapper">
-                <img src="{{ asset ('dashboard/default_2_profile.jpg') }}" alt="Hand tattoos" class="card-image">
-            </div>
-            <div class="card-body">
-                <div class="card-header">
-                    <div class="card-logo-wrapper">
-                        <img src="{{ asset ('dashboard/default_2.png') }}" alt="Crimson Lotus Tattoo Logo" class="card-logo">
-                        <div class="card-title-location">
-                            <h3 class="card-title">Crimson Lotus Tattoo</h3>
-                            <p class="card-location">
-                                <img src="{{ asset ('extra/location_logo.png') }}" alt="Location" style="width: 16px; height: 16px; vertical-align: middle;">
-                                San Diego, California, USA
-                            </p>
-                        </div>
-                    </div>
-                    <button class="card-like-btn">
-                        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                    </button>
-                </div>
-                <div class="card-info-section" >
-                    <div class="card-status-row">
-                        <span class="card-verified">
-                            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                            <span>Verified</span>
-                        </span>
-                        <span class="card-status-badge open">OPEN</span>
-                    </div>
-                    <div class="card-details">
-                        <p>Open Today: 12:00 PM - 10:00 PM</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Studio Card 4 (Closed) -->
-        <div class="studio-card" onclick=window.location.href="{{ asset('assets/web/dashboard/studio_detail') }}">
-            <div class="card-image-wrapper">
-                <img src="{{ asset ('dashboard/default_1_profile.jpg') }}" alt="Another tattoo artist" class="card-image">
-                <div class="card-image-dots">
-                    <span class="active"></span><span></span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="card-header">
-                    <div class="card-logo-wrapper">
-                        <img src="{{ asset ('dashboard/default_1.png') }}" alt="The Inkwell Studio Logo" class="card-logo">
-                        <div class="card-title-location">
-                            <h3 class="card-title">The Inkwell Studio</h3>
-                            <p class="card-location">
-                                <img src=" {{ asset ('extra/location_logo.png') }}" alt="Location" style="width: 16px; height: 16px; vertical-align: middle;">
-                                San Diego, California, USA
-                            </p>
-                        </div>
-                    </div>
-                    <button class="card-like-btn">
-                        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                    </button>
-                </div>
-                <div class="card-info-section">
-                    <div class="card-status-row">
-                        <span class="card-verified">
-                            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                            <span>Verified</span>
-                        </span>
-                        <span class="card-status-badge closed">CLOSED</span>
-                    </div>
-                    <div class="card-details">
-                        <p>Opens Tomorrow: 12:00 PM</p>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
 
 
         <!-- FILTER MODAL -->
@@ -297,11 +185,11 @@
                             <label class="form-label">Date Range</label>
                             <div class="calendar-container">
                                 <div class="calendar-header">
-                                    <button id="prev-month-btn" class="calendar-nav">
-                                        << /button>
-                                            <span id="calendar-month-year" class="calendar-month-year"></span>
-                                            <button id="next-month-btn" class="calendar-nav">></button>
+                                    <button id="prev-month-btn" class="calendar-nav">&lt;</button>
+                                    <span id="calendar-month-year" class="calendar-month-year"></span>
+                                    <button id="next-month-btn" class="calendar-nav">&gt;</button>
                                 </div>
+
                                 <div class="calendar-grid calendar-grid-header">
                                     <div class="day-name">M</div>
                                     <div class="day-name">T</div>
@@ -372,73 +260,12 @@
     @endsection
 
     @section('scripts')
-        {{-- Leaflet JS is needed for the map --}}
-        {{--    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> --}}
+
         <script async defer
             src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=initMap">
         </script>
-        {{--    <script> --}}
-        {{--        // Initialize map, centered on New York City --}}
-        {{--        var map = L.map('map', { --}}
-        {{--            zoomControl: false, // Hide default zoom +/- --}}
-        {{--        }).setView([40.74, -73.98], 13); --}}
 
-        {{--        // Add a light-themed tile layer from CartoDB, similar to the image --}}
-        {{--        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { --}}
-        {{--            maxZoom: 19, --}}
-        {{--            // attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>' --}}
-        {{--        }).addTo(map); --}}
-
-        {{--        // --- CUSTOM MARKERS --- --}}
-
-        {{--        // Data for studios based on the image --}}
-        {{--        const studios = [ --}}
-        {{--            { name: 'The Inkwell Studio', latlng: [40.7650, -73.9995] }, --}}
-        {{--            { name: 'Crimson Lotus Tattoo', latlng: [40.7829, -73.9654] }, --}}
-        {{--            { name: 'Electric Tiger Tattoo', latlng: [40.7295, -73.9930] } --}}
-        {{--        ]; --}}
-
-        {{--        // SVG icon for the studio markers --}}
-        {{--        const buildingSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" /></svg>`; --}}
-
-        {{--        // Loop through studios and add a custom marker for each --}}
-        {{--        studios.forEach(studio => { --}}
-        {{--            const studioIcon = L.divIcon({ --}}
-        {{--                html: ` --}}
-        {{--                    <div class="studio-marker"> --}}
-        {{--                        <div class="studio-marker-icon">${buildingSVG}</div> --}}
-        {{--                        <span>${studio.name}</span> --}}
-        {{--                    </div> --}}
-        {{--                `, --}}
-        {{--                className: '', // Leaflet adds 'leaflet-div-icon' class by default --}}
-        {{--                iconSize: null, // Size will be determined by CSS --}}
-        {{--                iconAnchor: [75, 18] // Center of the icon, adjust as needed --}}
-        {{--            }); --}}
-
-        {{--            L.marker(studio.latlng, { icon: studioIcon }).addTo(map); --}}
-        {{--        }); --}}
-
-        {{--        // Add the 'You' marker --}}
-        {{--        const youLocation = [40.7484, -73.9500]; // An example "You" location --}}
-
-        {{--        const youIcon = L.divIcon({ --}}
-        {{--            html: '<div class="you-marker-icon"></div>', --}}
-        {{--            className: '', --}}
-        {{--            iconSize: [24, 24], --}}
-        {{--            iconAnchor: [12, 12] --}}
-        {{--        }); --}}
-
-        {{--        L.marker(youLocation, { icon: youIcon, zIndexOffset: 1000 }).addTo(map) --}}
-        {{--            .bindTooltip('You', { --}}
-        {{--                permanent: true, --}}
-        {{--                direction: 'right', --}}
-        {{--                offset: [15, 0], --}}
-        {{--                className: 'you-tooltip' --}}
-        {{--            }); --}}
-
-        {{--    </script> --}}
         <script>
-            // --- DATA (Aapke image paths ke saath) ---
             const studios = [{
                     name: 'The Inkwell Studio',
                     location: 'San Diego, CA',
@@ -689,15 +516,7 @@
                     "September", "October", "November", "December"
                 ];
 
-                // // --- Modal Open/Close Functions ---
-                // const openModal = () => {
-                //     modalOverlay.classList.remove('hidden');
-                //     filterButton.classList.add('open');
-                // }
-                // const closeModal = () => {
-                //     modalOverlay.classList.add('hidden');
-                //     filterButton.classList.remove('open');
-                // }
+
 
                 // --- Date Formatting ---
                 const formatDate = (date) => {
@@ -792,13 +611,6 @@
                     renderCalendar();
                 };
 
-                // --- Event Listeners ---
-                // filterButton.addEventListener('click', openModal);
-                // closeModalBtn.addEventListener('click', closeModal);
-                // applyBtn.addEventListener('click', closeModal);
-                // modalOverlay.addEventListener('click', (e) => {
-                //     if (e.target === modalOverlay) closeModal();
-                // });
 
                 prevMonthBtn.addEventListener('click', () => {
                     currentDate.setMonth(currentDate.getMonth() - 1);
