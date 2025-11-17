@@ -34,6 +34,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('phpinfo', function () {
+    phpinfo();
+});
 Route::get('/thankyou', function () {
     return view('user.pages.client.thank_you');
 });
