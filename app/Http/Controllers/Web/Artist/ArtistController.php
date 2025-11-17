@@ -103,7 +103,7 @@ class ArtistController extends Controller
             'address' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'emergency_phone' => 'nullable|string|max:20',
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:15000',
         ]);
 
         // Avatar upload using your preferred method

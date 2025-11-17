@@ -87,9 +87,9 @@ class StudioManagementController extends Controller
             'commission_type'   => 'nullable|string|max:255',
             'commission_value'   => 'nullable|string|max:255',
 
-            'avatar'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'studio_logo'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'studio_cover'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'avatar'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:15000',
+            'studio_logo'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:15000',
+            'studio_cover'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:15000',
         ]);
         // update simple fields
         $user->fill($request->only([

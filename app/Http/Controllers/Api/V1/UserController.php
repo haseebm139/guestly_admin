@@ -50,7 +50,7 @@ class UserController extends BaseController
     public function uploadChatImage(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:15000',
         ]);
 
         if ($validator->fails()) {

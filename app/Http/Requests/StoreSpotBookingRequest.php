@@ -33,7 +33,7 @@ class StoreSpotBookingRequest extends FormRequest
             'message'           => 'nullable|string',
 
             'portfolio_files'     => 'nullable|array|max:5',
-            'portfolio_files.*'   => 'file|mimes:jpg,jpeg,png|max:5120', // max 2MB each
+            'portfolio_files.*'   => 'file|mimes:jpg,jpeg,png|max:15000', // max 2MB each
         ];
 
     }

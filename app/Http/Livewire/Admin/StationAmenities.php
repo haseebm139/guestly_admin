@@ -31,7 +31,7 @@ class StationAmenities extends Component
         return [
             'name' => 'required|max:255|unique:supplies,name,' . $this->amenityId,
             'description' => 'nullable|string',
-            'icon' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:5120',
+            'icon' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:15000',
         ];
     }
     public function render()

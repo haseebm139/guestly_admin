@@ -82,7 +82,7 @@ class ArtistManagementController extends Controller
             'city'      => 'nullable|string|max:255',
             'country'   => 'nullable|string|max:255',
             'phone'   => 'nullable|string|max:255',
-            'avatar'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'avatar'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:15000',
         ]);
         // update simple fields
         $user->fill($request->only([

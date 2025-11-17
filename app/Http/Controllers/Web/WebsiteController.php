@@ -208,8 +208,8 @@ class WebsiteController extends Controller
     public function verifyDocuments(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'front_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB max
-            'back_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Back image optional hai
+            'front_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:15000', // 2MB max
+            'back_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:15000', // Back image optional hai
         ]);
 
         if ($validator->fails()) {

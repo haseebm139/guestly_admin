@@ -39,7 +39,7 @@ class ArtistUpdateProfileRequest extends FormRequest
             'phone_verified'=>'nullable|boolean',
             'email_verified'=>'nullable|boolean',            
             'tattoo_style' => 'nullable|array',
-            'avatar'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'avatar'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:15000',
             'tattoo_style.*' => 'integer|exists:tattoo_styles,id',
             'is_active' => 'nullable|boolean',
 

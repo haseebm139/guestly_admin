@@ -54,7 +54,7 @@ class FlashTattooController extends BaseController
         $data = $request->validate([
             'title'       => 'required|string|max:255', 
             'repeatable'  => 'boolean', 
-            'image'       => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'image'       => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:15000',
             'description' => 'nullable|string',
             'options'     => 'required|array',
             'options.*.size'     => 'required|string',
@@ -99,7 +99,7 @@ class FlashTattooController extends BaseController
         $data = $request->validate([
             'title'       => 'required|string|max:255', 
             'repeatable'  => 'boolean', 
-            'image'       => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'image'       => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:15000',
             'description' => 'nullable|string',
             'options'     => 'required|array',
             'options.*.id'       => 'nullable|integer|exists:flash_tattoo_options,id',

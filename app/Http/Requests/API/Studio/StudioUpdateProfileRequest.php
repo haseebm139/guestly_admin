@@ -42,7 +42,7 @@ class StudioUpdateProfileRequest extends FormRequest
             'preferred_duration' => 'nullable|string',
             'commission_type' => 'nullable|in:0,1,2', // fixed, percentage, custom
             'commission_value' => 'nullable|numeric|min:0',
-            'avatar'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'avatar'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:15000',
             'phone_verified'=>'nullable|boolean',
             'email_verified'=>'nullable|boolean', 
             // Array fields
@@ -53,10 +53,10 @@ class StudioUpdateProfileRequest extends FormRequest
             'amenities.*' => 'integer|exists:station_amenities,id',
 
             // File fields
-            'studio_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'studio_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:15000',
+            'studio_cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:15000',
             'studio_images' => 'nullable|array|max:5',
-            'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'studio_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:15000',
 
             /* ✅ NEW: design specialties (exists in `design_specialties` table) */
             'design_specialties'   => 'nullable|array|max:10',
@@ -64,7 +64,7 @@ class StudioUpdateProfileRequest extends FormRequest
 
             /* ✅ NEW: guest-related fields */
             'guest_to_choose' => 'nullable|boolean',
-            'guest_policy'    => 'nullable|file|mimes:png,jpeg,jpg,pdf|max:5120',
+            'guest_policy'    => 'nullable|file|mimes:png,jpeg,jpg,pdf|max:15000',
 
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
