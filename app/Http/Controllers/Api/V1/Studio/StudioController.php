@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Services\Studio\StudioProfileService;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Http\Requests\API\Studio\StudioUpdateProfileRequest;
+use App\Models\FlashTattoo;
+use App\Models\User;
+use App\Models\Gallery;
 
 class StudioController extends BaseController
 {
@@ -139,5 +142,38 @@ class StudioController extends BaseController
 
         $artist = $this->service->getArtist($filters);
         return $this->sendResponse($artist, 'Artist profile fetched successfully.');
+    }
+
+    /**
+     * Get complete detailed artist profile
+     * 
+     * @param int $artistId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function artistProfile($artistId)
+    {
+        try {
+            $artist = User::where('id', $artistId)
+                ->where('user_type', 'artist')
+                ->firstOrFail();
+
+            // $artist = $artist->load(['supplies', 'stationAmenities', 'studioImages', 'designSpecialties', 'tattooStyles', 'activeSubscription.plan']);
+            $artist = $artist->load(['tattooStyles']);
+
+            // Get flash tattoos
+            $flashTattoos = FlashTattoo::where('artist_id', $artistId)
+                ->with('options')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Add flash tattoos to the artist object
+            $artist->flash_tattoos = $flashTattoos;
+
+            return $this->sendResponse($artist, 'Artist profile fetched successfully.');
+            
+        } catch (\Throwable $th) {
+            \Log::error('Error fetching artist profile: ' . $th->getMessage());
+            return $this->sendError('Something went wrong while fetching the artist profile', [], 500);
+        }
     }
 }

@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', 'studio'])->group(function () {
 
     Route::controller(StudioController::class)->group(function () {
         Route::get('/profile', 'show');
+        Route::get('artist/profile/{artistId}', 'artistProfile');
         Route::post('/profile/update', 'update');
         Route::post('/profile/update-image', 'updateImages');
         Route::get('/guests', 'getGuests');
