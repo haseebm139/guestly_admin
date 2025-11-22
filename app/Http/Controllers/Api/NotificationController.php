@@ -23,11 +23,39 @@ class NotificationController extends BaseController
     public function index(Request $request)
     {
         try {
-            $notifications = Notification::where('receiver_id', auth()->user()->id)
+            $notifications = Notification::
+                where('receiver_id', auth()->user()->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
     
-            return $this->sendResponse($notifications, 'Notification fetched successfully.');
+            // Group notifications by time periods
+            $grouped = [
+                'today' => [],
+                'yesterday' => [],
+                'last_30_days' => [],
+                'older' => []
+            ];
+            
+            $now = now();
+            $todayStart = $now->copy()->startOfDay();
+            $yesterdayStart = $now->copy()->subDay()->startOfDay();
+            $last30DaysStart = $now->copy()->subDays(30)->startOfDay();
+            
+            foreach ($notifications as $notification) {
+                $createdAt = \Carbon\Carbon::parse($notification->created_at);
+                
+                if ($createdAt->isToday()) {
+                    $grouped['today'][] = $notification;
+                } elseif ($createdAt->isYesterday()) {
+                    $grouped['yesterday'][] = $notification;
+                } elseif ($createdAt->gte($last30DaysStart)) {
+                    $grouped['last_30_days'][] = $notification;
+                } else {
+                    $grouped['older'][] = $notification;
+                }
+            }
+    
+            return $this->sendResponse($grouped, 'Notification fetched successfully.');
         } catch (\Throwable $th) {
             return $this->sendError('Something went wrong');
         }
