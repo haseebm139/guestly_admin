@@ -99,7 +99,7 @@ Route::prefix('v1')->group(function () {
         Route::get('lookups', [HomeController::class, 'lookups']);
         Route::controller(NotificationController::class)->prefix('notification')->group(function () {
             Route::get('/', 'index');
-            Route::post('/', 'store');
+            Route::post('/', 'sendToUser');
             Route::get('/read/{id}', 'markAsRead');
         });
 
