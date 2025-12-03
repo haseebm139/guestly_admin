@@ -24,6 +24,7 @@ class Notification extends Model
         'data',
         'is_read',
         'read_at',
+        'booking_id',
     ];
 
     protected $casts = [
