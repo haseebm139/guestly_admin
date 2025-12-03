@@ -177,7 +177,7 @@ class StudioBlockStationController extends BaseController
         
         $validator = Validator::make($request->all(), [
             'station_number' => 'required|integer',
-            'date'     => 'required|date|after_or_equal:today',
+            'date'     => 'required|date',
         ]);
 
         if ($validator->fails()) {
@@ -185,10 +185,10 @@ class StudioBlockStationController extends BaseController
         }
         $user = $request->user();
 
-        $block = BlockStation::where('id', $id)
-            ->where('studio_id', $user->id)
+        $block = BlockStation::where('studio_id', $user->id)
             ->where('station_number', $request->station_number)
             ->where('status', 'active')
+            ->where('start_date', '=', $request->date)
             ->first();
 
         if (!$block) {
