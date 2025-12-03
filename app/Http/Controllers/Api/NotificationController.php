@@ -93,7 +93,8 @@ class NotificationController extends BaseController
             'studio_name'   => 'nullable|string',
             'artist_name'   => 'nullable|string',
             'url'           => 'nullable|string',
-            'token'         => 'nullable|string', 
+            'token'         => 'nullable|string',
+            'booking_id'    => 'nullable'
         ]);
 
         if ($validator->fails()) {
@@ -125,6 +126,7 @@ class NotificationController extends BaseController
                 'studio_name'   => $request->studio_name ?? null,
                 'artist_name'   => $request->artist_name ?? null,
                 'token'         => $request->token ?? null,
+                'booking_id'     => $request->booking_id ?? null
                  
             ]);
             return $this->sendResponse([], 'Notification sent successfully.');
