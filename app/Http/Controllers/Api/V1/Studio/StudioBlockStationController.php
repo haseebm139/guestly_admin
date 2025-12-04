@@ -195,12 +195,12 @@ class StudioBlockStationController extends BaseController
             return $this->sendError('No active block record found for this station.');
         }
 
-        $block->update([
-            'status' => 'inactive',
-            'end_date' =>  $request->date
-        ]);
-
-        return $this->sendResponse($block, 'Station unblocked successfully.');
+        // $block->update([
+        //     'status' => 'inactive',
+        //     'end_date' =>  $request->date
+        // ]);
+        $block->delete();
+        return $this->sendResponse([], 'Station unblocked successfully.');
     }
 
    
