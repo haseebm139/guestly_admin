@@ -156,6 +156,7 @@ class SpotBookingController extends BaseController
 
             // --- 2. Get blocked stations ---
             $blockedStations = BlockStation::where('studio_id', $studioId)
+                ->where('status', 'active')
                 ->where(function ($q) use ($month, $year) {
                     $q->whereMonth('start_date', $month)
                         ->whereYear('start_date', $year)
